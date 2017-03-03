@@ -6,7 +6,7 @@ resource "aws_key_pair" "infra-demo-pub" {
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "ami-bae338ac"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
 
   security_groups = [
     "${module.vpc.default_security_group_id}",
