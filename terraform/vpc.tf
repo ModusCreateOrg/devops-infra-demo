@@ -26,5 +26,6 @@ module "vpc" {
   tags {
     "Terraform"   = "true"
     "Environment" = "demo"
+    "Project"     = "infra-demo"
   }
 }

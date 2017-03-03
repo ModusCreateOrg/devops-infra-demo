@@ -16,7 +16,6 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   #iam_instance_profile = "${aws_iam_instance_profile.?????.name}"
 
   key_name = "${aws_key_pair.infra-demo-pub.key_name}"
-
   lifecycle {
     create_before_destroy = true
   }
@@ -41,6 +40,12 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
   tag {
     key                 = "Name"
     value               = "infra-demo-web"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Project"
+    value               = "infra-demo"
     propagate_at_launch = true
   }
 }

@@ -12,6 +12,10 @@ resource "aws_security_group" "outbound" {
       "0.0.0.0/0",
     ]
   }
+
+  tags {
+    Project = "infra-demo"
+  }
 }
 
 resource "aws_security_group" "ssh" {
@@ -27,6 +31,10 @@ resource "aws_security_group" "ssh" {
     cidr_blocks = [
       "107.18.3.178/32",
     ]
+  }
+
+  tags {
+    Project = "infra-demo"
   }
 }
 
@@ -54,6 +62,10 @@ resource "aws_security_group" "web" {
       "0.0.0.0/0", # Everyone
     ]
   }
+
+  tags {
+    Project = "infra-demo"
+  }
 }
 
 resource "aws_security_group" "icmp" {
@@ -68,5 +80,9 @@ resource "aws_security_group" "icmp" {
     to_port   = -1
     protocol  = "icmp"
     self      = true
+  }
+
+  tags {
+    Project = "infra-demo"
   }
 }

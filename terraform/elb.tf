@@ -29,7 +29,8 @@ resource "aws_elb" "infra-demo-elb" {
   connection_draining_timeout = 400
 
   tags {
-    Name = "infra-demo-elb"
+    Name    = "infra-demo-elb"
+    Project = "infra-demo"
   }
 }
 
