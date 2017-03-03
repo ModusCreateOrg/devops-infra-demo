@@ -1,0 +1,43 @@
+{
+    "variables": {
+        "aws_access_key":"{{env `AWS_ACCESS_KEY_ID`}}",
+        "aws_secret_key":"{{env `AWS_SECRET_ACCESS_KEY`}}",
+        "aws_vpc_id": "{{env `PACKER_AWS_VPC_ID`}}",
+        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}"
+    },
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "us-east-1",
+        "source_ami" : "ami-f0768de6",
+        "instance_type": "t2.large",
+        "subnet_id": "{{user `aws_subnet_id`}}",
+        "vpc_id": "{{user `aws_vpc_id`}}",
+        "ssh_username": "ubuntu",
+        "ami_name": "ubuntu-16.04-web-{{timestamp}}",
+        "ami_description": "Ubuntu 16.04 Web Server"
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "bin/install-nginx.sh"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "../application",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo rm -rf /var/www/html/",
+                "sudo mkdir -p /var/www/html",
+                "sudo cp -r /tmp/application/* /var/www/html/",
+                "sudo chown -R www-data:www-data /var/www/html/"
+            ]
+        }
+    ]
+}
