@@ -1,7 +1,7 @@
 DevOps Infrastructure Demo
 ===========================
 
-This repository houses the demo code for @ateoto's
+This repository houses the demo code for Modus Create's
 DevOps NYC talk titled Multi-Cloud Deployment with GitHub and Terraform.
 
 To run the demo end to end, you will need:
