@@ -30,7 +30,60 @@ resource "aws_security_group" "ssh" {
 
     cidr_blocks = [
       "107.18.3.178/32",
+      "72.192.212.18/32", # matt@moduscreate.com
+      "97.65.133.42/32",  # Modus HQ Level 3
+      "69.255.26.188/32", # Modus HQ Comcast
     ]
+  }
+
+  tags {
+    Project = "infra-demo"
+  }
+}
+
+resource "aws_security_group" "consul" {
+  name        = "infra-demo-consul"
+  description = "Allows access to consul ports"
+  vpc_id      = "${module.vpc.vpc_id}"
+
+  ingress {
+    from_port = 8300
+    to_port   = 8300
+    protocol  = "tcp"
+
+    self = true
+  }
+
+  ingress {
+    from_port = 8301
+    to_port   = 8302
+    protocol  = "tcp"
+
+    self = true
+  }
+
+  ingress {
+    from_port = 8301
+    to_port   = 8302
+    protocol  = "udp"
+
+    self = true
+  }
+
+  ingress {
+    from_port = 8500
+    to_port   = 8501
+    protocol  = "tcp"
+
+    self = true
+  }
+
+  ingress {
+    from_port = 8600
+    to_port   = 8600
+    protocol  = "tcp"
+
+    self = true
   }
 
   tags {
