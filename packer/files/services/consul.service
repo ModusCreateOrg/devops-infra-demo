@@ -1,0 +1,22 @@
+[Unit]
+Description=Consul Agent
+Requires=network-online.target
+After=network-online.target
+Conflicts=consul-client.service
+
+[Service]
+Environment=GOMAXPROCS=2
+Restart=on-failure
+ExecStartPre=/bin/bash -c "/bin/systemctl set-environment LOCAL_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+ExecStartPre=/bin/bash -c "/bin/systemctl set-environment LOCAL_HOSTNAME=$(curl -s http://169.254.169.254/latest/meta-data/hostname)"
+ExecStart=/usr/local/bin/consul agent \
+                          -bind=${LOCAL_IP} \
+                          -client=${LOCAL_IP} \
+                          -node=${LOCAL_HOSTNAME} \
+                          -config-file=/etc/consul.d/server.json \
+                          -bootstrap-expect 3
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

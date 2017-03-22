@@ -1,0 +1,26 @@
+{
+  "datacenter": "us-east-1",
+  "data_dir": "/opt/consul",
+  "log_level": "INFO",
+  "server": true,
+  "encrypt": "KEnEYqex8oxknBfyfr7KaQ==",
+  "ca_file": "/etc/consul.d/ssl/ca.crt",
+  "cert_file": "/etc/consul.d/ssl/consul.crt",
+  "key_file": "/etc/consul.d/ssl/consul.key",
+  "retry_join_ec2": {
+      "tag_key": "consul-server",
+      "tag_value": "true"
+  },
+  "enable_syslog": true,
+  "addresses": {
+      "dns": "0.0.0.0",
+      "rpc": "0.0.0.0",
+      "http": "0.0.0.0",
+      "https": "0.0.0.0"
+  },
+  "ports": {
+      "http": 8500,
+      "https": 8501
+  },
+  "ui": true
+}

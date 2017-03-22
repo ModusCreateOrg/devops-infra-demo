@@ -1,0 +1,44 @@
+{
+    "variables": {
+        "aws_access_key":"{{env `AWS_ACCESS_KEY_ID`}}",
+        "aws_secret_key":"{{env `AWS_SECRET_ACCESS_KEY`}}",
+        "aws_vpc_id": "{{env `PACKER_AWS_VPC_ID`}}",
+        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}"
+    },
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "us-east-1",
+        "source_ami" : "ami-f0768de6",
+        "instance_type": "t2.large",
+        "subnet_id": "{{user `aws_subnet_id`}}",
+        "vpc_id": "{{user `aws_vpc_id`}}",
+        "ssh_username": "ubuntu",
+        "ami_name": "ubuntu-16.04-consul-{{timestamp}}",
+        "ami_description": "Ubuntu 16.04 Consul"
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "bin/install-consul.sh"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "./files",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo mv /tmp/files/consul-server.json /etc/consul.d/server.json",
+                "sudo mv /tmp/files/services/consul.service /lib/systemd/system/",
+                "sudo mv /tmp/files/consul.d/ssl/ /etc/consul.d/",
+                "sudo systemctl daemon-reload",
+                "sudo systemctl enable consul"
+            ]
+        }
+    ]
+}

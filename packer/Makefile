@@ -1,5 +1,5 @@
-web:
-	packer validate machines/web-server.json
+consul-server:
+	packer validate machines/consul-server.json
 	packer build \
-	    machines/web-server.json
-all: web
+	    machines/consul-server.json
+all: consul-server

@@ -7,3 +7,4 @@ terraform/terraform.tfstate.backup
 **/*.key
 **/*.csr
 **/*.crt
+**/.vagrant
