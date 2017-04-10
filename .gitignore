@@ -1,4 +1,5 @@
 .DS_Store
-terraform/.terraform
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
+/terraform/.terraform
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup
+/env.sh

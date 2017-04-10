@@ -3,7 +3,8 @@
         "aws_access_key":"{{env `AWS_ACCESS_KEY_ID`}}",
         "aws_secret_key":"{{env `AWS_SECRET_ACCESS_KEY`}}",
         "aws_vpc_id": "{{env `PACKER_AWS_VPC_ID`}}",
-        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}"
+        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}",
+        "google_project": "{{env `GOOGLE_PROJECT`}}"
     },
     "builders": [{
         "type": "amazon-ebs",
@@ -36,6 +37,7 @@
                 "sudo rm -rf /var/www/html/",
                 "sudo mkdir -p /var/www/html",
                 "sudo cp -r /tmp/application/* /var/www/html/",
+                "sudo sed -i'' -e 's/example-/{{user `google_project`}}-/g' /var/www/html/assets/css/main.css",
                 "sudo chown -R www-data:www-data /var/www/html/"
             ]
         }
