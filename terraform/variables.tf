@@ -41,3 +41,8 @@ variable "ami" {
   description = "Amazon AWS AMI to use"
   default = "ami-f0768de6"
 }
+
+variable "zone" {
+  description = "Amazon Zone to use"
+  default = "us-east-1"
+}
