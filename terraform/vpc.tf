@@ -9,14 +9,12 @@ module "vpc" {
     "10.0.1.0/24",
     "10.0.2.0/24",
     "10.0.3.0/24",
-    "10.0.4.0/24",
   ]
 
   azs = [
-    "us-east-1a",
-    "us-east-1c",
-    "us-east-1d",
-    "us-east-1e",
+    "${var.zone}a",
+    "${var.zone}b",
+    "${var.zone}c"
   ]
 
   enable_dns_hostnames    = true
