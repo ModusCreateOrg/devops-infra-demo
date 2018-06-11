@@ -29,7 +29,7 @@ stage('Build') {
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
                 reportDir: 'packer/build',
-                reportFiles: 'scan-xccdf-report.html',
+                reportFiles: 'scan-xccdf-results.html',
                 reportName: "OpenSCAP Report"
     ])
         }
