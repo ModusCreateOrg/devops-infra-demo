@@ -17,8 +17,9 @@ stage('Build') {
         unstash 'src'
         // TODO: We should be getting a built image from the Docker registry.
         sh ("""
+            cp env.sh.sample env.sh
             cd packer
-            make
+            ./pack.sh
         """)
     }
 }
