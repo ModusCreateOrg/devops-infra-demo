@@ -30,7 +30,9 @@
         {
             "type": "shell",
             "inline": [
-                "sudo touch /tag"
+                "sudo touch /tag",
+                "sudo yum -qy install openscap-scanner scap-security-guide",
+                "oscap xccdf eval --profile C2S /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml  --results scan-xccdf-results.xml"
             ]
         }
     ]
