@@ -28,12 +28,15 @@
             "destination": "/tmp"
         },
         {
+            "type": "file",
+            "source": "/app/scan.sh",
+            "destination": "/home/centos/scan.sh"
+        },
+        {
             "type": "shell",
             "inline": [
                 "sudo touch /tag",
-                "sudo yum -qy install openscap-scanner scap-security-guide",
-                "oscap xccdf eval --profile C2S --results scan-xccdf-results.xml /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml",
-                "oscap xccdf generate report --output scan-xccdf-report.html scan-xccdf-results.xml"
+                "bash /home/centos/scan.sh"
             ]
         },
         {
