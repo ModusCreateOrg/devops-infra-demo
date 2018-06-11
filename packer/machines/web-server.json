@@ -17,30 +17,20 @@
         "instance_type": "t2.large",
         "subnet_id": "{{user `aws_subnet_id`}}",
         "vpc_id": "{{user `aws_vpc_id`}}",
-        "ssh_username": "ubuntu",
-        "ami_name": "ubuntu-16.04-web-{{timestamp}}",
-        "ami_description": "Ubuntu 16.04 Web Server"
+        "ssh_username": "centos",
+        "ami_name": "centos-7-sec-demo-{{timestamp}}",
+        "ami_description": "CentOS 7 sec demo"
     }],
     "provisioners": [
         {
-            "type": "shell",
-            "scripts": [
-                "bin/install-nginx.sh"
-            ]
-        },
-        {
             "type": "file",
-            "source": "../application",
+            "source": "/app/application",
             "destination": "/tmp"
         },
         {
             "type": "shell",
             "inline": [
-                "sudo rm -rf /var/www/html/",
-                "sudo mkdir -p /var/www/html",
-                "sudo cp -r /tmp/application/* /var/www/html/",
-                "sudo sed -i'' -e 's/example-/{{user `google_project`}}-/g' /var/www/html/assets/css/main.css",
-                "sudo chown -R www-data:www-data /var/www/html/"
+                "sudo touch /tag"
             ]
         }
     ]
