@@ -19,8 +19,19 @@ stage('Build') {
             sh ("""
                 cp env.sh.sample env.sh
                 cd packer
+                rm -rf build
+                mkdir build
                 ./pack.sh
             """)
+            archive (includes: 'packer/build/**')
+            publishHTML (target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: 'packer/build',
+                reportFiles: 'scan-xccdf-report.html',
+                reportName: "OpenSCAP Report"
+    ])
         }
     }
 }
