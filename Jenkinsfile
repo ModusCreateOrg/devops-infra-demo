@@ -7,7 +7,7 @@ stage('Checkout') {
         timeout(time:default_timeout_minutes, unit:'MINUTES') {
             checkout scm
             sh ('git clean -fdx')
-            stash includes: "./**", excludes: "./.git/", name: 'src'
+            stash includes: "**", excludes: ".git/", name: 'src'
         }
     }
 }
