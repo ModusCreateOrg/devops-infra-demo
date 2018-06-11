@@ -18,7 +18,7 @@ docker run -i -t  \
     --env-file <(grep ^export ../env.sh | cut -c8-) \
     -e "PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID" \
     -e "PACKER_AWS_VPC_ID=$PACKER_AWS_VPC_ID" \
-    --mount type=bind,source="$(PWD)",target=/app \
+    --mount type=bind,source="$(pwd)",target=/app \
     hashicorp/packer:light \
     validate app/machines/web-server.json
  docker run -i -t  \
