@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+def default_timeout_minutes = 10
+
 stage('Checkout') {
     node {
         timeout(time:default_timeout_minutes, unit:'MINUTES') {
