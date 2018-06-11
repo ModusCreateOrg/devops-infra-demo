@@ -15,12 +15,13 @@ stage('Checkout') {
 stage('Build') {
     node {
         unstash 'src'
-        // TODO: We should be getting a built image from the Docker registry.
-        sh ("""
-            cp env.sh.sample env.sh
-            cd packer
-            ./pack.sh
-        """)
+        ansiColor('xterm') {
+            sh ("""
+                cp env.sh.sample env.sh
+                cd packer
+                ./pack.sh
+            """)
+        }
     }
 }
 
