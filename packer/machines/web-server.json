@@ -43,11 +43,11 @@
             "type": "file",
             "source": "scan-xccdf-results.xml",
             "direction": "download",
-            "destination": "/app/build/scan-xccdf-results.html"
+            "destination": "/app/build/scan-xccdf-results.xml"
         },
         {
             "type": "file",
-            "source": "scan-xccdf-results.xml",
+            "source": "scan-xccdf-results.html",
             "direction": "download",
             "destination": "/app/build/scan-xccdf-results.html"
         }
