@@ -46,22 +46,14 @@
         {
             "type": "shell",
             "inline": [
-                "bash /app/bin/install-ansible.sh"
-            ]
-        },
-        {
-            "type": "ansible-local",
-            "playbook_file": "/app/ansible/local.yml"
-        },
-        {
-            "type": "shell",
-            "inline": [
+                "bash /app/bin/install-ansible.sh",
+                "ansible-playbook  -l localhost /app/ansible/local.yml",
                 "bash /app/bin/scan.sh"
             ]
         },
         {
             "type": "file",
-            "source": "build",
+            "source": "build/",
             "direction": "download",
             "destination": "/app"
         }
