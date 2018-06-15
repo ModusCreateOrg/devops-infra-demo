@@ -1,0 +1,17 @@
+---
+# Use ansible to provision hosts
+
+#- name: apply common configuration to all nodes
+#  hosts: all
+#  remote_user: centos
+#
+#  roles:
+#    - common
+
+- name: Harden Server
+  hosts: all
+  become: yes
+  remote_user: centos
+
+  roles:
+    - MindPointGroup.RHEL7-CIS

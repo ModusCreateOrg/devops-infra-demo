@@ -1,5 +1,7 @@
+*.retry
 .DS_Store
+.vagrant
+/env.sh
 /terraform/.terraform
 /terraform/terraform.tfstate
 /terraform/terraform.tfstate.backup
-/env.sh
