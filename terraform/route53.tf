@@ -1,10 +1,10 @@
-data "aws_route53_zone" "modus" {
-  name = "moduscreate.com."
+data "aws_route53_zone" "dev" {
+  name = "${var.domain}."
 }
 
 resource "aws_route53_record" "main" {
-  zone_id = "${data.aws_route53_zone.modus.zone_id}"
-  name    = "devops-nyc-demo.moduscreate.com"
+  zone_id = "${data.aws_route53_zone.dev.zone_id}"
+  name    = "${var.host}.${var.domain}"
   type    = "CNAME"
   ttl     = "300"
 
