@@ -7,16 +7,15 @@ Originally this was targeted towards the DevOps NYC talk titled _Multi-Cloud Dep
 
 See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180619) for the code for the demo for the NYC DevOps talk _Applying the CIS Baseline using Ansible & Packer_.
 
-Multi-Cloud Deployment with GitHub and Terraform Instructions
--------------------------------------------------------------
-
+Applying the CIS Benchmark using Ansible & Packer Instructions
+--------------------------------------------------------------
 
 To run the demo end to end, you will need:
 
 * [AWS Account](https://aws.amazon.com/)
 * [Packer](https://www.packer.io/)
-* [Terraform](https://www.terraform.io/)
 
+Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
 
 You will also need to set a few environment variables. The method of doing so will vary from platform to platform. 
 
@@ -36,18 +35,8 @@ vim env.sh
 . env.sh
 ```
 
-The AWS profile IAM user should have administrative privileges in the account you are using.
+The AWS profile IAM user should have full control of EC2 in the account you are using.
 
-Terraform
----------
+### Packer
 
-This assumes that you already have a Route 53 domain in your AWS account created.
-You need to either edit variables.tf to match your domain or specify the domain as a command line `var` parameter.
-
-    cd terraform
-    terraform get
-    terraform plan -out tf.plan -var 'domain=example.net'
-    terraform apply tf.plan
-    # check to see if everything worked
-    terraform destroy -var 'domain=example.net'
-
+Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine on EC2, configure it using Ansible, and scan it using OpenSCAP. The results from the scan will end up in `packer/build`.
