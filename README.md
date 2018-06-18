@@ -23,8 +23,8 @@ You will also need to set a few environment variables. The method of doing so wi
 AWS_PROFILE
 AWS_DEFAULT_PROFILE
 AWS_DEFAULT_REGION
-PACKER_AWS_VPC_ID
-PACKER_AWS_SUBNET_ID
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
 ```
 
 A [sample file](env.sh.sample) is provided as a template to customize:
