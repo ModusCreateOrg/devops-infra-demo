@@ -40,3 +40,13 @@ The AWS profile IAM user should have full control of EC2 in the account you are 
 ### Packer
 
 Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine on EC2, configure it using Ansible, and scan it using OpenSCAP. The results from the scan will end up in `packer/build`.
+
+### Vagrant
+
+In order to make developing the Ansible playbooks faster, a Vagrantfile is provided to provision a VM locally.
+
+Install [Vagrant](https://www.vagrantup.com/). Change directory into `packer` and do a `vagrant up`. You can add or edit Ansible playbooks and support scripts then re-run the provisioning with `vagrant provision` to refine the remediations. This is more efficient that re-running packer and baking new AMIs for every change.
+
+### Jenkins
+
+A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
