@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-sudo yum -qy install openscap-scanner scap-security-guide
+sudo yum -q install -y openscap-scanner scap-security-guide
 
 mkdir -p build
 cd build
