@@ -21,7 +21,7 @@ stage('Build') {
                 cd packer
                 rm -rf build
                 mkdir build
-                ./pack.sh
+                ./bin/pack.sh
             """)
             archive (includes: 'packer/build/**')
             publishHTML (target: [
