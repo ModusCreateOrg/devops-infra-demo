@@ -1,0 +1,27 @@
+---
+# tasks file for extra-cis-remediation
+# Thanks Stack Overflow https://stackoverflow.com/a/34929776
+- name: 5.5 Ensure root login is restricted to system console (go further and prohibit all direct root logins)
+  copy:
+    content: ""
+    dest: /etc/securetty
+    force: yes
+    group: root
+    owner: root
+    mode: 0600
+  tags:
+    - no_direct_root_logins
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-27294-8
+    - NIST-800-53-IA-2(1)
+    - NIST-800-171-3.1.1
+    - NIST-800-171-3.1.6
+    - level1
+    - level2
+    - patch
+    - rule_5.5
+    - 
+
