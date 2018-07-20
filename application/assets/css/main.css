@@ -608,8 +608,8 @@
 			-webkit-pointer-events: none;
 			-ms-pointer-events: none;
 			pointer-events: none;
-			"google_storage_bucket" "devops-nyc-website-storage"
-			background-image: url("http://devops-nyc-media.storage.googleapis.com/images/overlay.png");
+			"google_storage_bucket" "example-website-storage"
+			background-image: url("http://example-website-storage.storage.googleapis.com/images/overlay.png");
 			background-color: rgba(19, 21, 25, 0.5);
 			border-radius: 4px;
 			content: '';
@@ -1076,7 +1076,7 @@
 			-webkit-transition-delay: 0.75s;
 			-ms-transition-delay: 0.75s;
 			transition-delay: 0.75s;
-			background-image: linear-gradient(to top, rgba(19, 21, 25, 0.5), rgba(19, 21, 25, 0.5)), url("http://devops-nyc-media.storage.googleapis.com/images/overlay.png");
+			background-image: linear-gradient(to top, rgba(19, 21, 25, 0.5), rgba(19, 21, 25, 0.5)), url("http://example-website-storage.storage.googleapis.com/images/overlay.png");
 			background-size: auto, 256px 256px;
 			background-position: center, center;
 			background-repeat: no-repeat, repeat;
@@ -1092,7 +1092,7 @@
 			-webkit-transition: -webkit-transform 0.325s ease-in-out, -webkit-filter 0.325s ease-in-out;
 			-ms-transition: -ms-transform 0.325s ease-in-out, -ms-filter 0.325s ease-in-out;
 			transition: transform 0.325s ease-in-out, filter 0.325s ease-in-out;
-			background-image: url("http://devops-nyc-media.storage.googleapis.com/images/bg.jpg");
+			background-image: url("http://example-website-storage.storage.googleapis.com/images/bg.jpg");
 			background-position: center;
 			background-size: cover;
 			background-repeat: no-repeat;
