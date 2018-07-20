@@ -8,8 +8,8 @@ To run the demo end to end, you will need:
 
 * [AWS Account](https://aws.amazon.com/)
 * [Google Cloud Account](https://cloud.google.com/)
-* [Packer](https://www.packer.io/)
-* [Terraform](https://www.terraform.io/)
+* [Packer](https://www.packer.io/) (tested with 1.0.3)
+* [Terraform](https://www.terraform.io/) (tested with  v0.11.7)
 
 
 You will also need to set a few environment variables. The method of doing so will vary from platform to platform. 
@@ -41,12 +41,14 @@ Terraform
 ---------
 
 This assumes that you already have a Route 53 domain in your AWS account created.
-You need to either edit variables.tf to match your domain or specify the domain as a command line `var` parameter.
+You need to either edit variables.tf to match your domain, ami, and AWS zone or specify these values as command line `var` parameters.
 
     cd terraform
     terraform get
+    # Example with values from our environment (replace with values from your environment)
+    # terraform plan -var zone=us-east-2 -var ami=ami-08f730916e53de731 -var domain=moduscreate.com -out tf.plan
     terraform plan -out tf.plan -var 'domain=example.net'
     terraform apply tf.plan
-    # check to see if everything worked
+    # check to see if everything worked - use the same variables here as above
     terraform destroy -var 'domain=example.net'
 
