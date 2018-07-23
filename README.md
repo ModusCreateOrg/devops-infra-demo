@@ -6,23 +6,28 @@ This repository houses demo code for Modus Create's DevOps talks and meetups.
 Originally this was targeted towards the [DevOps Wall Street](http://devopsnyc.co) talk titled _Multi-Cloud Deployment with GitHub and Terraform_. See the branch [demo-20170303](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20170303) for the code demonstrated at that event.
 
 See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180619) for the code for the demo for the [NYC DevOps talk _Applying the CIS Baseline using Ansible & Packer_](https://www.meetup.com/nycdevops/events/fmgjmnyxjbzb/).
+ 
+Instructions
+------------
 
-Multi-Cloud Deployment with GitHub and Terraform Instructions
--------------------------------------------------------------
-
-To run the demo end to end, you will need:
-
+ To run the demo end to end, you will need:
+ 
 * [AWS Account](https://aws.amazon.com/)
+* [Packer](https://www.packer.io/)
 * [Google Cloud Account](https://cloud.google.com/)
 * [Packer](https://www.packer.io/) (tested with 1.0.3)
 * [Terraform](https://www.terraform.io/) (tested with  v0.11.7)
 
-You will also need to set a few environment variables. The method of doing so will vary from platform to platform.
+Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
+
+You will also need to set a few environment variables. The method of doing so will vary from platform to platform. 
 
 ```
 AWS_PROFILE
 AWS_DEFAULT_PROFILE
 AWS_DEFAULT_REGION
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
 GOOGLE_CLOUD_KEYFILE_JSON
 GOOGLE_PROJECT
 GOOGLE_REGION
@@ -38,16 +43,30 @@ vim env.sh
 . env.sh
 ```
 
-The AWS profile IAM user should have administrative privileges in the account you are using.
+The AWS profile IAM user should have full control of EC2 in the account you are using.
 
 You will need to create an application in the Google developer console, create a set of service-to-service JSON credentials, and enable the Google Cloud Storage API in the referenced Google developer application for the Google integration to work. If you don't care about that, alternately you may remove the `terraform/google.tf` file to get the demo to work without the Google part.
 
-Terraform
----------
+### Packer
 
-This assumes that you already have a Route 53 domain in your AWS account created.
-You need to either edit variables.tf to match your domain, ami, and AWS zone or specify these values as command line `var` parameters.
+Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine on EC2, configure it using Ansible, and scan it using OpenSCAP. The results from the scan will end up in `packer/build`.
 
+Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
+
+### Vagrant
+
+In order to make developing the Ansible playbooks faster, a Vagrantfile is provided to provision a VM locally.
+
+Install [Vagrant](https://www.vagrantup.com/). Change directory into the root of the repository at the command line and issue the command `vagrant up`. You can add or edit Ansible playbooks and support scripts then re-run the provisioning with `vagrant provision` to refine the remediations. This is more efficient that re-running packer and baking new AMIs for every change.
+
+### Jenkins
+
+A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
+
+The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance should have full control of EC2 in the account you are using.
+
+### Terraform
+ 
     cd terraform
     terraform get
     # Example with values from our environment (replace with values from your environment)
@@ -57,3 +76,11 @@ You need to either edit variables.tf to match your domain, ami, and AWS zone or 
     # check to see if everything worked - use the same variables here as above
     terraform destroy -var 'domain=example.net'
 
+This assumes that you already have a Route 53 domain in your AWS account created.
+You need to either edit variables.tf to match your domain, ami, and AWS zone or specify these values as command line `var` parameters.
+ 
+### Jenkins
+The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.
+
+A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
++

@@ -1,0 +1,21 @@
+---
+# Use ansible to provision hosts
+
+#- name: apply common configuration to all nodes
+#  hosts: all
+#  remote_user: centos
+#
+#  roles:
+#    - common
+
+# Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
+# the trick on installing locally
+
+- name: Harden Server
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+
+  roles:
+    - extra-cis-remediation
+    - MindPointGroup.RHEL7-CIS
