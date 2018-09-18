@@ -3,6 +3,6 @@
 .vagrant
 /env.sh
 /terraform/.terraform
-/terraform/terraform.tfstate
-/terraform/terraform.tfstate.backup
+/terraform/tf.plan
+/terraform/terraform.tfstate*
 build/
