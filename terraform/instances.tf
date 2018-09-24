@@ -56,6 +56,17 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
 
   load_balancers = ["${aws_elb.infra-demo-elb.name}"]
 
+  enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances",
+  ]
+
   tag {
     key                 = "Name"
     value               = "infra-demo-web"
