@@ -12,13 +12,13 @@ resource "google_storage_bucket" "website-storage" {
 
 resource "google_storage_bucket_object" "overlay" {
   name   = "images/overlay.png"
-  source = "../application/images/overlay.png"
+  source = "../packer/application/images/overlay.png"
   bucket = "${google_storage_bucket.website-storage.name}"
 }
 
 resource "google_storage_bucket_object" "background" {
   name   = "images/bg.jpg"
-  source = "../application/images/bg.jpg"
+  source = "../packer/application/images/bg.jpg"
   bucket = "${google_storage_bucket.website-storage.name}"
 }
 

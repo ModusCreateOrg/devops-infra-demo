@@ -1,0 +1,6 @@
+---
+# defaults file for prepare-web-content
+ec2: false
+virtualbox: false
+app_dir: /app/application
+server_name: localhost

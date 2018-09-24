@@ -1,3 +1,8 @@
-# Install a role from the Ansible Galaxy
+# Install roles from Ansible Galaxy
+
+# CIS hardening
 - src: MindPointGroup.RHEL7-CIS
+
+# NGINX web server
+- src: nginxinc.nginx
 

@@ -1,0 +1,26 @@
+---
+# tasks file for scan-oscap
+- name: Install openscap packages
+  package: name={{item}} state=present
+  with_items:
+      - openscap-scanner
+      - scap-security-guide
+
+- name: Ensure build directory exists
+  file:
+    path: "{{ build_dir }}"
+    state: directory
+    mode: 0775
+
+- name: Scan with OpenSCAP
+  shell: |
+    set -euo pipefail
+    cd {{ build_dir }}
+    # This will have a non-zero exit if any of the scans fail, so do not fail immediately on that
+    set +e
+    oscap xccdf eval --profile {{ profile }} --results {{ output_file_xml }} {{ xccdf_file }}
+    set -e
+    oscap xccdf generate report {{ output_file_xml }} > {{ output_file_html }}
+  args:
+      executable: /bin/bash
+
