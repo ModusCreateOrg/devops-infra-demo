@@ -28,9 +28,7 @@ resource "aws_security_group" "ssh" {
     to_port   = 22
     protocol  = "tcp"
 
-    cidr_blocks = [
-      "107.18.3.178/32",
-    ]
+    cidr_blocks = "${var.trusted_cidr_blocks}"
   }
 
   tags {

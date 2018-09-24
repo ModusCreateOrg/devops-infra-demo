@@ -62,3 +62,10 @@ variable "zone" {
   description = "Amazon Zone to use"
   default = "us-east-1"
 }
+
+variable "trusted_cidr_blocks" {
+  description = "Trusted CIDR blocks, for ssh ingress"
+  default = [ 
+        "107.18.3.178/32",
+  ]
+}
