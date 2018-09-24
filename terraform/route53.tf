@@ -12,3 +12,7 @@ resource "aws_route53_record" "main" {
     "${aws_elb.infra-demo-elb.dns_name}",
   ]
 }
+
+output "route53-dns" {
+  value = "${var.host}.${var.domain}"
+}

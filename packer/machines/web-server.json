@@ -5,8 +5,7 @@
         "aws_source_ami":"{{env `AWS_SOURCE_AMI`}}",
         "aws_secret_key":"{{env `AWS_SECRET_ACCESS_KEY`}}",
         "aws_vpc_id": "{{env `PACKER_AWS_VPC_ID`}}",
-        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}",
-        "google_project": "{{env `GOOGLE_PROJECT`}}"
+        "aws_subnet_id": "{{env `PACKER_AWS_SUBNET_ID`}}"
     },
     "builders": [{
         "type": "amazon-ebs",
@@ -17,31 +16,46 @@
         "instance_type": "t2.large",
         "subnet_id": "{{user `aws_subnet_id`}}",
         "vpc_id": "{{user `aws_vpc_id`}}",
-        "ssh_username": "ubuntu",
-        "ami_name": "ubuntu-16.04-web-{{timestamp}}",
-        "ami_description": "Ubuntu 16.04 Web Server"
+        "ssh_username": "centos",
+        "ami_name": "devops-infra-demo-centos-7-{{timestamp}}",
+        "ami_description": "DevOps Infrastructure Demo CentOS 7 - CIS hardened"
     }],
     "provisioners": [
         {
             "type": "shell",
-            "scripts": [
-                "bin/install-nginx.sh"
+            "inline": [
+                "sudo mkdir /app",
+                "sudo chown centos:centos /app"
             ]
         },
         {
             "type": "file",
-            "source": "../application",
-            "destination": "/tmp"
+            "source": "/app/application",
+            "destination": "/app"
+        },
+        {
+            "type": "file",
+            "source": "/app/bin",
+            "destination": "/app"
+        },
+        {
+            "type": "file",
+            "source": "/app/ansible",
+            "destination": "/app"
         },
         {
             "type": "shell",
             "inline": [
-                "sudo rm -rf /var/www/html/",
-                "sudo mkdir -p /var/www/html",
-                "sudo cp -r /tmp/application/* /var/www/html/",
-                "sudo sed -i'' -e 's/example-/{{user `google_project`}}-/g' /var/www/html/assets/css/main.css",
-                "sudo chown -R www-data:www-data /var/www/html/"
+                "bash /app/bin/install-ansible.sh",
+                "ansible-playbook  -l localhost /app/ansible/local.yml",
+                "bash /app/bin/scan.sh"
             ]
+        },
+        {
+            "type": "file",
+            "source": "build/",
+            "direction": "download",
+            "destination": "/app"
         }
     ]
 }

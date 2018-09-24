@@ -1,0 +1,21 @@
+---
+# Use ansible to provision hosts
+
+# Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
+# the trick on installing locally using "hosts: 127.0.0.1" and "connection:local"
+- name: Install Web Application
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  roles:
+    - nginxinc.nginx
+    - prepare-web-content
+
+- name: Harden Server
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  roles:
+    - extra-cis-remediation
+    - MindPointGroup.RHEL7-CIS
+    - scan-openscap

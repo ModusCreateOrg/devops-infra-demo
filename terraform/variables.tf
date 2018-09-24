@@ -37,12 +37,35 @@ variable "google_project" {
   default = "example-media"
 }
 
-variable "ami" {
-  description = "Amazon AWS AMI to use"
-  default = "ami-f0768de6"
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = "${data.aws_caller_identity.current.account_id}"
+}
+
+variable "aws_account_id_for_ami" {
+  description = "AWS Account ID where AMIs live, if not the default"
+  default = ""
+}
+
+variable "ami_pattern" {
+  description = "Amazon AWS AMI filename pattern"
+  default = "devops-infra-demo-centos-7*"
+}
+
+variable "virtualization_type" {
+  description = "Virtualization type for AMIs"
+  default = "hvm"
 }
 
 variable "zone" {
   description = "Amazon Zone to use"
   default = "us-east-1"
+}
+
+variable "trusted_cidr_blocks" {
+  description = "Trusted CIDR blocks, for ssh ingress"
+  default = [ 
+        "107.18.3.178/32",
+  ]
 }
