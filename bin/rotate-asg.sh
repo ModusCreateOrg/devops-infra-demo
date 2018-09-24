@@ -5,13 +5,23 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Enable for enhanced debugging
-set -vx
+#set -vx
 
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-asg_name=${1?You must specify an Auto Scaling Group name}
+asg_name=${1:-}
+
+if [[ -z "$asg_name" ]]; then
+    echo "You must specify an Auto Scaling Group name. Existing ASGs are:"
+    aws autoscaling describe-auto-scaling-groups \
+        --query 'AutoScalingGroups[].Instances[?contains(LifecycleState,`InService`)].InstanceId' \
+        --query "AutoScalingGroups[].AutoScalingGroupName" \
+        --output table
+    exit 1
+fi
+
 
 # Count the number of instances in service
 function num_in_service() {
