@@ -23,7 +23,7 @@ fi
 
 # Clean up the env file for use in packer
 TMPFILE="$(mktemp)"
-grep ^export ../env.sh | cut -c8- > "$TMPFILE"
+grep ^export env.sh | cut -c8- > "$TMPFILE"
 
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins
@@ -39,7 +39,7 @@ DOCKER_PACKER="docker run -i
     --mount type=bind,source=$(pwd),target=/app 
     hashicorp/packer:light"
 
-$DOCKER_PACKER validate app/machines/web-server.json
-$DOCKER_PACKER build app/machines/web-server.json
+$DOCKER_PACKER validate app/packer/machines/web-server.json
+$DOCKER_PACKER build app/packer/machines/web-server.json
 
 rm -f "$TMPFILE"

@@ -18,17 +18,16 @@ stage('Build') {
         ansiColor('xterm') {
             sh ("""
                 cp env.sh.sample env.sh
-                cd packer
                 rm -rf build
                 mkdir build
                 ./bin/pack.sh
             """)
-            archive (includes: 'packer/build/**')
+            archive (includes: 'build/**')
             publishHTML (target: [
                 allowMissing: true,
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
-                reportDir: 'packer/build',
+                reportDir: 'build',
                 reportFiles: 'scan-xccdf-results.html',
                 reportName: "OpenSCAP Report"
     ])
