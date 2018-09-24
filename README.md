@@ -53,6 +53,12 @@ Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine
 
 Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
 
+### Terraform
+
+This assumes that you already have a Route 53 domain in your AWS account created.
+
+You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
+
 ### Vagrant
 
 In order to make developing the Ansible playbooks faster, a Vagrantfile is provided to provision a VM locally.
