@@ -85,9 +85,6 @@ The scripts here assume that Jenkins is running on EC2 and uses instance data fr
 A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
 +
 
-# License
-
-
 # Modus Create
 
 [Modus Create](https://moduscreate.com) is a digital product consultancy. We use a distributed team of the best talent in the world to offer a full suite of digital product design-build services; ranging from consumer facing apps, to digital migration, to agile development training, and business transformation.
