@@ -26,9 +26,14 @@ properties([
             description: 'Run Packer for this build?'
         ),
         booleanParam(
-            name: 'Run_Terraform', 
+            name: 'Apply_Terraform', 
             defaultValue: false, 
-            description: 'Run for this build?'
+            description: 'Apply Terraform plan on this build?'
+        ),
+        booleanParam(
+            name: 'Destroy_Terraform', 
+            defaultValue: false, 
+            description: 'Destroy Terraform resources?'
         ),
         string(
             name: 'CAPTCHA_Guess', 
@@ -104,23 +109,39 @@ if (params.Run_Packer) {
     }
 }
 
-if (params.Run_Terraform) {
-    stage('Plan Terraform') {
-        node {
-            unstash 'src'
-            ansiColor('xterm') {
-                prepEnv()
-                sh ("./bin/terraform.sh plan")
-            }
-            stash includes: "**", excludes: ".git/", name: 'plan'
-        }
-    }
+def terraform_prompt = 'Should we apply the Terraform plan?'
 
+stage('Plan Terraform') {
+    node {
+        unstash 'src'
+        ansiColor('xterm') {
+            prepEnv()
+            def verb = "plan"
+            if (params.Destroy_Terraform) {
+                verb += '-destroy';
+                terraform_prompt += ' WARNING: will DESTROY resourcesy';
+                echo """
+                     ******************************************************* 
+                     ************                             ************** 
+                     ************        ---WARNING---        ************** 
+                     ************                             ************** 
+                     ************* Planning Terraform Destroy ************** 
+                     ************                             ************** 
+                     *******************************************************
+                     """
+            }
+            sh ("./bin/terraform.sh ${verb}")
+        }
+        stash includes: "**", excludes: ".git/", name: 'plan'
+    }
+}
+
+if (params.Apply_Terraform || params.Destroy_Terraform) {
     // See https://support.cloudbees.com/hc/en-us/articles/226554067-Pipeline-How-to-add-an-input-step-with-timeout-that-continues-if-timeout-is-reached-using-a-default-value
     def userInput = false
     try {
         timeout(time: default_timeout_minutes, unit: 'MINUTES') {
-            userInput = input(message: 'Should we apply the Terraform plan?')
+            userInput = input(message: terraform_prompt)
         }
         stage('Apply Terraform') {
             node {
