@@ -20,7 +20,7 @@ BASE_DIR="$DIR/.."
 . "$BASE_DIR/env.sh"
 
 # Enable for enhanced debugging
-set -vx
+#set -vx
 
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
