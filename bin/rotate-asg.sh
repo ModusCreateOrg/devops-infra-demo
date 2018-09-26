@@ -5,16 +5,26 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Enable for enhanced debugging
-#set -vx
+set -vx
 
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
+# Credit to http://stackoverflow.com/a/246128/424301
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$DIR/.."
+
+# shellcheck disable=SC1090
+. "$DIR/common.sh"
+#shellcheck disable=SC1090
+. "$BASE_DIR/env.sh"
+
 asg_name=${1:-}
 
 if [[ -z "$asg_name" ]]; then
     echo "You must specify an Auto Scaling Group name. Existing ASGs are:"
+    #shellcheck disable=SC2016
     aws autoscaling describe-auto-scaling-groups \
         --query 'AutoScalingGroups[].Instances[?contains(LifecycleState,`InService`)].InstanceId' \
         --query "AutoScalingGroups[].AutoScalingGroupName" \
