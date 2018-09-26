@@ -14,7 +14,6 @@ set -euo pipefail
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
-PROJECT_NAME="$( cd "$BASE_DIR" && basename "$(pwd)")"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 #shellcheck disable=SC1090
