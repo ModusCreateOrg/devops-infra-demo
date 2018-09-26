@@ -84,6 +84,11 @@ stage('Checkout') {
         timeout(time:default_timeout_minutes, unit:'MINUTES') {
             checkout scm
             // sh ('git clean -fdx')
+            sh ('''
+                . bin/common.sh
+                clean_root_owned_docker_files
+                git clean -fdx
+                ''')
             stash includes: "**", excludes: ".git/", name: 'src'
         }
     }

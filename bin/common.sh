@@ -27,6 +27,18 @@ function get_aws_account_id() {
         | cut -d: -f5
 }
 
+function clean_root_owned_docker_files {
+    # Fix file permissions on Jenkins / Linux as
+    # Docker makes a bunch of root-owned files as it works
+    if is_ec2; then
+        docker run -i \
+            --mount type=bind,source="${BASE_DIR}"/terraform,target="${TF_DIR}" \
+            -w "${TF_DIR}" \
+            --entrypoint /bin/sh \
+            hashicorp/terraform:"${TF_VERSION}" \
+            <<< "chown -R $(id -u):$(id -g) ${TF_DIR}"
+    fi
+}
 
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins
