@@ -1,3 +1,9 @@
+# High level AWS variables
+variable "aws_region" {
+  description = "Amazon Region to use"
+  default = "us-east-1"
+}
+
 # Auto Scaling Groups related variables
 variable "desired_capacity" {
   description = "Desired number of instances in AutoScaling Group"
@@ -53,14 +59,15 @@ variable "virtualization_type" {
   default = "hvm"
 }
 
-variable "zone" {
-  description = "Amazon Zone to use"
-  default = "us-east-1"
-}
 
 variable "trusted_cidr_blocks" {
   description = "Trusted CIDR blocks, for ssh ingress"
   default = [ 
         "107.18.3.178/32",
   ]
+}
+
+variable "project_name" {
+  description = "Project name"
+  default = "devops-infra-demo"
 }

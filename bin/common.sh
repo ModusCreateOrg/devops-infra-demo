@@ -20,11 +20,22 @@ function get_env_tmpfile() {
     echo "$TMPFILE"
 }
 
+function get_aws_account_id() {
+    aws sts get-caller-identity \
+        --query Arn \
+        --output text \
+        | cut -d: -f5
+}
+
 
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins
 # Thanks https://stackoverflow.com/a/48230089
 declare USE_TTY
 test -t 1 && USE_TTY="-t" || USE_TTY=""
-export USE_TTY
+
+declare INPUT_ENABLED
+test -t 1 && INPUT_ENABLED="true" || INPUT_ENABLED="false"
+
+export INPUT_ENABLED USE_TTY
 

@@ -62,18 +62,33 @@ A `Jenkinsfile` is provided that will allow Jenkins to execute a Packer Terrafor
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance should have full control of EC2 in the account you are using.
 
 ### Terraform
+
+This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. Yu can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
+
+(Replace us-east-1 and XXXXXXXXXXXX with the AWS region and your account ID)
+```
+bucket = "tf-state.devops-infra-demo.us-east-1.XXXXXXXXXXXX"
+dynamodb_table = "TerraformStatelock-devops-infra-demo"
+key = "terraform.tfstate"
+profile = "terraform"
+region = "us-east-1"
+```
+You'll also need to modify the list of operators who can modify the object in the S3 bucket. Put in the IAM user names of the user into the `setup/variables.tf` file in that project. If your Jenkins instance uses an IAM role to grant access, give it a similar set of permissions to those granted on in the bucket policy to IAM users.
+
+These commands will then set up cloud resources using terraform:
  
     cd terraform
+    terraform init
     terraform get
     # Example with values from our environment (replace with values from your environment)
-    # terraform plan -var domain=modus.com -out tf.plan
+    # terraform plan -var domain=modus.app -out tf.plan
     terraform plan -out tf.plan -var 'domain=example.net'
     terraform apply tf.plan
     # check to see if everything worked - use the same variables here as above
     terraform destroy -var 'domain=example.net'
 
 This assumes that you already have a Route 53 domain in your AWS account created.
-You need to either edit variables.tf to match your domain, ami, and AWS zone or specify these values as command line `var` parameters.
+You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
  
 ### Jenkins
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.

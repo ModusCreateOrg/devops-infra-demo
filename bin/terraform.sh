@@ -14,13 +14,14 @@ set -euo pipefail
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
+PROJECT_NAME="$( cd "$BASE_DIR" && basename "$(pwd)")"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 #shellcheck disable=SC1090
 . "$BASE_DIR/env.sh"
 
 # Enable for enhanced debugging
-#set -vx
+set -vx
 
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
@@ -33,6 +34,7 @@ TF_VERSION=0.11.7
 TF_DIR="/app"
 
 TF_PLAN="$TF_DIR/tf.plan"
+AWS_ACCOUNT_ID=$(get_aws_account_id)
 
 DOCKER_TERRAFORM="docker run -i
     ${USE_TTY}
@@ -47,15 +49,17 @@ function plan() {
     local extra
     extra=${1:-}
     #shellcheck disable=SC2086
-    $DOCKER_TERRAFORM plan $extra \
+    $DOCKER_TERRAFORM plan \
+        $extra \
         -lock=true \
-        -input=false \
+        -input="$INPUT_ENABLED" \
+        -var project_name="$PROJECT_NAME" \
         -out="$TF_PLAN" \
         "$TF_DIR"
 }
 
 function plan-destroy() {
-   echo <<EOF
+   cat <<EOF
 
 *******************************************************
 ************                             **************
@@ -69,11 +73,17 @@ EOF
 }
 
 function apply() {
-    $DOCKER_TERRAFORM apply "$PLAN"
+    $DOCKER_TERRAFORM apply \
+        -lock=true \
+        "$TF_PLAN"
 }
 
 function init() {
-    $DOCKER_TERRAFORM init
+    #shellcheck disable=SC2086
+    $DOCKER_TERRAFORM init \
+        -input="$INPUT_ENABLED" \
+        -backend-config bucket=tf-state.${PROJECT_NAME}.${AWS_DEFAULT_REGION}.${AWS_ACCOUNT_ID} \
+        -backend-config dynamodb_table=TerraformStatelock-${PROJECT_NAME}
     # Generate an SSH keypair if none exists yet
     if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
         #shellcheck disable=SC2174
@@ -93,7 +103,7 @@ apply)
   Message="Executing terraform apply."
   ;;
 *)
-  echo "Unrecognized verb $verb specified. Use plan, plan-destroy, or apply"
+  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, or apply'
   exit 1
   ;;
 esac
@@ -101,6 +111,3 @@ esac
 echo "$Message"
 init
 "$verb"
-
-
-

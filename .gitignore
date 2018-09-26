@@ -1,8 +1,10 @@
 *.retry
+*.tmp
+*~
 .DS_Store
 .vagrant
 /env.sh
-/terraform/.terraform
-/terraform/tf.plan
+/terraform/.terraform*
 /terraform/terraform.tfstate*
+/terraform/tf.plan
 build/
