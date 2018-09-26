@@ -83,7 +83,7 @@ stage('Checkout') {
     node {
         timeout(time:default_timeout_minutes, unit:'MINUTES') {
             checkout scm
-            sh ('git clean -fdx')
+            // sh ('git clean -fdx')
             stash includes: "**", excludes: ".git/", name: 'src'
         }
     }
