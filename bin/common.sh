@@ -13,6 +13,14 @@ function is_ec2() {
     return 1
 }
 
+function get_env_tmpfile() {
+# Clean up the env file for use in packer
+    TMPFILE="$(mktemp)"
+    grep ^export "$DIR/../env.sh" | cut -c8- > "$TMPFILE"
+    echo "$TMPFILE"
+}
+
+
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins
 # Thanks https://stackoverflow.com/a/48230089

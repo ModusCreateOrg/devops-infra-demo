@@ -119,16 +119,7 @@ stage('Plan Terraform') {
             def verb = "plan"
             if (params.Destroy_Terraform) {
                 verb += '-destroy';
-                terraform_prompt += ' WARNING: will DESTROY resourcesy';
-                echo """
-                     ******************************************************* 
-                     ************                             ************** 
-                     ************        ---WARNING---        ************** 
-                     ************                             ************** 
-                     ************* Planning Terraform Destroy ************** 
-                     ************                             ************** 
-                     *******************************************************
-                     """
+                terraform_prompt += ' WARNING: will DESTROY resources';
             }
             sh ("./bin/terraform.sh ${verb}")
         }
