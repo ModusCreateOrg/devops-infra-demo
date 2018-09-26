@@ -23,7 +23,7 @@ def get_captcha() {
     def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
     Long captcha_answer = op1 + op2 - op3
     Long captcha_hash = captcha_answer ^ XOR_CONST
-    return [captcha_answer, captcha_hash]
+    return [captcha_problem, captcha_hash.toString()]
 }
 
 def prepEnv = {
@@ -69,7 +69,7 @@ properties([
         ),
         string(
             name: 'CAPTCHA_Hash',
-            defaultValue: captcha_hash.toString(),
+            defaultValue: captcha_hash,
             description: 'Hash for CAPTCHA answer (DO NOT modify)'
         ),
     ])
