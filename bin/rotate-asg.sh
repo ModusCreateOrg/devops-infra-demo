@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Enable for enhanced debugging
-set -vx
+#set -vx
 
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
