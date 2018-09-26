@@ -7,7 +7,7 @@ variable "aws_region" {
 # Auto Scaling Groups related variables
 variable "desired_capacity" {
   description = "Desired number of instances in AutoScaling Group"
-  default     = 2
+  default     = 8
 }
 
 variable "min_size" {
@@ -17,7 +17,7 @@ variable "min_size" {
 
 variable "max_size" {
   description = "Maximum number of instances in AutoScaling Group"
-  default     = 3
+  default     = 10
 }
 
 # Route 53 related variables
