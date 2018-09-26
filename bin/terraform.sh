@@ -45,6 +45,20 @@ DOCKER_TERRAFORM="docker run -i
     -w ${TF_DIR}
     hashicorp/terraform:${TF_VERSION}"
 
+# http://redsymbol.net/articles/bash-exit-traps/
+function finish {
+    # Fix file permissions
+    if is_ec2; then
+        docker run -i \
+            --mount type=bind,source="${BASE_DIR}"/terraform,target="${TF_DIR}" \
+            -w "${TF_DIR}" \
+            --entrypoint /bin/sh \
+            hashicorp/terraform:"${TF_VERSION}" \
+            <<< "chown -R $(id -u):$(id -g) /app"
+    fi
+}
+trap finish EXIT
+
 function plan() {
     local extra
     extra=${1:-}
@@ -111,3 +125,4 @@ esac
 echo "$Message"
 init
 "$verb"
+
