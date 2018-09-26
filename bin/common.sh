@@ -43,6 +43,30 @@ function clean_root_owned_docker_files {
     fi
 }
 
+function get_docker_packer {
+    local BASE_DIR=${1?You must specify a directory for the bind mount}
+    local DOCKER_PACKER
+    # This is going to leak a new tempfile every time
+    # it is run, maybe we should chain the exit traps to
+    # avoid this. https://stackoverflow.com/questions/3338030/multiple-bash-traps-for-the-same-signal
+    local TMPFILE
+    TMPFILE=$(get_env_tmpfile)
+    if is_ec2; then
+        PACKER_AWS_SUBNET_ID="$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/"$INTERFACE"/subnet-id)"
+        PACKER_AWS_VPC_ID="$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/"$INTERFACE"/vpc-id)"
+    fi
+
+    DOCKER_PACKER="docker run -i 
+        ${USE_TTY}  
+        --env-file $TMPFILE
+        -e PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID 
+        -e PACKER_AWS_VPC_ID=$PACKER_AWS_VPC_ID 
+        --mount type=bind,source=${BASE_DIR},target=/app 
+        hashicorp/packer:light"
+    #shellcheck disable=SC2086
+    echo $DOCKER_PACKER
+}
+
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins
 # Thanks https://stackoverflow.com/a/48230089

@@ -1,17 +1,17 @@
 #!/usr/bin/env groovy
-#
-# Jenkinsfile
-#
-# Use the Scripted style of Jenkinsfile in order to
-# write more Groovy functions and use variables to
-# control the workflow.
+/*
+ * Jenkinsfile
+ *
+ * Use the Scripted style of Jenkinsfile in order to
+ * write more Groovy functions and use variables to
+ */ control the workflow.
 
 import java.util.Random
 
 // Set default variables
 final default_timeout_minutes = 20
 
-// Set up CAPTCHA
+/** Set up CAPTCHA*/
 def get_captcha() {
     final Long MAX = 10
     final Long XOR_CONST = 3735928559 // 0xdeadbeef
@@ -25,10 +25,18 @@ def get_captcha() {
     return [captcha_answer, captcha_hash.toString()]
 }
 
+def prepEnv = {
+    sh ("""
+        cp env.sh.sample env.sh
+        rm -rf build
+        mkdir build
+    """)
+}
+
 
 (captcha_problem, captcha_hash) = get_captcha()
 
-// Gather properties from user parameters
+/** Gather properties from user parameters */
 properties([
     parameters([
         booleanParam(
@@ -66,8 +74,7 @@ properties([
     ])
 ])
 
-stage('Validate') {
-    // Validate packer templates
+stage('Preflight') {
        
     // Check CAPTCHA
     def should_validate_captcha = params.Run_Packer || params.Run_Terraform;
@@ -85,16 +92,6 @@ stage('Validate') {
     } else {
         echo "No CAPTCHA required, continuing"
     }
-
-    // Check branch
-}
-
-def prepEnv = {
-    sh ("""
-        cp env.sh.sample env.sh
-        rm -rf build
-        mkdir build
-    """)
 }
 
 stage('Checkout') {
@@ -111,6 +108,17 @@ stage('Checkout') {
         }
     }
 }
+
+stage('Validate') {
+    node {
+        unstash 'src'
+        ansiColor('xterm') {
+            // Validate packer templates, check branch
+            sh ("./bin/validate.sh")
+        }
+    }
+}
+
 
 if (params.Run_Packer) {
     stage('Pack') {
