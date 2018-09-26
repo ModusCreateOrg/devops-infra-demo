@@ -99,12 +99,7 @@ stage('Checkout') {
     node {
         timeout(time:default_timeout_minutes, unit:'MINUTES') {
             checkout scm
-            // sh ('git clean -fdx')
-            sh ('''#!/usr/bin/env bash
-                   . bin/common.sh
-                   clean_root_owned_docker_files
-                   git clean -fdx
-                ''')
+            sh ('bin/prep.sh') // Clean and prepare environment
             stash includes: "**", excludes: ".git/", name: 'src'
         }
     }
