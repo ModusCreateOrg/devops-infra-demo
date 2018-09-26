@@ -4,7 +4,8 @@
  *
  * Use the Scripted style of Jenkinsfile in order to
  * write more Groovy functions and use variables to
- */ control the workflow.
+ * control the workflow.
+ */ 
 
 import java.util.Random
 
