@@ -1,21 +1,32 @@
 #!/usr/bin/env groovy
+#
+# Jenkinsfile
+#
+# Use the Scripted style of Jenkinsfile in order to
+# write more Groovy functions and use variables to
+# control the workflow.
 
-def default_timeout_minutes = 10
+import java.util.Random
 
+// Set default variables
+final default_timeout_minutes = 20
 
 // Set up CAPTCHA
-import java.util.Random
-Random rand = new Random()
-int max = 10
+def get_captcha() {
+    final Long MAX = 10
+    final Long XOR_CONST = 3735928559 // 0xdeadbeef
+    Random rand = new Random()
+    def op1 = rand.nextInt(MAX+1)
+    def op2 = rand.nextInt(MAX+1) + MAX
+    def op3 = rand.nextInt(MAX+1) 
+    def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
+    Long captcha_answer = op1 + op2 - op3
+    Long captcha_hash = captcha_answer ^ XOR_CONST
+    return [captcha_answer, captcha_hash.toString()]
+}
 
-def op1 = rand.nextInt(max+1)
-def op2 = rand.nextInt(max+1) + 10
-def op3 = rand.nextInt(max+1) 
 
-def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
-Long captcha_answer = op1 + op2 - op3
-Long captcha_constant = 3735928559 // 0xdeadbeef
-Long captcha_hash = captcha_answer ^ captcha_constant
+(captcha_problem, captcha_hash) = get_captcha()
 
 // Gather properties from user parameters
 properties([
@@ -35,6 +46,13 @@ properties([
             defaultValue: false, 
             description: 'Destroy Terraform resources?'
         ),
+        booleanParam(
+            name: 'Rotate_Servers', 
+            defaultValue: false, 
+            description: """Rotate server instances in Auto Scaling Group?
+                            You should do this if you changed ASG size or baked a new AMI.
+                         """
+        ),
         string(
             name: 'CAPTCHA_Guess', 
             defaultValue: '', 
@@ -42,7 +60,7 @@ properties([
         ),
         string(
             name: 'CAPTCHA_Hash',
-            defaultValue: captcha_hash.toString(),
+            defaultValue: captcha_hash,
             description: 'Hash for CAPTCHA answer (DO NOT modify)'
         ),
     ])
@@ -60,7 +78,7 @@ stage('Validate') {
         }
         def guess = params.CAPTCHA_Guess as Long
         def hash = params.CAPTCHA_Hash as Long
-        if ((guess ^ captcha_constant) != hash) {
+        if ((guess ^ XOR_CONST) != hash) {
             throw new Exception("CAPTCHA incorrect, try again")
         }
         echo "CAPTCHA validated OK"
@@ -153,3 +171,16 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
         currentBuild.result = 'ABORTED'
     }
 }
+
+if (params.Rotate_Servers) {
+    stage('Rotate Servers') {
+        node {
+            unstash 'src'
+            ansiColor('xterm') {
+                prepEnv()
+                sh ("./bin/rotate-asg.sh infra-demo-asg")
+            }
+        }
+    }
+}
+
