@@ -47,14 +47,15 @@ DOCKER_TERRAFORM="docker run -i
 
 # http://redsymbol.net/articles/bash-exit-traps/
 function finish {
-    # Fix file permissions
+    # Fix file permissions on Jenkins / Linux as
+    # Docker makes a bunch of root-owned files as it works
     if is_ec2; then
         docker run -i \
             --mount type=bind,source="${BASE_DIR}"/terraform,target="${TF_DIR}" \
             -w "${TF_DIR}" \
             --entrypoint /bin/sh \
             hashicorp/terraform:"${TF_VERSION}" \
-            <<< "chown -R $(id -u):$(id -g) /app"
+            <<< "chown -R $(id -u):$(id -g) ${TF_DIR}"
     fi
 }
 trap finish EXIT
