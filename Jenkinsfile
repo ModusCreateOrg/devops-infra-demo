@@ -12,7 +12,7 @@ import java.util.Random
 final default_timeout_minutes = 20
 
 /** Set up CAPTCHA*/
-def get_captcha() = {
+def get_captcha = {
     final Long MAX = 10
     final Long XOR_CONST = 3735928559 // 0xdeadbeef
     Random rand = new Random()
