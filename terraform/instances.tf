@@ -25,7 +25,7 @@ data "aws_ami" "node_app_ami" {
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
-  instance_type = "m4.large"
+  instance_type = "t2.micro"
 
   security_groups = [
     "${module.vpc.default_security_group_id}",
