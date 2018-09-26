@@ -13,7 +13,7 @@ import java.util.Random
 final default_timeout_minutes = 20
 
 /** Set up CAPTCHA*/
-def get_captcha = {
+def get_captcha() {
     final int MAX = 10
     final Long XOR_CONST = 3735928559 // 0xdeadbeef
     Random rand = new Random()
@@ -23,7 +23,7 @@ def get_captcha = {
     def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
     Long captcha_answer = op1 + op2 - op3
     Long captcha_hash = captcha_answer ^ XOR_CONST
-    return [captcha_answer, captcha_hash.toString()]
+    return [captcha_answer, captcha_hash]
 }
 
 def prepEnv = {
@@ -69,7 +69,7 @@ properties([
         ),
         string(
             name: 'CAPTCHA_Hash',
-            defaultValue: captcha_hash,
+            defaultValue: captcha_hash.toString(),
             description: 'Hash for CAPTCHA answer (DO NOT modify)'
         ),
     ])
