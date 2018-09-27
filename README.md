@@ -5,9 +5,9 @@ This repository houses demo code for Modus Create's DevOps talks and meetups.
 
 Originally this was targeted towards the [DevOps Wall Street](http://devopsnyc.co) talk titled _Multi-Cloud Deployment with GitHub and Terraform_. See the branch [demo-20170303](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20170303) for the code demonstrated at that event.
 
-See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180619) for the code for the demo for the [NYC DevOps talk _Applying the CIS Baseline using Ansible & Packer_](https://www.meetup.com/nycdevops/events/fmgjmnyxjbzb/).
+See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180619) for the code for the demo for the [NYC DevOps talk _Applying the CIS Baseline using Ansible & Packer_](https://www.meetup.com/nycdevops/events/fmgjmnyxjbzb/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/applying-the-cis-benchmark-using-ansible-packer).
 
-See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180926) for the code for the demo for the [Continuous Delivery NYC talk _Managing Expensive or Destructive Operations in Jenkins CI_](https://www.meetup.com/ContinuousDeliveryNYC/).
+See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180926) for the code for the demo for the [Continuous Delivery NYC talk _Managing Expensive or Destructive Operations in Jenkins CI_](https://www.meetup.com/ContinuousDeliveryNYC/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/managing-expensive-or-destructive-operations-in-jenkins-ci).
 
  
 Instructions
