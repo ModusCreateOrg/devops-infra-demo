@@ -43,6 +43,11 @@ variable "public_key_file" {
   default     = "~/.ssh/id_rsa.pub"
 }
 
+variable "google_project" {
+  description = "Google project for assets"
+  default     = "example-media"
+}
+
 data "aws_caller_identity" "current" {}
 
 output "account_id" {
