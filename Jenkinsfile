@@ -177,7 +177,7 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
             node {
                 echo "baz"
                 unstash 'plan'
-                wrap({
+                wrap.call({
                     echo "snafu"
                     prepEnv()
                     sh ("./bin/terraform.sh apply")
