@@ -26,7 +26,7 @@ data "aws_ami" "node_app_ami" {
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
-  instance_type = "t2.micro"
+  instance_type = "${var.instance_type}"
 
   security_groups = [
     "${module.vpc.default_security_group_id}",
@@ -39,9 +39,9 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   lifecycle {
     create_before_destroy = true
   }
-  ebs_block_device {
+  root_block_device {
+    volume_type = "gp2"
     delete_on_termination = true
-    volume_type           = "gp2"
   }
   enable_monitoring = true
 }

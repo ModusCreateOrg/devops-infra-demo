@@ -31,6 +31,11 @@ variable "host" {
   default     = "devops-infra-demo"
 }
 
+variable "instance_type" {
+  description = "EC2 instance type for servers"
+  default     = "t2.micro"
+}
+
 # Public key variables - you can specify another file for the public key
 # than the default
 variable "public_key_file" {
