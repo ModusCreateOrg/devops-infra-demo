@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Prepare a clean environment
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
@@ -10,6 +11,9 @@ BASE_DIR="$DIR/.."
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
 
-DOCKER_PACKER=$(get_docker_packer "$BASE_DIR")
-$DOCKER_PACKER validate app/packer/machines/web-server.json
-$DOCKER_PACKER build app/packer/machines/web-server.json
+cd "$BASE_DIR"
+clean_root_owned_docker_files
+git clean -fdx
+cp env.sh.sample env.sh
+rm -rf build
+mkdir -p build
