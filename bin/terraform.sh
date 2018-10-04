@@ -46,9 +46,12 @@ DOCKER_TERRAFORM="docker run -i
     hashicorp/terraform:${TF_VERSION}"
 
 # Inject Google application credentials into env file for docker
+echo "$GOOGLE_APPLICATION_CREDENTIALS"
 if [[ -f "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
     cat <<EOF >>"$ENV_FILE"
+declare GOOGLE_CLOUD_KEYFILE_JSON
 GOOGLE_CLOUD_KEYFILE_JSON="$(cat "$GOOGLE_APPLICATION_CREDENTIALS")"
+export GOOGLE_CLOUD_KEYFILE_JSON
 EOF
 fi
 
