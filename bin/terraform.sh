@@ -31,7 +31,7 @@ verb=${1:?You must specify a verb: plan, plan-destroy, apply}
 
 TF_VERSION=0.11.7
 # TF_DIR is from the perspective of the Terraform docker container
-TF_DIR="/app"
+TF_DIR="/app/terraform"
 
 TF_PLAN="$TF_DIR/tf.plan"
 AWS_ACCOUNT_ID=$(get_aws_account_id)
@@ -41,7 +41,8 @@ DOCKER_TERRAFORM="docker run -i
     ${USE_TTY}
     --env-file $ENV_FILE
     --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
-    --mount type=bind,source=${BUILD_DIR},target=${TF_DIR}/build
+    --mount type=bind,source=${BASE_DIR}/application,target=/app/application
+    --mount type=bind,source=${BUILD_DIR},target=/app/build
     --mount type=bind,source=${HOME}/.aws,target=/root/.aws
     --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
     -w ${TF_DIR}
