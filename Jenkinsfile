@@ -186,6 +186,7 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
             }
         }
     } catch(err) { // timeout reached or other error
+        echo err.toString()
         currentBuild.result = 'ABORTED'
     }
 }
