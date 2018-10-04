@@ -34,15 +34,23 @@ TF_DIR="/app"
 
 TF_PLAN="$TF_DIR/tf.plan"
 AWS_ACCOUNT_ID=$(get_aws_account_id)
+ENV_FILE=$(get_env_tmpfile)
 
 DOCKER_TERRAFORM="docker run -i
     ${USE_TTY}
-    --env-file $(get_env_tmpfile)
+    --env-file $ENV_FILE
     --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
     --mount type=bind,source=${HOME}/.aws,target=/root/.aws
     --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
     -w ${TF_DIR}
     hashicorp/terraform:${TF_VERSION}"
+
+# Inject Google application credentials into env file for docker
+if [[ -f "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
+    cat <<EOF >>"$ENV_FILE"
+GOOGLE_CLOUD_KEYFILE_JSON="$(cat "$GOOGLE_APPLICATION_CREDENTIALS")"
+EOF
+fi
 
 # http://redsymbol.net/articles/bash-exit-traps/
 trap clean_root_owned_docker_files EXIT

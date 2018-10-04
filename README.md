@@ -68,6 +68,8 @@ A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraf
 
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
+This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id "terraform-demo.json". You will need to add that to your Jenkins server's credentials.
+
 ### Terraform
 
 This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. Yu can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:

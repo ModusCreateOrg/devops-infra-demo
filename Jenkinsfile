@@ -147,7 +147,10 @@ stage('Plan Terraform') {
                 verb += '-destroy';
                 terraform_prompt += ' WARNING: will DESTROY resources';
             }
-            sh ("./bin/terraform.sh ${verb}")
+            withCredentials([file(credentialsId: 'terraform-demo.json',
+                variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                sh ("./bin/terraform.sh ${verb}")
+            }
         }
         stash includes: "**", excludes: ".git/", name: 'plan'
     }
