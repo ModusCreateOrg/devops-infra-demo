@@ -14,6 +14,7 @@ set -euo pipefail
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
+BUILD_DIR="$BASE_DIR/build"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 #shellcheck disable=SC1090
@@ -40,20 +41,26 @@ DOCKER_TERRAFORM="docker run -i
     ${USE_TTY}
     --env-file $ENV_FILE
     --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
+    --mount type=bind,source=${BUILD_DIR},target=${TF_DIR}/build
     --mount type=bind,source=${HOME}/.aws,target=/root/.aws
     --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
     -w ${TF_DIR}
     hashicorp/terraform:${TF_VERSION}"
 
 # Inject Google application credentials into env file for docker
+GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
 if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
     echo "Overriding Google Application Credentials"
     GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE"
-    sed -i.bak '/GOOGLE_APPLICATION_CREDENTIALS/d' "$ENV_FILE"
-    cat <<EOF >>"$ENV_FILE"
-GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS
-EOF
 fi
+
+# Set up Google creds in build dir for docker terraform
+mkdir -p "$BUILD_DIR"
+cp "$GOOGLE_APPLICATION_CREDENTIALS" "$BUILD_DIR/google.json"
+sed -i.bak '/GOOGLE_APPLICATION_CREDENTIALS/d' "$ENV_FILE"
+cat <<EOF >>"$ENV_FILE"
+GOOGLE_APPLICATION_CREDENTIALS=/app/build/google.json
+EOF
 
 # http://redsymbol.net/articles/bash-exit-traps/
 trap clean_root_owned_docker_files EXIT
