@@ -148,7 +148,7 @@ stage('Plan Terraform') {
                 terraform_prompt += ' WARNING: will DESTROY resources';
             }
             withCredentials([file(credentialsId: 'terraform-demo.json',
-                variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
                 sh ("./bin/terraform.sh ${verb}")
             }
         }

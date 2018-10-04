@@ -46,6 +46,9 @@ DOCKER_TERRAFORM="docker run -i
     hashicorp/terraform:${TF_VERSION}"
 
 # Inject Google application credentials into env file for docker
+if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
+    GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE
+fi
 echo "$GOOGLE_APPLICATION_CREDENTIALS"
 if [[ -f "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
     cat <<EOF >>"$ENV_FILE"
