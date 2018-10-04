@@ -158,7 +158,10 @@ stage('Plan Terraform') {
                 verb += '-destroy';
                 terraform_prompt += ' WARNING: will DESTROY resources';
             }
-            sh ("./bin/terraform.sh ${verb}")
+            sh ("""
+                ./bin/terraform.sh ${verb}
+                ./bin/docker-clean-root-owned-files.sh
+                """)
         })
         stash includes: "**", excludes: ".git/", name: 'plan'
     }
@@ -182,7 +185,6 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
                     prepEnv()
                     sh ("./bin/terraform.sh apply")
                 })
-                stash includes: "**", excludes: ".git/", name: 'apply'
             }
         }
     } catch(err) { // timeout reached or other error
