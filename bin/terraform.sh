@@ -64,8 +64,11 @@ cp "$GOOGLE_APPLICATION_CREDENTIALS" "$BUILD_DIR/google.json"
 # https://issues.jenkins-ci.org/browse/JENKINS-33126
 chmod u+w "$BUILD_DIR/google.json"
 sed -i.bak '/GOOGLE_APPLICATION_CREDENTIALS/d' "$ENV_FILE"
+#shellcheck disable=SC2086
+GOOGLE_PROJECT_OVERRIDE=$(awk 'BEGIN { FS = "\"" } /project_id/{print $4}' <$GOOGLE_APPLICATION_CREDENTIALS)
 cat <<EOF >>"$ENV_FILE"
 GOOGLE_APPLICATION_CREDENTIALS=/app/build/google.json
+GOOGLE_PROJECT=$GOOGLE_PROJECT_OVERRIDE
 EOF
 
 # http://redsymbol.net/articles/bash-exit-traps/
