@@ -179,6 +179,7 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
             echo "bar"
             node {
                 echo "baz"
+                sh 'ls -lR .'
                 unstash 'plan'
                 wrap.call({
                     echo "snafu"
