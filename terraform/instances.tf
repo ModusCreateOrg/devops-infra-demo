@@ -39,9 +39,11 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   lifecycle {
     create_before_destroy = true
   }
-  delete_on_termination = true
-  enable_monitoring     = true
-  volume_type           = "gp2"
+  ebs_block_device {
+    delete_on_termination = true
+    volume_type           = "gp2"
+  }
+  enable_monitoring = true
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
