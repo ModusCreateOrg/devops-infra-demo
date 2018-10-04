@@ -67,6 +67,14 @@ function get_asg_instances() {
         --output text
 }
 
+function finish {
+    aws autoscaling resume-processes \
+        --auto-scaling-group-name "$asg_name" \
+        --scaling-processes AlarmNotification ReplaceUnhealthy HealthCheck AZRebalance ScheduledActions
+}
+
+trap finiah EXIT
+
 original_asg_instances="$(get_asg_instances "$asg_name")"
 
 count="$(num_in_service "$original_asg_instances")"
@@ -114,7 +122,4 @@ aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
     --max-size "$asg_MaxSize"
 
-aws autoscaling resume-processes \
-    --auto-scaling-group-name "$asg_name" \
-    --scaling-processes AlarmNotification ReplaceUnhealthy HealthCheck AZRebalance ScheduledActions
 
