@@ -160,7 +160,6 @@ stage('Plan Terraform') {
             }
             sh ("""
                 ./bin/terraform.sh ${verb}
-                ./bin/docker-clean-root-owned-files.sh
                 """)
         })
         stash includes: "**", excludes: ".git/", name: 'plan'
@@ -173,16 +172,11 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
     try {
         timeout(time: default_timeout_minutes, unit: 'MINUTES') {
             userInput = input(message: terraform_prompt)
-            echo "foo"
         }
         stage('Apply Terraform') {
-            echo "bar"
             node {
-                echo "baz"
-                sh 'ls -lR .'
                 unstash 'plan'
                 wrap.call({
-                    echo "snafu"
                     prepEnv()
                     sh ("./bin/terraform.sh apply")
                 })

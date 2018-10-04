@@ -57,6 +57,12 @@ fi
 # Set up Google creds in build dir for docker terraform
 mkdir -p "$BUILD_DIR"
 cp "$GOOGLE_APPLICATION_CREDENTIALS" "$BUILD_DIR/google.json"
+# Ugh. Jenkins was failing to extract the stash containing this file
+# because google.json had a umask of 0400 (read only to user):
+#     java.io.IOException: Failed to extract plan.tar.gz
+# This is similar to the problem listed here: 
+# https://issues.jenkins-ci.org/browse/JENKINS-33126
+chmod u+w "$BUILD_DIR/google.json"
 sed -i.bak '/GOOGLE_APPLICATION_CREDENTIALS/d' "$ENV_FILE"
 cat <<EOF >>"$ENV_FILE"
 GOOGLE_APPLICATION_CREDENTIALS=/app/build/google.json
