@@ -170,14 +170,18 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
     try {
         timeout(time: default_timeout_minutes, unit: 'MINUTES') {
             userInput = input(message: terraform_prompt)
+            echo "foo"
         }
         stage('Apply Terraform') {
+            echo "bar"
             node {
+                echo "baz"
                 unstash 'plan'
-                ansiColor('xterm') {
+                wrap({
+                    echo "snafu"
                     prepEnv()
                     sh ("./bin/terraform.sh apply")
-                }
+                })
                 stash includes: "**", excludes: ".git/", name: 'apply'
             }
         }
