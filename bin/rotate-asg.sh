@@ -67,13 +67,13 @@ function get_asg_instances() {
         --output text
 }
 
-function finish {
+function finish() {
     aws autoscaling resume-processes \
         --auto-scaling-group-name "$asg_name" \
         --scaling-processes AlarmNotification ReplaceUnhealthy HealthCheck AZRebalance ScheduledActions
 }
 
-trap finiah EXIT
+trap finish EXIT
 
 original_asg_instances="$(get_asg_instances "$asg_name")"
 
@@ -102,7 +102,8 @@ aws autoscaling suspend-processes \
 aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
     --max-size "$asg_NewCapacity" \
-    --desired-capacity "$asg_NewCapacity"
+    --desired-capacity "$asg_NewCapacity" \
+    --output table
 
 # Wait until new instances spin up
 current_asg_instances="$(get_asg_instances "$asg_name")"
@@ -115,11 +116,13 @@ done
 for instance in $original_asg_instances; do
     aws autoscaling terminate-instance-in-auto-scaling-group \
         --instance-id "$instance" \
-        --should-decrement-desired-capacity
+        --should-decrement-desired-capacity \
+        --output table
 done
 
 aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
-    --max-size "$asg_MaxSize"
+    --max-size "$asg_MaxSize" \
+    --output table
 
 
