@@ -49,11 +49,13 @@ DOCKER_TERRAFORM="docker run -i
 if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
     GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE"
 fi
-echo "$GOOGLE_APPLICATION_CREDENTIALS"
 if [[ -f "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
+    echo 'Found Google credentials file.'
+    wc "$GOOGLE_APPLICATION_CREDENTIALS"
     cat <<EOF >>"$ENV_FILE"
 GOOGLE_CLOUD_KEYFILE_JSON=$(tr '\n' ' ' <<<"$GOOGLE_APPLICATION_CREDENTIALS")
 EOF
+cat "$ENV_FILE"
 fi
 
 # http://redsymbol.net/articles/bash-exit-traps/
