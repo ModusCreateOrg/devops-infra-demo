@@ -33,6 +33,15 @@ def prepEnv = {
     """)
 }
 
+def wrap = { fn->
+        ansiColor('xterm') {
+            withCredentials([file(credentialsId: 'terraform-demo.json',
+                variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
+                fn()
+            }
+        }
+}
+
 final Long XOR_CONST = 3735928559 // 0xdeadbeef
 (captcha_problem, captcha_hash) = get_captcha(XOR_CONST)
 
@@ -107,10 +116,10 @@ stage('Checkout') {
 stage('Validate') {
     node {
         unstash 'src'
-        ansiColor('xterm') {
+        wrap.call({
             // Validate packer templates, check branch
             sh ("./bin/validate.sh")
-        }
+        })
     }
 }
 
@@ -119,7 +128,7 @@ if (params.Run_Packer) {
     stage('Pack') {
         node {
             unstash 'src'
-            ansiColor('xterm') {
+            wrap.call({
                 prepEnv()
                 sh ("./bin/pack.sh")
                 archive (includes: 'build/**')
@@ -130,28 +139,27 @@ if (params.Run_Packer) {
                     reportDir: 'build',
                     reportFiles: 'scan-xccdf-results.html',
                     reportName: "OpenSCAP Report"
-                ]) }
+                ])
+            })
         }
     }
 }
 
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
+
 stage('Plan Terraform') {
     node {
         unstash 'src'
-        ansiColor('xterm') {
+        wrap.call({
             prepEnv()
             def verb = "plan"
             if (params.Destroy_Terraform) {
                 verb += '-destroy';
                 terraform_prompt += ' WARNING: will DESTROY resources';
             }
-            withCredentials([file(credentialsId: 'terraform-demo.json',
-                variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
-                sh ("./bin/terraform.sh ${verb}")
-            }
-        }
+            sh ("./bin/terraform.sh ${verb}")
+        })
         stash includes: "**", excludes: ".git/", name: 'plan'
     }
 }
