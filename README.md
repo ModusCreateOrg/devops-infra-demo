@@ -16,6 +16,8 @@ Instructions
  To run the demo end to end, you will need:
  
 * [AWS Account](https://aws.amazon.com/)
+* [Google Cloud Account](https://cloud.google.com/)
+* [Docker](https://docker.com/) (tested with 18.05.0-ce)
 * [Packer](https://www.packer.io/) (tested with 1.0.3)
 * [Terraform](https://www.terraform.io/) (tested with  v0.11.7)
 
@@ -29,6 +31,9 @@ AWS_DEFAULT_PROFILE
 AWS_DEFAULT_REGION
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
+GOOGLE_CLOUD_KEYFILE_JSON
+GOOGLE_PROJECT
+GOOGLE_REGION
 PACKER_AWS_VPC_ID
 PACKER_AWS_SUBNET_ID
 ```
@@ -42,6 +47,8 @@ vim env.sh
 ```
 
 The AWS profile IAM user should have full control of EC2 in the account you are using.
+
+You will need to create an application in the Google developer console, create a set of service-to-service JSON credentials, and enable the Google Cloud Storage API in the referenced Google developer application for the Google integration to work. If you don't care about that, alternately you may remove the `terraform/google.tf` file to get the demo to work without the Google part.
 
 ### Packer
 
@@ -57,9 +64,9 @@ Install [Vagrant](https://www.vagrantup.com/). Change directory into the root of
 
 ### Jenkins
 
-A `Jenkinsfile` is provided that will allow Jenkins to execute a Packer Terraform. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account. Packer needs this in order to create AMIs, key pairs, etc, and Terraform needs this to create a VPC and EC2 resources. This could be pared down further through some careful logging and role work.
+A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account. Packer needs this in order to create AMIs, key pairs, etc, and Terraform needs this to create a VPC and EC2 resources. This could be pared down further through some careful logging and role work.
 
-The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance should have full control of EC2 in the account you are using.
+The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
 ### Terraform
 
@@ -89,12 +96,8 @@ These commands will then set up cloud resources using terraform:
 
 This assumes that you already have a Route 53 domain in your AWS account created.
 You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
- 
-### Jenkins
-The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.
 
-A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
-
+The application loads an image from Google storage. To get it loading correctly, look in the X file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
 
 # Modus Create
 
