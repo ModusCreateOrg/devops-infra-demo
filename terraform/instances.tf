@@ -40,7 +40,7 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
     create_before_destroy = true
   }
   root_block_device {
-    volume_type = "gp2"
+    volume_type           = "gp2"
     delete_on_termination = true
   }
   enable_monitoring = true
