@@ -1,5 +1,6 @@
 resource "aws_key_pair" "infra-demo-pub" {
-  key_name   = "infra-demo"
+  key_name = "infra-demo"
+
   # Get the user's main primary public key and use that
   public_key = "${file(pathexpand(var.public_key_file))}"
 }
@@ -38,6 +39,9 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   lifecycle {
     create_before_destroy = true
   }
+  delete_on_termination = true
+  enable_monitoring     = true
+  volume_type           = "gp2"
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {

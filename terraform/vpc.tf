@@ -14,7 +14,7 @@ module "vpc" {
   azs = [
     "${var.aws_region}a",
     "${var.aws_region}b",
-    "${var.aws_region}c"
+    "${var.aws_region}c",
   ]
 
   enable_dns_hostnames    = true

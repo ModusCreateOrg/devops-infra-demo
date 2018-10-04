@@ -1,7 +1,7 @@
 # High level AWS variables
 variable "aws_region" {
   description = "Amazon Region to use"
-  default = "us-east-1"
+  default     = "us-east-1"
 }
 
 # Auto Scaling Groups related variables
@@ -46,28 +46,28 @@ output "account_id" {
 
 variable "aws_account_id_for_ami" {
   description = "AWS Account ID where AMIs live, if not the default"
-  default = ""
+  default     = ""
 }
 
 variable "ami_pattern" {
   description = "Amazon AWS AMI filename pattern"
-  default = "devops-infra-demo-centos-7*"
+  default     = "devops-infra-demo-centos-7*"
 }
 
 variable "virtualization_type" {
   description = "Virtualization type for AMIs"
-  default = "hvm"
+  default     = "hvm"
 }
-
 
 variable "trusted_cidr_blocks" {
   description = "Trusted CIDR blocks, for ssh ingress"
-  default = [ 
-        "107.18.3.178/32",
+
+  default = [
+    "107.18.3.178/32",
   ]
 }
 
 variable "project_name" {
   description = "Project name"
-  default = "devops-infra-demo"
+  default     = "devops-infra-demo"
 }
