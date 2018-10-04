@@ -57,9 +57,9 @@ Install [Vagrant](https://www.vagrantup.com/). Change directory into the root of
 
 ### Jenkins
 
-A `Jenkinsfile` is provided that will allow Jenkins to execute a Packer Terraform. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account. Packer needs this in order to create AMIs, key pairs, etc, and Terraform needs this to create a VPC and EC2 resources. This could be pared down further through some careful logging and role work.
+A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account. Packer needs this in order to create AMIs, key pairs, etc, and Terraform needs this to create a VPC and EC2 resources. This could be pared down further through some careful logging and role work.
 
-The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance should have full control of EC2 in the account you are using.
+The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
 ### Terraform
 
@@ -90,12 +90,6 @@ These commands will then set up cloud resources using terraform:
 This assumes that you already have a Route 53 domain in your AWS account created.
 You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
  
-### Jenkins
-The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.
-
-A `Jenkinsfile` is provided that will make Jenkins execute a packer run on every commit. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 resources in that account. Packer needs this in order to create AMIs, key pairs, etc. This could be pared down further through some careful logging and role work.
-
-
 # Modus Create
 
 [Modus Create](https://moduscreate.com) is a digital product consultancy. We use a distributed team of the best talent in the world to offer a full suite of digital product design-build services; ranging from consumer facing apps, to digital migration, to agile development training, and business transformation.
