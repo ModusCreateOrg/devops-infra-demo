@@ -12,4 +12,3 @@ BASE_DIR="$DIR/.."
 
 DOCKER_PACKER=$(get_docker_packer "$BASE_DIR")
 $DOCKER_PACKER validate app/packer/machines/web-server.json
-$DOCKER_PACKER build app/packer/machines/web-server.json

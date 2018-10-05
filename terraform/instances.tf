@@ -1,5 +1,6 @@
 resource "aws_key_pair" "infra-demo-pub" {
-  key_name   = "infra-demo"
+  key_name = "infra-demo"
+
   # Get the user's main primary public key and use that
   public_key = "${file(pathexpand(var.public_key_file))}"
 }
@@ -25,7 +26,7 @@ data "aws_ami" "node_app_ami" {
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
-  instance_type = "t2.medium"
+  instance_type = "${var.instance_type}"
 
   security_groups = [
     "${module.vpc.default_security_group_id}",
@@ -38,6 +39,11 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   lifecycle {
     create_before_destroy = true
   }
+  root_block_device {
+    volume_type           = "gp2"
+    delete_on_termination = true
+  }
+  enable_monitoring = true
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
@@ -55,6 +61,17 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
   ]
 
   load_balancers = ["${aws_elb.infra-demo-elb.name}"]
+
+  enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupPendingInstances",
+    "GroupStandbyInstances",
+    "GroupTerminatingInstances",
+    "GroupTotalInstances",
+  ]
 
   tag {
     key                 = "Name"

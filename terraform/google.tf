@@ -1,7 +1,7 @@
 provider "google" {}
 
 resource "google_storage_bucket" "website-storage" {
-  name     = "${var.google_project}-website-storage" 
+  name     = "${var.google_project}-website-storage"
   location = "US"
 
   website {

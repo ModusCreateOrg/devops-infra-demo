@@ -11,10 +11,20 @@ IFS=$'\n\t'
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
+# Credit to http://stackoverflow.com/a/246128/424301
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$DIR/.."
+
+# shellcheck disable=SC1090
+. "$DIR/common.sh"
+#shellcheck disable=SC1090
+. "$BASE_DIR/env.sh"
+
 asg_name=${1:-}
 
 if [[ -z "$asg_name" ]]; then
     echo "You must specify an Auto Scaling Group name. Existing ASGs are:"
+    #shellcheck disable=SC2016
     aws autoscaling describe-auto-scaling-groups \
         --query 'AutoScalingGroups[].Instances[?contains(LifecycleState,`InService`)].InstanceId' \
         --query "AutoScalingGroups[].AutoScalingGroupName" \
@@ -57,6 +67,14 @@ function get_asg_instances() {
         --output text
 }
 
+function finish() {
+    aws autoscaling resume-processes \
+        --auto-scaling-group-name "$asg_name" \
+        --scaling-processes AlarmNotification ReplaceUnhealthy HealthCheck AZRebalance ScheduledActions
+}
+
+trap finish EXIT
+
 original_asg_instances="$(get_asg_instances "$asg_name")"
 
 count="$(num_in_service "$original_asg_instances")"
@@ -84,7 +102,8 @@ aws autoscaling suspend-processes \
 aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
     --max-size "$asg_NewCapacity" \
-    --desired-capacity "$asg_NewCapacity"
+    --desired-capacity "$asg_NewCapacity" \
+    --output table
 
 # Wait until new instances spin up
 current_asg_instances="$(get_asg_instances "$asg_name")"
@@ -97,14 +116,13 @@ done
 for instance in $original_asg_instances; do
     aws autoscaling terminate-instance-in-auto-scaling-group \
         --instance-id "$instance" \
-        --should-decrement-desired-capacity
+        --should-decrement-desired-capacity \
+        --output table
 done
 
 aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
-    --max-size "$asg_MaxSize"
+    --max-size "$asg_MaxSize" \
+    --output table
 
-aws autoscaling resume-processes \
-    --auto-scaling-group-name "$asg_name" \
-    --scaling-processes AlarmNotification ReplaceUnhealthy HealthCheck AZRebalance ScheduledActions
 
