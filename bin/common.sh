@@ -14,9 +14,20 @@ function is_ec2() {
 }
 
 function get_env_tmpfile() {
-# Clean up the env file for use in packer
+# Clean up the env file for use in packer & terraform
+    local TMPFILE
     TMPFILE="$(mktemp)"
     grep ^export "$DIR/../env.sh" | cut -c8- > "$TMPFILE"
+    echo "$TMPFILE"
+}
+
+function get_var_tmpfile() {
+# Emit a Terraform variables tempfile
+    local TMPFILE
+    local EXTRA=${1:-# no extras}
+    mkdir -p "$BUILD_DIR"
+    TMPFILE="$BUILD_DIR/extra.tfvars"
+    echo "$EXTRA" > "$TMPFILE"
     echo "$TMPFILE"
 }
 
@@ -66,6 +77,23 @@ function get_docker_packer {
     #shellcheck disable=SC2086
     echo $DOCKER_PACKER
 }
+
+function get_docker_terraform {
+    local BASE_DIR=${1?You must specify a directory for the bind mount}
+    local DOCKER_TERRAFORM="docker run -i
+        ${USE_TTY}
+        --env-file $ENV_FILE
+        --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
+        --mount type=bind,source=${BASE_DIR}/application,target=/app/application
+        --mount type=bind,source=${BUILD_DIR},target=/app/build
+        --mount type=bind,source=${HOME}/.aws,target=/root/.aws
+        --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
+        -w ${TF_DIR}
+        hashicorp/terraform:${TF_VERSION}"
+    #shellcheck disable=SC2086
+    echo $DOCKER_TERRAFORM
+}
+
 
 # Only use TTY for Docker if we detect one, otherwise
 # this will balk when run in Jenkins

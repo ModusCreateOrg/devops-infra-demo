@@ -63,6 +63,11 @@ properties([
             defaultValue: false, 
             description: 'Destroy Terraform resources?'
         ),
+        text(
+            name: 'Extra_Variables', 
+            defaultValue: '', 
+            description: 'Terraform Variables to define for this run. Allows you to override declared variables.\nPut one variable per line, in JSON or HCL like this:\nFOO = "bar"\nassociate_public_ip_address = "true"'
+        ), 
         booleanParam(
             name: 'Rotate_Servers', 
             defaultValue: false, 

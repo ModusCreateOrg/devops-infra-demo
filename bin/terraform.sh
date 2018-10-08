@@ -30,23 +30,15 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 verb=${1:?You must specify a verb: plan, plan-destroy, apply}
 
 TF_VERSION=0.11.7
+export TF_VERSION
 # TF_DIR is from the perspective of the Terraform docker container
 TF_DIR="/app/terraform"
 
 TF_PLAN="$TF_DIR/tf.plan"
 AWS_ACCOUNT_ID=$(get_aws_account_id)
 ENV_FILE=$(get_env_tmpfile)
-
-DOCKER_TERRAFORM="docker run -i
-    ${USE_TTY}
-    --env-file $ENV_FILE
-    --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
-    --mount type=bind,source=${BASE_DIR}/application,target=/app/application
-    --mount type=bind,source=${BUILD_DIR},target=/app/build
-    --mount type=bind,source=${HOME}/.aws,target=/root/.aws
-    --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
-    -w ${TF_DIR}
-    hashicorp/terraform:${TF_VERSION}"
+VAR_FILE="$(get_var_tmpfile "${Extra_Variables:-}")"
+DOCKER_TERRAFORM=$(get_docker_terraform "$BASE_DIR")
 
 # Inject Google application credentials into env file for docker
 GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
@@ -84,6 +76,7 @@ function plan() {
         -lock=true \
         -input="$INPUT_ENABLED" \
         -var project_name="$PROJECT_NAME" \
+        -var-file="/app/build/extra.tfvars" \
         -out="$TF_PLAN" \
         "$TF_DIR"
 }
