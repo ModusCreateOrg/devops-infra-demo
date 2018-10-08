@@ -38,6 +38,12 @@ function get_aws_account_id() {
         | cut -d: -f5
 }
 
+function get_targets() {
+    for target in ${Terraform_Targets:-}; do
+        echo -n "-target=$target "
+    done
+}
+
 function clean_root_owned_docker_files {
     # Fix file permissions on Jenkins / Linux as
     # Docker makes a bunch of root-owned files as it works

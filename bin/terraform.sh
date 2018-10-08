@@ -70,9 +70,11 @@ trap clean_root_owned_docker_files EXIT
 function plan() {
     local extra
     extra=${1:-}
+    targets=$(get_targets)
     #shellcheck disable=SC2086
     $DOCKER_TERRAFORM plan \
         $extra \
+        $targets \
         -lock=true \
         -input="$INPUT_ENABLED" \
         -var project_name="$PROJECT_NAME" \
