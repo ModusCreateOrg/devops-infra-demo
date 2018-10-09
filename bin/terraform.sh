@@ -38,7 +38,9 @@ TF_PLAN="$TF_DIR/tf.plan"
 AWS_ACCOUNT_ID=$(get_aws_account_id)
 ENV_FILE=$(get_env_tmpfile)
 VAR_FILE="$(get_var_tmpfile "${Extra_Variables:-}")"
-DOCKER_TERRAFORM=$(get_docker_terraform "$BASE_DIR")
+export VAR_FILE
+DOCKER_TERRAFORM=$(get_docker_terraform)
+DOCKER_LANDSCAPE=$(get_docker_landscape)
 
 # Inject Google application credentials into env file for docker
 GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
@@ -67,10 +69,17 @@ EOF
 # http://redsymbol.net/articles/bash-exit-traps/
 trap clean_root_owned_docker_files EXIT
 
+
 function plan() {
     local extra
+    local output
+    local retcode
+    local targets
     extra=${1:-}
+    output="$(mktemp)"
     targets=$(get_targets)
+
+    set +e
     #shellcheck disable=SC2086
     $DOCKER_TERRAFORM plan \
         $extra \
@@ -80,7 +89,13 @@ function plan() {
         -var project_name="$PROJECT_NAME" \
         -var-file="/app/build/extra.tfvars" \
         -out="$TF_PLAN" \
-        "$TF_DIR"
+        "$TF_DIR" \
+        > "$output"
+    retcode="$?"
+    set -e
+    $DOCKER_LANDSCAPE - < "$output"
+    rm -f "$output"
+    return "$retcode"
 }
 
 function plan-destroy() {

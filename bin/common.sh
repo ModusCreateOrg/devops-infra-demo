@@ -61,7 +61,6 @@ function clean_root_owned_docker_files {
 }
 
 function get_docker_packer {
-    local BASE_DIR=${1?You must specify a directory for the bind mount}
     local DOCKER_PACKER
     # This is going to leak a new tempfile every time
     # it is run, maybe we should chain the exit traps to
@@ -84,8 +83,13 @@ function get_docker_packer {
     echo $DOCKER_PACKER
 }
 
+function get_docker_landscape() {
+    local LANDSCAPE="docker run -i --rm alpine/landscape"
+    #shellcheck disable=SC2086
+    echo $LANDSCAPE
+}
+
 function get_docker_terraform {
-    local BASE_DIR=${1?You must specify a directory for the bind mount}
     local DOCKER_TERRAFORM="docker run -i
         ${USE_TTY}
         --env-file $ENV_FILE
