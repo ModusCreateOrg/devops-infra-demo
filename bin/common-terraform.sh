@@ -35,7 +35,7 @@ function get_docker_landscape() {
 }
 
 function get_docker_terraform {
-    echo "docker run -i
+    echo "docker run -i --rm
         ${USE_TTY}
         --env-file $ENV_FILE
         --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
@@ -52,7 +52,9 @@ function init_terraform() {
     $DOCKER_TERRAFORM init \
         -input="$INPUT_ENABLED" \
         -backend-config bucket=tf-state.${PROJECT_NAME}.${AWS_DEFAULT_REGION}.$(get_aws_account_id) \
-        -backend-config dynamodb_table=TerraformStatelock-${PROJECT_NAME}
+        -backend-config dynamodb_table=TerraformStatelock-${PROJECT_NAME} \
+        -backend-config region=${AWS_DEFAULT_REGION} \
+        -backend-config encrypt=true
     # Generate an SSH keypair if none exists yet
     if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
         #shellcheck disable=SC2174
