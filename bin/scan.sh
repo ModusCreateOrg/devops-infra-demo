@@ -3,6 +3,12 @@
 
 set -euo pipefail
 
+# Enable for enhanced debugging
+#set -vx
+# Credit to https://stackoverflow.com/a/17805088
+# and http://wiki.bash-hackers.org/scripting/debuggingtips
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+
 sudo yum -q install -y openscap-scanner scap-security-guide
 
 mkdir -p build

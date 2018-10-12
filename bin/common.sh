@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 # common.sh
 
+# Only use TTY for Docker if we detect one, otherwise
+# this will balk when run in Jenkins
+# Thanks https://stackoverflow.com/a/48230089
+declare USE_TTY
+test -t 1 && USE_TTY="-t" || USE_TTY=""
+
+declare INPUT_ENABLED
+test -t 1 && INPUT_ENABLED="true" || INPUT_ENABLED="false"
+
+export INPUT_ENABLED USE_TTY
+
 # https://gist.github.com/samkeen/4255e1c8620be643d692
 # Thanks to GitHub user samkeen
 function is_ec2() {
@@ -21,27 +32,11 @@ function get_env_tmpfile() {
     echo "$TMPFILE"
 }
 
-function get_var_tmpfile() {
-# Emit a Terraform variables tempfile
-    local TMPFILE
-    local EXTRA=${1:-# no extras}
-    mkdir -p "$BUILD_DIR"
-    TMPFILE="$BUILD_DIR/extra.tfvars"
-    echo "$EXTRA" > "$TMPFILE"
-    echo "$TMPFILE"
-}
-
 function get_aws_account_id() {
     aws sts get-caller-identity \
         --query Arn \
         --output text \
         | cut -d: -f5
-}
-
-function get_targets() {
-    for target in ${Terraform_Targets:-}; do
-        echo -n "-target=$target "
-    done
 }
 
 function clean_root_owned_docker_files {
@@ -87,30 +82,4 @@ function get_docker_landscape() {
 function get_docker_shellcheck() {
     echo "docker run --rm -it -v $(pwd):/mnt koalaman/shellcheck"
 }
-
-
-function get_docker_terraform {
-    echo "docker run -i
-        ${USE_TTY}
-        --env-file $ENV_FILE
-        --mount type=bind,source=${BASE_DIR}/terraform,target=${TF_DIR}
-        --mount type=bind,source=${BASE_DIR}/application,target=/app/application
-        --mount type=bind,source=${BUILD_DIR},target=/app/build
-        --mount type=bind,source=${HOME}/.aws,target=/root/.aws
-        --mount type=bind,source=${HOME}/.ssh,target=/root/.ssh
-        -w ${TF_DIR}
-        hashicorp/terraform:${TF_VERSION}"
-}
-
-
-# Only use TTY for Docker if we detect one, otherwise
-# this will balk when run in Jenkins
-# Thanks https://stackoverflow.com/a/48230089
-declare USE_TTY
-test -t 1 && USE_TTY="-t" || USE_TTY=""
-
-declare INPUT_ENABLED
-test -t 1 && INPUT_ENABLED="true" || INPUT_ENABLED="false"
-
-export INPUT_ENABLED USE_TTY
 
