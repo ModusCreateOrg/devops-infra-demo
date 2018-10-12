@@ -34,6 +34,7 @@ $DOCKER_PACKER validate app/packer/machines/web-server.json
 # Ensure that `terraform fmt` comes up clean
 echo "Linting terraform files for correctness"
 DOCKER_TERRAFORM=$(get_docker_terraform)
+$DOCKER_TERRAFORM init
 $DOCKER_TERRAFORM validate
 echo "Linting terraform files for formatting"
 fmt=$($DOCKER_TERRAFORM fmt)
