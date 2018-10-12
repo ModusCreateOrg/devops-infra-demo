@@ -80,6 +80,8 @@ function get_docker_landscape() {
 }
 
 function get_docker_shellcheck() {
+    # See https://hub.docker.com/r/nlknguyen/alpine-shellcheck/
+    # and https://github.com/koalaman/shellcheck/issues/727
     echo "docker run --rm -it -v $(pwd):/mnt koalaman/shellcheck"
 }
 
