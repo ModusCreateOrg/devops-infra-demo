@@ -23,11 +23,12 @@ export TF_PLAN
 ENV_FILE=$(get_env_tmpfile)
 VAR_FILE="$(get_var_tmpfile "${Extra_Variables:-}")"
 export VAR_FILE
-DOCKER_TERRAFORM=$(get_docker_terraform)
+
 
 export ENV_FILE
 
 DOCKER_PACKER=$(get_docker_packer "$BASE_DIR")
+echo "Linting packer files"
 $DOCKER_PACKER validate app/packer/machines/web-server.json
 
 # Ensure that `terraform fmt` comes up clean
@@ -42,3 +43,8 @@ if [[ -n "$fmt" ]]; then
     git diff
     exit 1
 fi
+
+echo "Linting shell scripts"
+DOCKER_SHELLCHECK=$(get_docker_shellcheck)
+# shellcheck disable=SC2046
+$DOCKER_SHELLCHECK $(find . -name '*.sh') env.sh.sample
