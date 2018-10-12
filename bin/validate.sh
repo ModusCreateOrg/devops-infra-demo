@@ -11,6 +11,8 @@ export BUILD_DIR
 
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
+# shellcheck disable=SC1090
+. "$BASE_DIR/env.sh"
 
 
 TF_VERSION=0.11.7
