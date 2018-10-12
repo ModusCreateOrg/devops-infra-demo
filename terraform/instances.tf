@@ -33,9 +33,11 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
     "${aws_security_group.web.id}",
   ]
 
+  associate_public_ip_address = "${var.associate_public_ip_address}"
+  key_name                    = "${aws_key_pair.infra-demo-pub.key_name}"
+
   #iam_instance_profile = "${aws_iam_instance_profile.?????.name}"
 
-  key_name = "${aws_key_pair.infra-demo-pub.key_name}"
   lifecycle {
     create_before_destroy = true
   }

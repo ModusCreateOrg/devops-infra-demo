@@ -25,18 +25,15 @@ def get_captcha(Long hash_const) {
     return [captcha_problem, captcha_hash.toString()]
 }
 
-def prepEnv = {
-    sh ("""
-        cp env.sh.sample env.sh
-        rm -rf build
-        mkdir build
-    """)
-}
-
 def wrap = { fn->
         ansiColor('xterm') {
             withCredentials([file(credentialsId: 'terraform-demo.json',
                 variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
+                sh ("""
+                    cp env.sh.sample env.sh
+                    rm -rf build
+                    mkdir build
+                """)
                 fn()
             }
         }
@@ -80,6 +77,20 @@ properties([
             defaultValue: captcha_hash,
             description: 'Hash for CAPTCHA answer (DO NOT modify)'
         ),
+        string(
+            name: 'Terraform_Targets',
+            defaultValue: '',
+            description: '''Specific Terraform resource or resource names to target
+                            (Use this to modify or delete less than the full set of resources'''
+        ),
+        text(
+            name: 'Extra_Variables', 
+            defaultValue: '', 
+            description: '''Terraform Variables to define for this run. 
+                            Allows you to override declared variables.
+                            Put one variable per line, in JSON or HCL like this:
+                            associate_public_ip_address = "true"'''
+        ), 
     ])
 ])
 
@@ -129,7 +140,6 @@ if (params.Run_Packer) {
         node {
             unstash 'src'
             wrap.call({
-                prepEnv()
                 sh ("./bin/pack.sh")
                 archive (includes: 'build/**')
                 publishHTML (target: [
@@ -152,7 +162,6 @@ stage('Plan Terraform') {
     node {
         unstash 'src'
         wrap.call({
-            prepEnv()
             def verb = "plan"
             if (params.Destroy_Terraform) {
                 verb += '-destroy';
@@ -177,7 +186,6 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
             node {
                 unstash 'plan'
                 wrap.call({
-                    prepEnv()
                     sh ("./bin/terraform.sh apply")
                 })
             }

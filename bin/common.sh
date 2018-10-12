@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 # common.sh
 
+# Only use TTY for Docker if we detect one, otherwise
+# this will balk when run in Jenkins
+# Thanks https://stackoverflow.com/a/48230089
+declare USE_TTY
+test -t 1 && USE_TTY="-t" || USE_TTY=""
+
+declare INPUT_ENABLED
+test -t 1 && INPUT_ENABLED="true" || INPUT_ENABLED="false"
+
+export INPUT_ENABLED USE_TTY
+
 # https://gist.github.com/samkeen/4255e1c8620be643d692
 # Thanks to GitHub user samkeen
 function is_ec2() {
@@ -14,7 +25,8 @@ function is_ec2() {
 }
 
 function get_env_tmpfile() {
-# Clean up the env file for use in packer
+# Clean up the env file for use in packer & terraform
+    local TMPFILE
     TMPFILE="$(mktemp)"
     grep ^export "$DIR/../env.sh" | cut -c8- > "$TMPFILE"
     echo "$TMPFILE"
@@ -44,8 +56,6 @@ function clean_root_owned_docker_files {
 }
 
 function get_docker_packer {
-    local BASE_DIR=${1?You must specify a directory for the bind mount}
-    local DOCKER_PACKER
     # This is going to leak a new tempfile every time
     # it is run, maybe we should chain the exit traps to
     # avoid this. https://stackoverflow.com/questions/3338030/multiple-bash-traps-for-the-same-signal
@@ -56,25 +66,22 @@ function get_docker_packer {
         PACKER_AWS_VPC_ID="$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/"$INTERFACE"/vpc-id)"
     fi
 
-    DOCKER_PACKER="docker run -i 
+    echo "docker run -i 
         ${USE_TTY}  
         --env-file $TMPFILE
         -e PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID 
         -e PACKER_AWS_VPC_ID=$PACKER_AWS_VPC_ID 
         --mount type=bind,source=${BASE_DIR},target=/app 
         hashicorp/packer:light"
-    #shellcheck disable=SC2086
-    echo $DOCKER_PACKER
 }
 
-# Only use TTY for Docker if we detect one, otherwise
-# this will balk when run in Jenkins
-# Thanks https://stackoverflow.com/a/48230089
-declare USE_TTY
-test -t 1 && USE_TTY="-t" || USE_TTY=""
+function get_docker_landscape() {
+    echo "docker run -i --rm alpine/landscape"
+}
 
-declare INPUT_ENABLED
-test -t 1 && INPUT_ENABLED="true" || INPUT_ENABLED="false"
-
-export INPUT_ENABLED USE_TTY
+function get_docker_shellcheck() {
+    # See https://hub.docker.com/r/nlknguyen/alpine-shellcheck/
+    # and https://github.com/koalaman/shellcheck/issues/727
+    echo "docker run --rm -i ${USE_TTY} -v $(pwd):/mnt koalaman/shellcheck"
+}
 
