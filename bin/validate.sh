@@ -7,6 +7,7 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
 BUILD_DIR="$BASE_DIR/build"
+export BUILD_DIR
 
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
@@ -18,6 +19,7 @@ export TF_VERSION
 TF_DIR="/app/terraform"
 
 TF_PLAN="$TF_DIR/tf.plan"
+export TF_PLAN
 ENV_FILE=$(get_env_tmpfile)
 VAR_FILE="$(get_var_tmpfile "${Extra_Variables:-}")"
 export VAR_FILE
