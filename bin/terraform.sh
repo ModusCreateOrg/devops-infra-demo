@@ -64,7 +64,7 @@ trap clean_root_owned_docker_files EXIT
 function plan() {
     local extra
     local output
-    local retcode
+    local -i retcode
     local targets
     extra=${1:-}
     output="$(mktemp)"
