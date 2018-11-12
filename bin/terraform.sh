@@ -84,7 +84,7 @@ function plan() {
         > "$output"
     retcode="$?"
     set -e
-    if [[ "$retcode" = 0 ]]; then
+    if [[ "$retcode" -eq 0 ]]; then
         $DOCKER_LANDSCAPE - < "$output"
     else
         cat "$output"
