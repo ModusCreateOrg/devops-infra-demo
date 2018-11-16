@@ -2,9 +2,9 @@
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
-
-# Enable for enhanced debugging
-#set -vx
+ 
+# Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
+${DEBUG:-false} && set -vx
 
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

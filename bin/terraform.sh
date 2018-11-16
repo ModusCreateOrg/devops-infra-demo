@@ -11,8 +11,8 @@
 set -euo pipefail
 #IFS=$'\n\t'
 
-# Enable for enhanced debugging
-#set -vx
+# Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
+${DEBUG:-false} && set -vx
 # Credit to https://stackoverflow.com/a/17805088
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
@@ -64,7 +64,7 @@ trap clean_root_owned_docker_files EXIT
 function plan() {
     local extra
     local output
-    local retcode
+    local -i retcode
     local targets
     extra=${1:-}
     output="$(mktemp)"
@@ -84,7 +84,11 @@ function plan() {
         > "$output"
     retcode="$?"
     set -e
-    $DOCKER_LANDSCAPE - < "$output"
+    if [[ "$retcode" -eq 0 ]]; then
+        $DOCKER_LANDSCAPE - < "$output"
+    else
+        cat "$output"
+    fi
     rm -f "$output"
     return "$retcode"
 }
