@@ -7,8 +7,9 @@ Originally this was targeted towards the [DevOps Wall Street](http://devopsnyc.c
 
 See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180619) for the code for the demo for the [NYC DevOps talk _Applying the CIS Baseline using Ansible & Packer_](https://www.meetup.com/nycdevops/events/fmgjmnyxjbzb/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/applying-the-cis-benchmark-using-ansible-packer).
 
-See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180926) for the code for the demo for the [Continuous Delivery NYC talk _Managing Expensive or Destructive Operations in Jenkins CI_](https://www.meetup.com/ContinuousDeliveryNYC/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/managing-expensive-or-destructive-operations-in-jenkins-ci).
+See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180926) for the code for the demo for the [Continuous Delivery NYC talk _Managing Expensive or Destructive Operations in Jenkins CI_](https://www.meetup.com/ContinuousDeliveryNYC/events/254036209/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/managing-expensive-or-destructive-operations-in-jenkins-ci).
 
+See the branch [demo-20181205](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20181205) for the code for the demo for the [Ansible NYC talk _Ansible Image Bakeries: Best Practices & Pitfalls_](https://www.meetup.com/Ansible-NYC/events/256728741/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/ansible-image-bakeries-best-practices-and-pitfalls).
  
 Instructions
 ------------
