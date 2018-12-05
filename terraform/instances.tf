@@ -50,7 +50,7 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
     delete_on_termination = true
   }
   enable_monitoring = true
-  user_data = "${data.cloud-config.rendered}"
+  user_data         = "${data.template_file.cloud-config.rendered}"
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
