@@ -11,6 +11,10 @@
       virtualbox: true
   when: "'VirtualBox' in ansible_bios_version"
 
+- name: Debug ansible_bios_version
+  debug:
+      msg: "{{ ansible_bios_version }}"
+
 - name: Define ec2 variable
   set_fact:
       ec2: true
