@@ -10,6 +10,7 @@
   roles:
     - nginxinc.nginx
     - prepare-web-content
+    - prepare-codedeploy
 
 - name: Harden Server
   hosts: 127.0.0.1
@@ -17,5 +18,5 @@
   become: yes
   roles:
     - extra-cis-remediation
-    - MindPointGroup.RHEL7-CIS
-    - scan-openscap
+    #- MindPointGroup.RHEL7-CIS
+    #- scan-openscap

@@ -6,3 +6,11 @@
 # NGINX web server
 - src: nginxinc.nginx
 
+# AWS CodeDeploy agent
+# The original version of this role in Ansible Galaxy
+# is telus/ansible-aws-codedeploy-agent
+#
+# It has not been updated for Ansible 2.7            :(
+# However CareerBuilder's fork of it works with 2.7  :)
+- src: https://github.com/cbdr/ansible-aws-codedeploy-agent
+

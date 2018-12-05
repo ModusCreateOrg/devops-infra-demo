@@ -23,6 +23,10 @@ data "aws_ami" "node_app_ami" {
   owners = ["${var.aws_account_id_for_ami != "" ? var.aws_account_id_for_ami : data.aws_caller_identity.current.account_id}"]
 }
 
+data "template_file" "cloud-config" {
+  template = "${file("cloud-config.yml")}"
+}
+
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
@@ -46,6 +50,7 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
     delete_on_termination = true
   }
   enable_monitoring = true
+  user_data = "${data.cloud-config.rendered}"
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
