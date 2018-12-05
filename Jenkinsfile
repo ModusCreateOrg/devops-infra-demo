@@ -155,6 +155,15 @@ if (params.Run_Packer) {
     }
 }
 
+stage('Build CodeDeploy Archive') {
+    node {
+        unstash 'src'
+        wrap.call({
+            sh ("./codedeploy/bin/build.sh")
+        })
+    }
+}
+
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
 
