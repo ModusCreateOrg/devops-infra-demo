@@ -14,5 +14,10 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-systemctl start nginx
-systemctl enable nginx
+# Credit to http://stackoverflow.com/a/246128/424301
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$DIR/.."
+ANSIBLE_DIR="$BASE_DIR/ansible"
+
+# Invoke Ansible for final set up
+ansible-playbook -l localhost "$ANSIBLE_DIR/app-StartServer.yml"

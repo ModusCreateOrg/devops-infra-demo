@@ -20,4 +20,4 @@ BASE_DIR="$DIR/.."
 ANSIBLE_DIR="$BASE_DIR/ansible"
 
 # Invoke Ansible for final set up
-ansible-playbook -l localhost "$ANSIBLE_DIR/AfterInstall.yml"
+ansible-playbook -l localhost "$ANSIBLE_DIR/app-AfterInstall.yml"
