@@ -14,4 +14,4 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-rm -rf /app /opt/spin
+rm -rf /app

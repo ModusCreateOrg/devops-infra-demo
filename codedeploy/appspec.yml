@@ -3,9 +3,9 @@ version: 0.0
 os: linux
 files:
   - source: application
-    destination: /app
+    destination: /app/application
   - source: src
-    destination: /opt/spin
+    destination: /app/src
 hooks:
   ApplicationStop:
     - location: bin/ApplicationStop.sh
