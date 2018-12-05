@@ -47,7 +47,7 @@
             "type": "shell",
             "inline": [
                 "bash /app/bin/install-ansible.sh",
-                "cd /app/ansible && ansible-playbook -l localhost bakery.yml app-AfterInstall.yml app-StartServer.yml && cd -",
+                "ansible-playbook -l localhost /app/ansible/bakery.yml /app/ansible/app-AfterInstall.yml /app/ansible/app-StartServer.yml",
                 "bash /app/bin/scan.sh"
             ]
         },
