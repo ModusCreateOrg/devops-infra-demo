@@ -17,9 +17,12 @@ ANSIBLE_DIR="$BASE_DIR/../ansible"
 APPLICTION_DIR="$BASE_DIR/../application"
 SRC_DIR="$BASE_DIR/../src"
 
-BUILD_NUMBER=${BUILD_NUMBER:-$(git rev-parse --short HEAD)}
+GIT_REV="$(git rev-parse --short HEAD)"
+BUILD_NUMBER=${BUILD_NUMBER:-0}
+ARCHIVE="codedeploy-$BUILD_NUMBER-$GIT_REV.zip"
+echo "GIT_REV=$GIT_REV"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
-ARCHIVE="codedeploy-$BUILD_NUMBER.zip"
+echo "ARCHIVE=$ARCHIVE"
 
 # Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
