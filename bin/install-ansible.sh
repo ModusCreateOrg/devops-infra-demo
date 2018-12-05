@@ -20,4 +20,5 @@ function quick_yum_install() {
 }
 quick_yum_install epel-release
 quick_yum_install ansible
+quick_yum_install git
 ansible-galaxy install -r /app/ansible/requirements.yml
