@@ -29,7 +29,12 @@ data "template_file" "cloud-config" {
 
 resource "aws_iam_role" "CodeDeployServiceRole" {
   name               = "infra-demo-CodeDeployServiceRole"
-  assume_role_policy = "${file("assume-role-policy.json")}"
+  assume_role_policy = "${file("assume-role-policy-codedeploy.json")}"
+}
+
+resource "aws_iam_role" "EC2ServiceRole" {
+  name               = "infra-demo-EC2ServiceRole"
+  assume_role_policy = "${file("assume-role-policy-ec2.json")}"
 }
 
 resource "aws_iam_policy" "codedeploy-policy" {
@@ -45,8 +50,11 @@ resource "aws_iam_policy_attachment" "codedeploy-attach" {
 }
 
 resource "aws_iam_instance_profile" "infra-demo-ip" {
-  name  = "infra-demo-ip"
-  roles = ["${aws_iam_role.CodeDeployServiceRole.name}"]
+  name = "infra-demo-ip"
+
+  roles = ["${aws_iam_role.EC2ServiceRole.name}",
+    "${aws_iam_role.CodeDeployServiceRole.name}",
+  ]
 }
 
 resource "aws_launch_configuration" "infra-demo-web-lc" {
