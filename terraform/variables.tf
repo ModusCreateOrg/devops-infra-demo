@@ -33,7 +33,7 @@ variable "host" {
 
 variable "instance_type" {
   description = "EC2 instance type for servers"
-  default     = "t2.micro"
+  default     = "t3.small"
 }
 
 # Public key variables - you can specify another file for the public key
@@ -68,6 +68,7 @@ variable "trusted_cidr_blocks" {
 
   default = [
     "107.18.3.178/32",
+    "52.205.207.185/32",
   ]
 }
 

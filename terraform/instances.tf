@@ -35,6 +35,7 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   security_groups = [
     "${module.vpc.default_security_group_id}",
     "${aws_security_group.web.id}",
+    "${aws_security_group.ssh.id}",
   ]
 
   associate_public_ip_address = "${var.associate_public_ip_address}"
