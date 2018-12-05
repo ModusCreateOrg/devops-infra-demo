@@ -89,9 +89,8 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
   name = "infra-demo-asg"
 
-  desired_capacity = "${var.desired_capacity}"
-  min_size         = "${var.min_size}"
-  max_size         = "${var.max_size}"
+  min_size = "${var.min_size}"
+  max_size = "${var.max_size}"
 
   launch_configuration = "${aws_launch_configuration.infra-demo-web-lc.name}"
   health_check_type    = "EC2"
@@ -123,5 +122,21 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
     key                 = "Project"
     value               = "infra-demo"
     propagate_at_launch = true
+  }
+}
+
+resource "aws_autoscaling_policy" "infra-demo-asp" {
+  name                   = "infra-demo-asp"
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 180
+  autoscaling_group_name = "${aws_autoscaling_group.infra-demo-web-asg.name}"
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 40.0
   }
 }

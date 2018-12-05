@@ -22,4 +22,3 @@ hooks:
   ValidateService:
     - location: bin/ValidateService.sh
       timeout: 60
-      runas: nobody

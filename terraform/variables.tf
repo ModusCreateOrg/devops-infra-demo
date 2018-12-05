@@ -12,12 +12,12 @@ variable "desired_capacity" {
 
 variable "min_size" {
   description = "Minimum number of instances in AutoScaling Group"
-  default     = 1
+  default     = 2
 }
 
 variable "max_size" {
   description = "Maximum number of instances in AutoScaling Group"
-  default     = 3
+  default     = 8
 }
 
 # Route 53 related variables
