@@ -27,6 +27,28 @@ data "template_file" "cloud-config" {
   template = "${file("cloud-config.yml")}"
 }
 
+resource "aws_iam_role" "CodeDeployServiceRole" {
+  name               = "CodeDeployServiceRole"
+  assume_role_policy = "${file("assume-role-policy.json")}"
+}
+
+resource "aws_iam_policy" "codedeploy-policy" {
+  name        = "codedeploy-policy"
+  description = "Policy allowing codedeploy to work"
+  policy      = "${file("infra-demo-role-policy.json")}"
+}
+
+resource "aws_iam_policy_attachment" "codedeploy-attach" {
+  name       = "codedeploy-attach"
+  roles      = ["${aws_iam_role.CodeDeployServiceRole.name}"]
+  policy_arn = "${aws_iam_policy.codedeploy-policy.arn}"
+}
+
+resource "aws_iam_instance_profile" "infra-demo-ip" {
+  name  = "infra-demo-ip"
+  roles = ["${aws_iam_role.CodeDeployServiceRole.name}"]
+}
+
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
@@ -41,15 +63,17 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   associate_public_ip_address = "${var.associate_public_ip_address}"
   key_name                    = "${aws_key_pair.infra-demo-pub.key_name}"
 
-  #iam_instance_profile = "${aws_iam_instance_profile.?????.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.infra-demo-ip.name}"
 
   lifecycle {
     create_before_destroy = true
   }
+
   root_block_device {
     volume_type           = "gp2"
     delete_on_termination = true
   }
+
   enable_monitoring = true
   user_data         = "${data.template_file.cloud-config.rendered}"
 }
