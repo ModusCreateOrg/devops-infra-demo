@@ -28,18 +28,18 @@ data "template_file" "cloud-config" {
 }
 
 resource "aws_iam_role" "CodeDeployServiceRole" {
-  name               = "CodeDeployServiceRole"
+  name               = "infra-demo-CodeDeployServiceRole"
   assume_role_policy = "${file("assume-role-policy.json")}"
 }
 
 resource "aws_iam_policy" "codedeploy-policy" {
-  name        = "codedeploy-policy"
+  name        = "infra-demo-codedeploy-policy"
   description = "Policy allowing codedeploy to work"
   policy      = "${file("infra-demo-role-policy.json")}"
 }
 
 resource "aws_iam_policy_attachment" "codedeploy-attach" {
-  name       = "codedeploy-attach"
+  name       = "infra-demo-codedeploy-attach"
   roles      = ["${aws_iam_role.CodeDeployServiceRole.name}"]
   policy_arn = "${aws_iam_policy.codedeploy-policy.arn}"
 }
