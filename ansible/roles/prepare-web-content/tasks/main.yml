@@ -1,6 +1,11 @@
 ---
 # tasks file for prepare-web-content
 
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
 # Strictly speaking, we don't need the selinux modules at this early stage,
 # but having them will help the app-AfterInstall playbook avoid delays.
 - name: Ensure firewall and selinux modules are present

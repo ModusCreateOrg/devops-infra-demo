@@ -21,6 +21,9 @@ BUILD_NUMBER=${BUILD_NUMBER:-$(git rev-parse --short HEAD)}
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 ARCHIVE="codedeploy-$BUILD_NUMBER.zip"
 
+# Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
@@ -45,3 +48,4 @@ zip -r "$ARCHIVE" \
     application \
     src \
 
+aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE"

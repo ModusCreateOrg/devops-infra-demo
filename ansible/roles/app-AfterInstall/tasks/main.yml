@@ -1,6 +1,11 @@
 ---
 # tasks file for prepare-web-content
 
+- name: Ensure python-virtualenv is present
+  package: name={{item}} state=present
+  with_items:
+      - python-virtualenv
+
 - name: Define VirtualBox variable
   set_fact:
       virtualbox: true
@@ -55,4 +60,10 @@
       src: app.conf.j2
       dest: /etc/nginx/conf.d/app.conf
       mode: 0640
+
+
+- name: Install python dependencies for app
+  pip:
+    requirements: /app/src/requirements.txt
+    virtualenv: /app/venv
 
