@@ -1,0 +1,58 @@
+---
+# tasks file for prepare-web-content
+
+- name: Define VirtualBox variable
+  set_fact:
+      virtualbox: true
+  when: "'VirtualBox' in ansible_bios_version"
+
+- name: Define ec2 variable
+  set_fact:
+      ec2: true
+  when: "'amazon' in ansible_bios_version"
+
+- name: Ensure selinux modules are present
+  package: name={{item}} state=present
+  with_items:
+      - checkpolicy
+      - policycoreutils-python
+      - policycoreutils
+
+- name: Create temp directory
+  tempfile:
+      state: directory
+      suffix: selinux
+  register: tmpdir
+  when: virtualbox
+
+- name: Copy SELinux policy to temp directory
+  copy:
+      src: my_httpd_t.te
+      dest: "{{ tmpdir.path }}"
+  when: virtualbox
+
+- name: Set up SELinux rules for Virtualbox
+  shell: |
+      cd "{{ tmpdir.path }}"
+      checkmodule -M -m -o my_httpd_t.mod my_httpd_t.te
+      semodule_package -o my_httpd_t.pp -m my_httpd_t.mod
+      semodule -i my_httpd_t.pp
+  when: virtualbox
+
+- name: Set up SELinux rules for Amazon EC2
+  shell: |
+      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?" 
+      restorecon -R "{{ app_dir }}"
+  when: ec2
+
+- name: Ensure default web server config is removed
+  file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+
+- name: Copy web server config into place
+  template:
+      src: app.conf.j2
+      dest: /etc/nginx/conf.d/app.conf
+      mode: 0640
+

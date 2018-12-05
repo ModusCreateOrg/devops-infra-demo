@@ -1,0 +1,25 @@
+---
+version: 0.0
+os: linux
+files:
+  - source: application
+    destination: /app
+  - source: src
+    destination: /opt/spin
+hooks:
+  ApplicationStop:
+    - location: bin/ApplicationStop.sh
+      timeout: 600
+  BeforeInstall:
+    - location: bin/BeforeInstall.sh
+      timeout: 30
+  AfterInstall:
+    - location: bin/AfterInstall.sh
+      timeout: 30
+  ApplicationStart:
+    - location: bin/ApplicationStart.sh
+      timeout: 60
+  ValidateService:
+    - location: bin/ValidateService.sh
+      timeout: 60
+      runas: nobody
