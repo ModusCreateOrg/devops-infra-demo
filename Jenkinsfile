@@ -200,10 +200,9 @@ if (params.Rotate_Servers) {
     stage('Rotate Servers') {
         node {
             unstash 'src'
-            ansiColor('xterm') {
-                prepEnv()
+            wrap.call({
                 sh ("./bin/rotate-asg.sh infra-demo-asg")
-            }
+            })
         }
     }
 }
