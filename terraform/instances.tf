@@ -44,17 +44,17 @@ resource "aws_iam_policy" "codedeploy-policy" {
 }
 
 resource "aws_iam_policy_attachment" "codedeploy-attach" {
-  name       = "infra-demo-codedeploy-attach"
-  roles      = ["${aws_iam_role.CodeDeployServiceRole.name}"]
+  name = "infra-demo-codedeploy-attach"
+
+  roles = ["${aws_iam_role.EC2ServiceRole.name}"]
+
   policy_arn = "${aws_iam_policy.codedeploy-policy.arn}"
 }
 
 resource "aws_iam_instance_profile" "infra-demo-ip" {
   name = "infra-demo-ip"
 
-  roles = ["${aws_iam_role.EC2ServiceRole.name}",
-    "${aws_iam_role.CodeDeployServiceRole.name}",
-  ]
+  roles = ["${aws_iam_role.EC2ServiceRole.name}"]
 }
 
 resource "aws_launch_configuration" "infra-demo-web-lc" {
