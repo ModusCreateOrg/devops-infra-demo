@@ -15,10 +15,10 @@ hooks:
       timeout: 30
   AfterInstall:
     - location: bin/AfterInstall.sh
-      timeout: 30
+      timeout: 300
   ApplicationStart:
     - location: bin/ApplicationStart.sh
-      timeout: 60
+      timeout: 120
   ValidateService:
     - location: bin/ValidateService.sh
       timeout: 60
