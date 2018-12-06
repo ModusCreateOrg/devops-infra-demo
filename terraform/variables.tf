@@ -33,7 +33,7 @@ variable "host" {
 
 variable "instance_type" {
   description = "EC2 instance type for servers"
-  default     = "t3.small"
+  default     = "t2.large"
 }
 
 # Public key variables - you can specify another file for the public key
