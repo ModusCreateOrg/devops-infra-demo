@@ -18,7 +18,7 @@
 - name: Define ec2 variable
   set_fact:
       ec2: true
-  when: "'amazon' in ansible_bios_version"
+  when: "'amazon' in ansible_bios_version or 'Amazon EC2' in ansible_system_vendor"
 
 - name: Ensure selinux modules are present
   package: name={{item}} state=present
