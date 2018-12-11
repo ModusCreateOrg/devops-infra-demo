@@ -19,8 +19,10 @@ resource "aws_iam_role" "infra-demo" {
 EOF
 }
 
+# attach AWS managed policy called AWSCodeDeployRole
+# required for deployments which are to an EC2 compute platform
 resource "aws_iam_role_policy_attachment" "tf-codedeploy-role" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/tf-codedeploy-role"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
   role       = "${aws_iam_role.infra-demo.name}"
 }
 
