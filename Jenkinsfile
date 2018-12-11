@@ -5,7 +5,7 @@
  * Use the Scripted style of Jenkinsfile in order to
  * write more Groovy functions and use variables to
  * control the workflow.
- */ 
+ */
 
 import java.util.Random
 
@@ -18,7 +18,7 @@ def get_captcha(Long hash_const) {
     Random rand = new Random()
     def op1 = rand.nextInt(MAX+1)
     def op2 = rand.nextInt(MAX+1) + MAX
-    def op3 = rand.nextInt(MAX+1) 
+    def op3 = rand.nextInt(MAX+1)
     def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
     Long captcha_answer = op1 + op2 - op3
     Long captcha_hash = captcha_answer ^ hash_const
@@ -46,30 +46,28 @@ final Long XOR_CONST = 3735928559 // 0xdeadbeef
 properties([
     parameters([
         booleanParam(
-            name: 'Run_Packer', 
-            defaultValue: false, 
+            name: 'Run_Packer',
+            defaultValue: false,
             description: 'Run Packer for this build?'
         ),
         booleanParam(
-            name: 'Apply_Terraform', 
-            defaultValue: false, 
+            name: 'Apply_Terraform',
+            defaultValue: false,
             description: 'Apply Terraform plan on this build?'
         ),
         booleanParam(
-            name: 'Destroy_Terraform', 
-            defaultValue: false, 
+            name: 'Destroy_Terraform',
+            defaultValue: false,
             description: 'Destroy Terraform resources?'
         ),
         booleanParam(
-            name: 'Rotate_Servers', 
-            defaultValue: false, 
+            name: 'Rotate_Servers',
+            defaultValue: false,
             description: """Rotate server instances in Auto Scaling Group?
-                            You should do this if you changed ASG size or baked a new AMI.
-                         """
         ),
         string(
-            name: 'CAPTCHA_Guess', 
-            defaultValue: '', 
+            name: 'CAPTCHA_Guess',
+            defaultValue: '',
             description: captcha_problem
         ),
         string(
@@ -84,18 +82,18 @@ properties([
                             (Use this to modify or delete less than the full set of resources'''
         ),
         text(
-            name: 'Extra_Variables', 
-            defaultValue: '', 
-            description: '''Terraform Variables to define for this run. 
+            name: 'Extra_Variables',
+            defaultValue: '',
+            description: '''Terraform Variables to define for this run.
                             Allows you to override declared variables.
                             Put one variable per line, in JSON or HCL like this:
                             associate_public_ip_address = "true"'''
-        ), 
+        ),
     ])
 ])
 
 stage('Preflight') {
-       
+
     // Check CAPTCHA
     def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform
 
