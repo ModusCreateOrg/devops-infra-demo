@@ -64,6 +64,9 @@ properties([
             name: 'Rotate_Servers',
             defaultValue: false,
             description: """Rotate server instances in Auto Scaling Group?
+                            You should do this if you changed ASG size or baked a new AMI.
+                        """
+
         ),
         string(
             name: 'CAPTCHA_Guess',
