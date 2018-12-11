@@ -35,7 +35,7 @@ resource "aws_codedeploy_deployment_config" "infra-demo" {
 
   minimum_healthy_hosts {
     type  = "HOST_COUNT"
-    value = 2
+    value = 1
   }
 }
 
