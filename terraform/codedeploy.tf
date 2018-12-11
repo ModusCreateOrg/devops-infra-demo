@@ -19,7 +19,7 @@ resource "aws_iam_role" "infra-demo" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "codedeploy-role" {
+resource "aws_iam_role_policy_attachment" "tf-codedeploy-role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/tf-codedeploy-role"
   role       = "${aws_iam_role.infra-demo.name}"
 }
