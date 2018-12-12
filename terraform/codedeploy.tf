@@ -61,7 +61,7 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
   }
 
   alarm_configuration {
-    alarms  = ["my-alarm-name"]
+    alarms  = ["tf-infra-demo-alarm"]
     enabled = true
   }
 }
