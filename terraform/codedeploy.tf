@@ -74,4 +74,6 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
     alarms  = ["my-alarm-name"]
     enabled = true
   }
+
+  depends_on = ["aws_codedeploy_deployment_config.infra-demo"]
 }
