@@ -30,15 +30,6 @@ resource "aws_codedeploy_app" "infra-demo" {
   name = "tf-infra-demo-app"
 }
 
-resource "aws_codedeploy_deployment_config" "infra-demo" {
-  deployment_config_name = "tf-infra-demo-deployment-config"
-
-  minimum_healthy_hosts {
-    type  = "HOST_COUNT"
-    value = 1
-  }
-}
-
 resource "aws_codedeploy_deployment_group" "infra-demo" {
   app_name               = "${aws_codedeploy_app.infra-demo.name}"
   deployment_group_name  = "dev"
@@ -74,6 +65,4 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
     alarms  = ["my-alarm-name"]
     enabled = true
   }
-
-  depends_on = ["aws_codedeploy_deployment_config.infra-demo"]
 }
