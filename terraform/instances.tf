@@ -131,7 +131,6 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
 
 resource "aws_autoscaling_policy" "infra-demo-asp" {
   name                   = "infra-demo-asp"
-  adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = "${aws_autoscaling_group.infra-demo-web-asg.name}"
   policy_type            = "TargetTrackingScaling"
 
