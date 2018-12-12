@@ -34,7 +34,6 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
   app_name               = "${aws_codedeploy_app.infra-demo.name}"
   deployment_group_name  = "dev"
   service_role_arn       = "${aws_iam_role.infra-demo.arn}"
-  deployment_config_name = "${aws_codedeploy_deployment_config.infra-demo.id}"
 
   ec2_tag_set {
     ec2_tag_filter {
