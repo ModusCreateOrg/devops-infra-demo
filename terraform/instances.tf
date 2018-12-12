@@ -123,11 +123,14 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
     value               = "infra-demo"
     propagate_at_launch = true
   }
+
+  lifecycle {
+    ignore_changes = ["desired_capacity", "max_size", "min_size"]
+  }
 }
 
 resource "aws_autoscaling_policy" "infra-demo-asp" {
   name                   = "infra-demo-asp"
-  adjustment_type        = "ChangeInCapacity"
   autoscaling_group_name = "${aws_autoscaling_group.infra-demo-web-asg.name}"
   policy_type            = "TargetTrackingScaling"
 
