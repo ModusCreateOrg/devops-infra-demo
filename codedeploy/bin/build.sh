@@ -21,7 +21,6 @@ VENV_DIR="$BASE_DIR/venv"
 GIT_REV="$(git rev-parse --short HEAD)"
 BUILD_NUMBER=${BUILD_NUMBER:-0}
 ARCHIVE="codedeploy-$BUILD_NUMBER-$GIT_REV.zip"
-
 CONTAINERNAME=infra-demo
 
 echo "GIT_REV=$GIT_REV"
@@ -38,10 +37,10 @@ fi
 mkdir -p "$BUILD_DIR"
 
 echo Build docker container $CONTAINERNAME
-docker build -f=Dockerfile -t "$(CONTAINERNAME)" "$(BASE_DIR)"
+docker build -f=Dockerfile -t "$CONTAINERNAME" "$BASE_DIR"
 
 echo Get python virtual environment
-docker run --rm -v "$(BASE_DIR):/src" "$(CONTAINERNAME)" /bin/bash -c \
+docker run --rm -v "$BASE_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "mkdir -p /src/venv ; \
     cp -fa /app/venv/* /src/venv"
 
