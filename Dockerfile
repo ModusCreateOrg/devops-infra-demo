@@ -20,7 +20,3 @@ ADD src/requirements.txt /app/requirements.txt
 # setup python packages
 RUN /app/venv/bin/pip install -U pip \
 	&& /bin/sh -c "/app/venv/bin/pip install --no-cache-dir -r /app/requirements.txt"
-
-COPY src/* /app/
-
-RUN tar -cvzf /src/build.tar.gz /app
