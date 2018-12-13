@@ -16,7 +16,8 @@ BUILD_DIR="$BASE_DIR/build"
 ANSIBLE_DIR="$BASE_DIR/../ansible"
 APPLICTION_DIR="$BASE_DIR/../application"
 SRC_DIR="$BASE_DIR/../src"
-VENV_DIR="$BASE_DIR/venv"
+VENV_DIR="$BASE_DIR/../venv"
+DOCKER_DIR="$BASE_DIR/.."
 
 GIT_REV="$(git rev-parse --short HEAD)"
 BUILD_NUMBER=${BUILD_NUMBER:-0}
@@ -37,10 +38,10 @@ fi
 mkdir -p "$BUILD_DIR"
 
 echo Build docker container $CONTAINERNAME
-docker build -f=Dockerfile -t "$CONTAINERNAME" "$BASE_DIR"
+docker build -f=Dockerfile -t "$CONTAINERNAME" "$DOCKER_DIR"
 
 echo Get python virtual environment
-docker run --rm -v "$BASE_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
+docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "mkdir -p /src/venv ; \
     cp -fa /app/venv/* /src/venv"
 
