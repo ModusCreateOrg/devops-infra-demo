@@ -40,7 +40,7 @@ mkdir -p "$BUILD_DIR"
 echo Build docker container $CONTAINERNAME
 docker build -f=Dockerfile -t "$CONTAINERNAME" "$DOCKER_DIR"
 
-echo Get python virtual environment
+echo Create python virtual environment
 docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "mkdir -p /src/venv ; \
     cp -fa /app/venv/* /src/venv"
@@ -64,5 +64,10 @@ zip -r "$ARCHIVE" \
     application \
     src \
     venv
+cd -
+
+echo Remove docker generated files
+docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
+    "rm -rf /src/venv"
 
 aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE"

@@ -47,7 +47,7 @@ function clean_root_owned_docker_files {
     BASE_DIR="$(pwd)"
     if is_ec2; then
         docker run -i \
-            --mount type=bind,source="${BASE_DIR}"/terraform,target="${TF_DIR}" \
+            --mount type=bind,source="${BASE_DIR}",target="${TF_DIR}" \
             -w "${TF_DIR}" \
             --entrypoint /bin/sh \
             busybox \
@@ -66,12 +66,12 @@ function get_docker_packer {
         PACKER_AWS_VPC_ID="$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/"$INTERFACE"/vpc-id)"
     fi
 
-    echo "docker run -i 
-        ${USE_TTY}  
+    echo "docker run -i
+        ${USE_TTY}
         --env-file $TMPFILE
-        -e PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID 
-        -e PACKER_AWS_VPC_ID=$PACKER_AWS_VPC_ID 
-        --mount type=bind,source=${BASE_DIR},target=/app 
+        -e PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID
+        -e PACKER_AWS_VPC_ID=$PACKER_AWS_VPC_ID
+        --mount type=bind,source=${BASE_DIR},target=/app
         hashicorp/packer:light"
 }
 
