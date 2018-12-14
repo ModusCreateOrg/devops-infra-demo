@@ -72,6 +72,6 @@
 
 - name: nobody owns /app/socket
   file:
-    - path: /app/socket
-    - owner: nobody
-    - group: nobody
+    path: /app/socket
+    owner: nobody
+    group: nobody
