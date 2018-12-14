@@ -73,5 +73,6 @@
 - name: nobody owns /app/socket
   file:
     path: /app/socket
+    state: directory
     owner: nobody
     group: nobody
