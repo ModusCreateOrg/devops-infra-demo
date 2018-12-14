@@ -19,5 +19,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
 ANSIBLE_DIR="$BASE_DIR/ansible"
 
+# start UWSGI
+/app/src/startit.sh
+
 # Invoke Ansible for final set up
 ansible-playbook -l localhost "$ANSIBLE_DIR/app-StartServer.yml"
+
