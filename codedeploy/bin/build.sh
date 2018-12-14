@@ -35,7 +35,7 @@ BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
 fi
-mkdir -p "$BUILD_DIR"
+mkdir -p "$BUILD_DIR/socket"
 
 echo Build docker container $CONTAINERNAME
 docker build -f=Dockerfile -t "$CONTAINERNAME" "$DOCKER_DIR"
@@ -64,7 +64,8 @@ done
         ansible \
         application \
         src \
-        venv
+        venv \
+        socket
 )
 
 echo Remove docker generated files

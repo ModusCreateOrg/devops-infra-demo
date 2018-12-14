@@ -50,7 +50,7 @@
 
 - name: Set up SELinux rules for Amazon EC2
   shell: |
-      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?" 
+      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?"
       restorecon -R "{{ app_dir }}"
   when: ec2
 
@@ -65,9 +65,13 @@
       dest: /etc/nginx/conf.d/app.conf
       mode: 0640
 
-
 - name: Install python dependencies for app
   pip:
     requirements: /app/src/requirements.txt
     virtualenv: /app/venv
 
+- name: nobody owns /app/socket
+  file:
+    - path: /app/socket
+    - owner: nobody
+    - group: nobody
