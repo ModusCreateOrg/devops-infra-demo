@@ -56,18 +56,20 @@ for src in $SOURCES; do
     cp -a "$src" "$BUILD_DIR"
 done
 
-cd "$BUILD_DIR"
-zip -r "$ARCHIVE" \
-    appspec.yml \
-    bin \
-    ansible \
-    application \
-    src \
-    venv
-cd -
+(
+    cd "$BUILD_DIR"
+    zip -r "$ARCHIVE" \
+        appspec.yml \
+        bin \
+        ansible \
+        application \
+        src \
+        venv
+)
 
 echo Remove docker generated files
 docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "rm -rf /src/venv"
 
+cd "$BUILD_DIR"
 aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE"

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # current directory needs where this script is located
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit
 
 UWSGI_VIRTUALENV=/app/venv \
 UWSGI_WSGI_FILE=/app/src/wsgi.py \
