@@ -19,7 +19,9 @@ BASE_DIR="$DIR/.."
 
 cd "$BASE_DIR"
 clean_root_owned_docker_files
-git clean -fdx
+echo 'clean_root_owned_docker_files -----'
+sudo git clean -fdx
+echo 'git clean -------------------------'
 cp env.sh.sample env.sh
 rm -rf build
 mkdir -p build
