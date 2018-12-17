@@ -1,6 +1,12 @@
 ---
 # tasks file for prepare-web-content
 
+- name: Start and enable emperor, as it should start off disabled
+  service:
+    name: emperor
+    enabled: yes
+    state: restarted
+
 - name: Start and enable nginx, as it should start off disabled
   service:
     name: nginx
