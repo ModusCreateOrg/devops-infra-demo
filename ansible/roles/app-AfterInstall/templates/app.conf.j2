@@ -7,6 +7,12 @@ server {
         index  index.html index.htm;
     }
 
+    location /api/spin {
+        uwsgi_pass  unix:///app/socket/infra-demo.sock;
+        include     /etc/nginx/uwsgi_params;
+        uwsgi_param UWSGI_SCRIPT /app/src/wsgi.py;
+    }
+
     # redirect server error pages to the static page /50x.html
     #
     error_page   500 502 503 504  /50x.html;
