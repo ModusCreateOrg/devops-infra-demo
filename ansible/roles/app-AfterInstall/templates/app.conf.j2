@@ -8,7 +8,7 @@ server {
     }
 
     location /api/spin {
-        uwsgi_pass  unix:///app/socket/infra-demo.sock;
+        uwsgi_pass  127.0.0.1:8008;
         include     /etc/nginx/uwsgi_params;
         uwsgi_param UWSGI_SCRIPT /app/src/wsgi.py;
         # following config allow us to map /api/spin to /spin on uwsgi:
