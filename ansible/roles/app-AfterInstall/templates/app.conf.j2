@@ -11,6 +11,9 @@ server {
         uwsgi_pass  unix:///app/socket/infra-demo.sock;
         include     /etc/nginx/uwsgi_params;
         uwsgi_param UWSGI_SCRIPT /app/src/wsgi.py;
+        # following config allow us to map /api/spin to /spin on uwsgi:
+        uwsgi_param SCRIPT_NAME /api;   # set SCRIPT_NAME to match subpath
+        uwsgi_modifier1 30;             # strips SCRIPT_NAME from PATH_INFO
     }
 
     # redirect server error pages to the static page /50x.html
