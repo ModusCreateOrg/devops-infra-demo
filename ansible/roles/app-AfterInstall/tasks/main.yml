@@ -50,6 +50,8 @@
 
 - name: Set up SELinux rules for Amazon EC2
   shell: |
+      setsebool -P httpd_can_network_connect 1
+      setsebool -P httpd_can_network_relay 1
       semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?"
       restorecon -R "{{ app_dir }}"
   when: ec2
