@@ -70,12 +70,12 @@
     requirements: /app/src/requirements.txt
     virtualenv: /app/venv
 
-- name: nobody owns /app/socket
+- name: nginx owns /app/socket
   file:
     path: /app/socket
     state: directory
-    owner: nobody
-    group: nobody
+    owner: nginx
+    group: nginx
 
 - name: Emperor systemd config
   template:
