@@ -117,4 +117,3 @@ This project is part of [Modus Labs](https://labs.moduscreate.com).
 This project is [MIT licensed](./LICENSE).
 
 The content in `application` is adapted from _Dimension_ by https://html5up.net/ and is [licensed under a Creative Commons Attribution 3.0 License](https://html5up.net/license)
-
