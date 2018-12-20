@@ -17,5 +17,7 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
+systemctl stop emperor
+systemctl disable emperor
 systemctl stop nginx
 systemctl disable nginx

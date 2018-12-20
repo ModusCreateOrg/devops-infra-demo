@@ -2,7 +2,7 @@
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
- 
+
 # Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
 ${DEBUG:-false} && set -vx
 # Credit to https://stackoverflow.com/a/17805088
@@ -16,10 +16,14 @@ BUILD_DIR="$BASE_DIR/build"
 ANSIBLE_DIR="$BASE_DIR/../ansible"
 APPLICTION_DIR="$BASE_DIR/../application"
 SRC_DIR="$BASE_DIR/../src"
+VENV_DIR="$BASE_DIR/../venv"
+DOCKER_DIR="$BASE_DIR/.."
 
 GIT_REV="$(git rev-parse --short HEAD)"
 BUILD_NUMBER=${BUILD_NUMBER:-0}
 ARCHIVE="codedeploy-$BUILD_NUMBER-$GIT_REV.zip"
+CONTAINERNAME=infra-demo
+
 echo "GIT_REV=$GIT_REV"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 echo "ARCHIVE=$ARCHIVE"
@@ -31,24 +35,42 @@ BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
 fi
-mkdir -p "$BUILD_DIR"
+mkdir -p "$BUILD_DIR/socket"
+
+echo Build docker container $CONTAINERNAME
+docker build -f=Dockerfile -t "$CONTAINERNAME" "$DOCKER_DIR"
+
+echo Create python virtual environment
+docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
+    "mkdir -p /src/venv ; \
+    cp -fa /app/venv/* /src/venv"
 
 SOURCES="$BASE_DIR/bin
 $ANSIBLE_DIR
 $APPLICTION_DIR
 $SRC_DIR
 $BASE_DIR/appspec.yml
-$BASE_DIR/bin"
+$BASE_DIR/bin
+$VENV_DIR"
 for src in $SOURCES; do
     cp -a "$src" "$BUILD_DIR"
 done
 
-cd "$BUILD_DIR"
-zip -r "$ARCHIVE" \
-    appspec.yml \
-    bin \
-    ansible \
-    application \
-    src \
+(
+    cd "$BUILD_DIR"
+    zip -r "$ARCHIVE" \
+        appspec.yml \
+        bin \
+        ansible \
+        application \
+        src \
+        venv \
+        socket
+)
 
+echo Remove docker generated files
+docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
+    "rm -rf /src/venv"
+
+cd "$BUILD_DIR"
 aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE"

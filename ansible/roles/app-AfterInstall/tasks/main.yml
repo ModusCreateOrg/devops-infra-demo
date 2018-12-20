@@ -50,7 +50,9 @@
 
 - name: Set up SELinux rules for Amazon EC2
   shell: |
-      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?" 
+      setsebool -P httpd_can_network_connect 1
+      setsebool -P httpd_can_network_relay 1
+      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?"
       restorecon -R "{{ app_dir }}"
   when: ec2
 
@@ -65,9 +67,38 @@
       dest: /etc/nginx/conf.d/app.conf
       mode: 0640
 
-
 - name: Install python dependencies for app
   pip:
     requirements: /app/src/requirements.txt
     virtualenv: /app/venv
 
+- name: nginx owns /app/socket
+  file:
+    path: /app/socket
+    state: directory
+    owner: nginx
+    group: nginx
+
+- name: Emperor systemd config
+  template:
+    src: emperor.service.j2
+    dest: /etc/systemd/system/emperor.service
+    owner: root
+    group: root
+    mode: 0640
+
+- name: emperor.ini
+  template:
+    src: emperor.ini.j2
+    dest: /app/emperor.ini
+    owner: root
+    group: root
+    mode: 0644
+
+- name: uwsgi app config infra-demo.ini
+  template:
+    src: infra-demo.ini.j2
+    dest: /app/src/infra-demo.ini
+    owner: root
+    group: root
+    mode: 0644
