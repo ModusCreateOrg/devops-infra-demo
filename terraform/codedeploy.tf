@@ -47,12 +47,6 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
       type  = "KEY_AND_VALUE"
       value = "infra-demo"
     }
-
-    ec2_tag_filter {
-      key   = "aws:autoscaling:groupName"
-      type  = "KEY_AND_VALUE"
-      value = "infra-demo-asg"
-    }
   }
 
   auto_rollback_configuration {
