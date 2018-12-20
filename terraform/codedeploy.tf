@@ -1,4 +1,3 @@
-// devops-infra-demo
 resource "aws_iam_role" "infra-demo" {
   name = "tf-infra-demo-role"
 
