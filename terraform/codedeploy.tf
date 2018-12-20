@@ -34,19 +34,9 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
   deployment_group_name = "dev"
   service_role_arn      = "${aws_iam_role.infra-demo.arn}"
 
-  ec2_tag_set {
-    ec2_tag_filter {
-      key   = "Name"
-      type  = "KEY_AND_VALUE"
-      value = "infra-demo-web"
-    }
-
-    ec2_tag_filter {
-      key   = "Project"
-      type  = "KEY_AND_VALUE"
-      value = "infra-demo"
-    }
-  }
+  autoscaling_groups = [
+    "infra-demo-asg",
+  ]
 
   auto_rollback_configuration {
     enabled = true
