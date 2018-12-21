@@ -75,6 +75,24 @@ properties([
             """
         ),
         string(
+            name: 'JMETER_users',
+            defaultValue: '2',
+            description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
+            - 2 threads, 3 instances;
+            - 4 threads, 7 instances;
+            """
+        ),
+        string(
+            name: 'JMETER_rampup',
+            defaultValue: '0',
+            description: 'period in seconds of ramp-up time.'
+        ),
+        string(
+            name: 'JMETER_time',
+            defaultValue: '900',
+            description: 'time in seconds to the whole Jmeter test'
+        ),
+        string(
             name: 'CAPTCHA_Guess',
             defaultValue: '',
             description: captcha_problem
@@ -228,7 +246,7 @@ if (params.Run_JMeter) {
         node {
             unstash 'src'
             wrap.call({
-                sh ("./bin/runJmeter.sh")
+                sh ("./bin/runJmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time}")
             })
         }
     }
