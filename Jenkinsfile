@@ -66,7 +66,13 @@ properties([
             description: """Rotate server instances in Auto Scaling Group?
                             You should do this if you changed ASG size or baked a new AMI.
                         """
-
+        ),
+        booleanParam(
+            name: 'Run_JMeter',
+            defaultValue: false,
+            description: """Execute a 2 thread JMeter load test against
+                            http://devops-infra-demo.modus.app/api/spin for 15 minutes.
+            """
         ),
         string(
             name: 'CAPTCHA_Guess',
@@ -212,6 +218,17 @@ if (params.Rotate_Servers) {
             unstash 'src'
             wrap.call({
                 sh ("./bin/rotate-asg.sh infra-demo-asg")
+            })
+        }
+    }
+}
+
+if (params.Run_JMeter) {
+    stage('Run JMeter') {
+        node {
+            unstash 'src'
+            wrap.call({
+                sh ("docker run -it -v $(pwd):/repo justb4/jmeter -n -t /repo/devops-infra-demo-api-spin.jmx -l /repo/results.txt")
             })
         }
     }
