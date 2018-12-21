@@ -104,7 +104,7 @@ properties([
 stage('Preflight') {
 
     // Check CAPTCHA
-    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform
+    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
