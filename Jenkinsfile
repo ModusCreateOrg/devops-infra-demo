@@ -245,8 +245,8 @@ if (params.Run_JMeter) {
             unstash 'src'
             wrap.call({
                 sh ("""
-                    URL=$$(./bin/terraform output route53-dns)
-                    ./bin/jmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time} -Jurl=https://$$URL/
+                    URL=\$(./bin/terraform output route53-dns)
+                    ./bin/jmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time} -Jurl=https://\$URL/
                     """)
             })
         }
