@@ -1,3 +1,4 @@
+*.ini
 *.pyc
 *.retry
 *.tmp
