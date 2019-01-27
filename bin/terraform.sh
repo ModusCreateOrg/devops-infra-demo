@@ -31,7 +31,7 @@ BUILD_DIR="$BASE_DIR/build"
 DOCKER_TERRAFORM=$(get_docker_terraform)
 DOCKER_LANDSCAPE=$(get_docker_landscape)
 
-verb=${1:?You must specify a verb: plan, plan-destroy, apply}
+verb=${1:?You must specify a verb: plan, plan-destroy, apply, show, output}
 
 # Inject Google application credentials into env file for docker
 GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
@@ -60,6 +60,18 @@ EOF
 # http://redsymbol.net/articles/bash-exit-traps/
 trap clean_root_owned_docker_files EXIT
 
+function show() {
+    local -i retcode
+    #shellcheck disable=SC2086
+    $DOCKER_TERRAFORM show
+}
+
+function output () {
+    local -i retcode
+    local extra
+    #shellcheck disable=SC2086
+    $DOCKER_TERRAFORM output "$@"
+}
 
 function plan() {
     local extra
@@ -123,13 +135,19 @@ plan-destroy)
 apply)
   Message="Executing terraform apply."
   ;;
+show)
+  Message="Executing terraform show."
+  ;;
+output)
+  Message="Executing terraform output."
+  ;;
 *)
-  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, or apply'
+  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show'
   exit 1
   ;;
 esac
-
-echo "$Message"
-init_terraform
-"$verb"
+shift
+echo "$Message" 1>&2
+init_terraform 1>&2
+"$verb" "$@"
 

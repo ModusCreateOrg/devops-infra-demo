@@ -70,9 +70,7 @@ properties([
         booleanParam(
             name: 'Run_JMeter',
             defaultValue: false,
-            description: """Execute a 2 thread JMeter load test against
-                            http://devops-infra-demo.modus.app/api/spin for 15 minutes.
-            """
+            description: "Execute a JMeter load test against the stack"
         ),
         string(
             name: 'JMETER_users',
@@ -84,12 +82,12 @@ properties([
         ),
         string(
             name: 'JMETER_rampup',
-            defaultValue: '0',
+            defaultValue: '900',
             description: 'period in seconds of ramp-up time.'
         ),
         string(
             name: 'JMETER_time',
-            defaultValue: '900',
+            defaultValue: '1800',
             description: 'time in seconds to the whole Jmeter test'
         ),
         string(
@@ -246,7 +244,10 @@ if (params.Run_JMeter) {
         node {
             unstash 'src'
             wrap.call({
-                sh ("./bin/runJmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time}")
+                sh ("""
+                    URL=$(./bin/terraform output route53-dns)
+                    ./bin/jmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time -Jurl=https://$URL/
+                    """)
             })
         }
     }
