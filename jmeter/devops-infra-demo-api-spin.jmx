@@ -19,10 +19,10 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(users,2)}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${__P(rampup,90)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(num_threads,2)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(ramp_time,90)}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${__P(time,180)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(duration,180)}</stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
@@ -30,11 +30,11 @@
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">${__P(url,devops-infra-demo.modus.app)}</stringProp>
+          <stringProp name="HTTPSampler.domain">${__P(domain,devops-infra-demo.modus.app)}</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/api/spin</stringProp>
+          <stringProp name="HTTPSampler.path">${__P(path,/api/spin)}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>

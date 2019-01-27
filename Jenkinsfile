@@ -87,7 +87,7 @@ properties([
             description: "Execute a JMeter load test against the stack"
         ),
         string(
-            name: 'JMETER_users',
+            name: 'JMETER_threads',
             defaultValue: '2',
             description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
             - 2 threads, 3 instances;
@@ -95,12 +95,12 @@ properties([
             """
         ),
         string(
-            name: 'JMETER_rampup',
+            name: 'JMETER_ramp_duration',
             defaultValue: '900',
             description: 'period in seconds of ramp-up time.'
         ),
         string(
-            name: 'JMETER_time',
+            name: 'JMETER_duration',
             defaultValue: '1800',
             description: 'time in seconds to the whole Jmeter test'
         ),
@@ -245,8 +245,8 @@ if (params.Run_JMeter) {
             unstash 'src'
             wrap.call({
                 sh ("""
-                    URL=\$(./bin/terraform.sh output route53-dns)
-                    ./bin/jmeter.sh -Jusers=${params.JMETER_users} -Jrampup=${params.JMETER_rampup} -Jtime=${params.JMETER_time} -Jurl=https://\$URL/
+                    HOST=\$(./bin/terraform.sh output route53-dns)
+                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost\$HOST
                     """)
             })
         }
