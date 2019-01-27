@@ -36,7 +36,7 @@ verb=${1:?You must specify a verb: plan, plan-destroy, apply, show, output}
 # Inject Google application credentials into env file for docker
 GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
 if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
-    echo "Overriding Google Application Credentials"
+    echo "Overriding Google Application Credentials" 1>&2
     GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE"
 fi
 
@@ -106,7 +106,7 @@ function plan() {
 }
 
 function plan-destroy() {
-   cat <<EOF
+   cat 1>&2 <<EOF
 
 *******************************************************
 ************                             **************
@@ -142,7 +142,7 @@ output)
   Message="Executing terraform output."
   ;;
 *)
-  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show'
+  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show' 1>>2
   exit 1
   ;;
 esac
