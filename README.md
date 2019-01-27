@@ -73,7 +73,7 @@ This script relies on Jenkins having a secret file containing the Google applica
 
 ### Terraform
 
-This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. Yu can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
+This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. You can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
 
 (Replace us-east-1 and XXXXXXXXXXXX with the AWS region and your account ID)
 ```
@@ -97,10 +97,17 @@ These commands will then set up cloud resources using terraform:
     # check to see if everything worked - use the same variables here as above
     terraform destroy -var 'domain=example.net'
 
+Alternatively, use the wrapper script in `bin/terraform.sh` which will work interactively or from CI:
+
+   bin/terraform.sh plan
+   bin/terraform.sh apply
+   bin/terraform.sh plan-destroy
+   bin/terraform.sh destroy
+
 This assumes that you already have a Route 53 domain in your AWS account created.
 You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
 
-The application loads an image from Google storage. To get it loading correctly, look in the X file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
+The application loads an image from Google storage. To get it loading correctly, edit the `application/assets/css/main.css` file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
 
 # Modus Create
 
