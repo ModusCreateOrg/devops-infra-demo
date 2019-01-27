@@ -246,7 +246,7 @@ if (params.Run_JMeter) {
             wrap.call({
                 sh ("""
                     HOST=\$(./bin/terraform.sh output route53-dns)
-                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost\$HOST
+                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
                     """)
                 archiveArtifacts artifacts: 'build/*.jtl', fingerprint: true
             })
