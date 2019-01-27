@@ -3,7 +3,7 @@ Description=uWSGI Emperor
 After=syslog.target
 
 [Service]
-ExecStart=/app/venv/bin/uwsgi --ini /app/emperor.ini
+ExecStart=/opt/emperor/venv/bin/uwsgi --ini /app/venv/etc/emperor.ini
 # Requires systemd version 211 or newer
 RuntimeDirectory=uwsgi
 Restart=always

@@ -90,7 +90,7 @@
 - name: emperor.ini
   template:
     src: emperor.ini.j2
-    dest: /app/emperor.ini
+    dest: /opt/emperor/etc/emperor.ini
     owner: root
     group: root
     mode: 0644
@@ -98,7 +98,8 @@
 - name: uwsgi app config infra-demo.ini
   template:
     src: infra-demo.ini.j2
-    dest: /app/src/infra-demo.ini
+
+    dest: /app/venv/etc/infra-demo.ini
     owner: root
     group: root
     mode: 0644
