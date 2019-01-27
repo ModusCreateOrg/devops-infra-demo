@@ -60,6 +60,20 @@ properties([
             defaultValue: false,
             description: 'Destroy Terraform resources?'
         ),
+        string(
+            name: 'Terraform_Targets',
+            defaultValue: '',
+            description: '''Specific Terraform resource or resource names to target
+                            (Use this to modify or delete less than the full set of resources'''
+        ),
+        text(
+            name: 'Extra_Variables',
+            defaultValue: '',
+            description: '''Terraform Variables to define for this run.
+                            Allows you to override declared variables.
+                            Put one variable per line, in JSON or HCL like this:
+                            associate_public_ip_address = "true"'''
+        ),
         booleanParam(
             name: 'Rotate_Servers',
             defaultValue: false,
@@ -99,20 +113,6 @@ properties([
             name: 'CAPTCHA_Hash',
             defaultValue: captcha_hash,
             description: 'Hash for CAPTCHA answer (DO NOT modify)'
-        ),
-        string(
-            name: 'Terraform_Targets',
-            defaultValue: '',
-            description: '''Specific Terraform resource or resource names to target
-                            (Use this to modify or delete less than the full set of resources'''
-        ),
-        text(
-            name: 'Extra_Variables',
-            defaultValue: '',
-            description: '''Terraform Variables to define for this run.
-                            Allows you to override declared variables.
-                            Put one variable per line, in JSON or HCL like this:
-                            associate_public_ip_address = "true"'''
         ),
     ])
 ])
