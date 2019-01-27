@@ -142,7 +142,7 @@ output)
   Message="Executing terraform output."
   ;;
 *)
-  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show' 1>>2
+  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show' 1>&2
   exit 1
   ;;
 esac
