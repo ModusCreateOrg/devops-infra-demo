@@ -73,4 +73,4 @@ docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "rm -rf /src/venv"
 
 cd "$BUILD_DIR"
-aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE"
+aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE" --quiet
