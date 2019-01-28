@@ -54,7 +54,7 @@ resource "aws_iam_policy_attachment" "codedeploy-attach" {
 resource "aws_iam_instance_profile" "infra-demo-ip" {
   name = "infra-demo-ip"
 
-  roles = ["${aws_iam_role.EC2ServiceRole.name}"]
+  role = "${aws_iam_role.EC2ServiceRole.name}"
 }
 
 resource "aws_launch_configuration" "infra-demo-web-lc" {

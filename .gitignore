@@ -1,3 +1,4 @@
+*.ini
 *.pyc
 *.retry
 *.tmp
@@ -10,4 +11,5 @@
 /terraform/tf.plan
 __pycache__
 build/
+jmeter.log
 venv/

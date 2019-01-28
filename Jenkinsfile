@@ -60,24 +60,6 @@ properties([
             defaultValue: false,
             description: 'Destroy Terraform resources?'
         ),
-        booleanParam(
-            name: 'Rotate_Servers',
-            defaultValue: false,
-            description: """Rotate server instances in Auto Scaling Group?
-                            You should do this if you changed ASG size or baked a new AMI.
-                        """
-
-        ),
-        string(
-            name: 'CAPTCHA_Guess',
-            defaultValue: '',
-            description: captcha_problem
-        ),
-        string(
-            name: 'CAPTCHA_Hash',
-            defaultValue: captcha_hash,
-            description: 'Hash for CAPTCHA answer (DO NOT modify)'
-        ),
         string(
             name: 'Terraform_Targets',
             defaultValue: '',
@@ -92,13 +74,53 @@ properties([
                             Put one variable per line, in JSON or HCL like this:
                             associate_public_ip_address = "true"'''
         ),
+        booleanParam(
+            name: 'Rotate_Servers',
+            defaultValue: false,
+            description: """Rotate server instances in Auto Scaling Group?
+                            You should do this if you changed ASG size or baked a new AMI.
+                        """
+        ),
+        booleanParam(
+            name: 'Run_JMeter',
+            defaultValue: false,
+            description: "Execute a JMeter load test against the stack"
+        ),
+        string(
+            name: 'JMETER_threads',
+            defaultValue: '2',
+            description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
+            - 2 threads, 3 instances;
+            - 4 threads, 7 instances;
+            """
+        ),
+        string(
+            name: 'JMETER_ramp_duration',
+            defaultValue: '900',
+            description: 'period in seconds of ramp-up time.'
+        ),
+        string(
+            name: 'JMETER_duration',
+            defaultValue: '1800',
+            description: 'time in seconds to the whole Jmeter test'
+        ),
+        string(
+            name: 'CAPTCHA_Guess',
+            defaultValue: '',
+            description: captcha_problem
+        ),
+        string(
+            name: 'CAPTCHA_Hash',
+            defaultValue: captcha_hash,
+            description: 'Hash for CAPTCHA answer (DO NOT modify)'
+        ),
     ])
 ])
 
 stage('Preflight') {
 
     // Check CAPTCHA
-    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform
+    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
@@ -212,6 +234,22 @@ if (params.Rotate_Servers) {
             unstash 'src'
             wrap.call({
                 sh ("./bin/rotate-asg.sh infra-demo-asg")
+            })
+        }
+    }
+}
+
+if (params.Run_JMeter) {
+    stage('Run JMeter') {
+        node {
+            unstash 'src'
+            wrap.call({
+                sh ("""
+                    HOST=\$(./bin/terraform.sh output route53-dns)
+                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
+                    ls -l build
+                    """)
+                archiveArtifacts artifacts: 'build/*.jtl, build/*.xml, build/*.csv, build/*.html', fingerprint: true
             })
         }
     }
