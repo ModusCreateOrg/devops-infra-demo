@@ -18,5 +18,5 @@
   become: yes
   roles:
     - extra-cis-remediation
-    - MindPointGroup.RHEL7-CIS
+    #- MindPointGroup.RHEL7-CIS
     - scan-openscap
