@@ -2,7 +2,8 @@
 # This makes it super-clear which AWS account, arn, and user_id are in use
 # in a way that can be conveniently tracked in the output of CI tools
 provider "aws" {
-  region = "${var.aws_region}"
+  region  = "${var.aws_region}"
+  version = "~> 1.57"
 }
 
 data "aws_caller_identity" "current" {}

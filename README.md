@@ -63,17 +63,9 @@ In order to make developing the Ansible playbooks faster, a Vagrantfile is provi
 
 Install [Vagrant](https://www.vagrantup.com/). Change directory into the root of the repository at the command line and issue the command `vagrant up`. You can add or edit Ansible playbooks and support scripts then re-run the provisioning with `vagrant provision` to refine the remediations. This is more efficient that re-running packer and baking new AMIs for every change.
 
-### Jenkins
-
-A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account. Packer needs this in order to create AMIs, key pairs, etc, and Terraform needs this to create a VPC and EC2 resources. This could be pared down further through some careful logging and role work.
-
-The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
-
-This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id "terraform-demo.json". You will need to add that to your Jenkins server's credentials.
-
 ### Terraform
 
-This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. Yu can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
+This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. You can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
 
 (Replace us-east-1 and XXXXXXXXXXXX with the AWS region and your account ID)
 ```
@@ -97,10 +89,34 @@ These commands will then set up cloud resources using terraform:
     # check to see if everything worked - use the same variables here as above
     terraform destroy -var 'domain=example.net'
 
+Alternatively, use the wrapper script in `bin/terraform.sh` which will work interactively or from CI:
+
+   bin/terraform.sh plan
+   bin/terraform.sh apply
+   bin/terraform.sh plan-destroy
+   bin/terraform.sh destroy
+
 This assumes that you already have a Route 53 domain in your AWS account created.
 You need to either edit variables.tf to match your domain and AWS zone or specify these values as command line `var` parameters.
 
-The application loads an image from Google storage. To get it loading correctly, look in the X file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
+The application loads an image from Google storage. To get it loading correctly, edit the `application/assets/css/main.css` file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
+
+### CodeDeploy
+
+The application enclosed in this demo is packaged and deployed using [AWS CodeDeploy](https://aws.amazon.com/codedeploy/). The script `codedeploy/bin/build.sh` will package the application so that it can be deployed on the AMI built with Ansible and Packer.
+
+The application contains both a simple HTML web site, and a Python app that has an API endpoint of `/api/spin` that spins the CPU of the server, in order to more easily test CPU-sensing auto scaling scale-out operations.
+
+### JMeter
+
+A JMeter test harness that will allow testing of a the application 
+### Jenkins
+
+A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform, package a CodeDeploy application, and even run JMeter performance tests. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account, and write access to the S3 bucket used for storing CodeDeploy applications. Packer needs this in order to create AMIs, key pairs, etc, Terraform needs this to create a VPC and EC2 resources, and CodeDeploy needs this to store the artifact it creates. This could be pared down further through some careful logging and role work.
+
+The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
+
+This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id "terraform-demo.json". You will need to add that to your Jenkins server's credentials.
 
 # Modus Create
 

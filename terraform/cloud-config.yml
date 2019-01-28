@@ -1,0 +1,3 @@
+#cloud-config
+runcmd:
+ - sudo -u centos ansible-playbook -l localhost /app/ansible/codedeploy.yml

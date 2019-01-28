@@ -1,0 +1,13 @@
+---
+# tasks file for prepare-codedeploy
+
+
+- name: Ensure packages used by CodeDeploy installer are present
+  package: name={{item}} state=present
+  with_items:
+      - python2-pip
+      - ruby
+      - git
+
+- name: Ensure awscli is installed
+  pip: name=awscli state=present

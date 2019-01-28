@@ -23,6 +23,40 @@ data "aws_ami" "node_app_ami" {
   owners = ["${var.aws_account_id_for_ami != "" ? var.aws_account_id_for_ami : data.aws_caller_identity.current.account_id}"]
 }
 
+data "template_file" "cloud-config" {
+  template = "${file("cloud-config.yml")}"
+}
+
+resource "aws_iam_role" "CodeDeployServiceRole" {
+  name               = "infra-demo-CodeDeployServiceRole"
+  assume_role_policy = "${file("assume-role-policy-codedeploy.json")}"
+}
+
+resource "aws_iam_role" "EC2ServiceRole" {
+  name               = "infra-demo-EC2ServiceRole"
+  assume_role_policy = "${file("assume-role-policy-ec2.json")}"
+}
+
+resource "aws_iam_policy" "codedeploy-policy" {
+  name        = "infra-demo-codedeploy-policy"
+  description = "Policy allowing codedeploy to work"
+  policy      = "${file("infra-demo-role-policy.json")}"
+}
+
+resource "aws_iam_policy_attachment" "codedeploy-attach" {
+  name = "infra-demo-codedeploy-attach"
+
+  roles = ["${aws_iam_role.EC2ServiceRole.name}"]
+
+  policy_arn = "${aws_iam_policy.codedeploy-policy.arn}"
+}
+
+resource "aws_iam_instance_profile" "infra-demo-ip" {
+  name = "infra-demo-ip"
+
+  role = "${aws_iam_role.EC2ServiceRole.name}"
+}
+
 resource "aws_launch_configuration" "infra-demo-web-lc" {
   name_prefix   = "infra-demo-web-"
   image_id      = "${data.aws_ami.node_app_ami.id}"
@@ -31,29 +65,32 @@ resource "aws_launch_configuration" "infra-demo-web-lc" {
   security_groups = [
     "${module.vpc.default_security_group_id}",
     "${aws_security_group.web.id}",
+    "${aws_security_group.ssh.id}",
   ]
 
   associate_public_ip_address = "${var.associate_public_ip_address}"
   key_name                    = "${aws_key_pair.infra-demo-pub.key_name}"
 
-  #iam_instance_profile = "${aws_iam_instance_profile.?????.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.infra-demo-ip.name}"
 
   lifecycle {
     create_before_destroy = true
   }
+
   root_block_device {
     volume_type           = "gp2"
     delete_on_termination = true
   }
+
   enable_monitoring = true
+  user_data         = "${data.template_file.cloud-config.rendered}"
 }
 
 resource "aws_autoscaling_group" "infra-demo-web-asg" {
   name = "infra-demo-asg"
 
-  desired_capacity = "${var.desired_capacity}"
-  min_size         = "${var.min_size}"
-  max_size         = "${var.max_size}"
+  min_size = "${var.min_size}"
+  max_size = "${var.max_size}"
 
   launch_configuration = "${aws_launch_configuration.infra-demo-web-lc.name}"
   health_check_type    = "EC2"
@@ -85,5 +122,23 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
     key                 = "Project"
     value               = "infra-demo"
     propagate_at_launch = true
+  }
+
+  lifecycle {
+    ignore_changes = ["desired_capacity", "max_size", "min_size"]
+  }
+}
+
+resource "aws_autoscaling_policy" "infra-demo-asp" {
+  name                   = "infra-demo-asp"
+  autoscaling_group_name = "${aws_autoscaling_group.infra-demo-web-asg.name}"
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 40.0
   }
 }

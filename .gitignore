@@ -1,3 +1,5 @@
+*.ini
+*.pyc
 *.retry
 *.tmp
 *~
@@ -7,4 +9,7 @@
 /terraform/.terraform*
 /terraform/terraform.tfstate*
 /terraform/tf.plan
+__pycache__
 build/
+jmeter.log
+venv/

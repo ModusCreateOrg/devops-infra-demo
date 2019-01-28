@@ -5,7 +5,7 @@
  * Use the Scripted style of Jenkinsfile in order to
  * write more Groovy functions and use variables to
  * control the workflow.
- */ 
+ */
 
 import java.util.Random
 
@@ -18,7 +18,7 @@ def get_captcha(Long hash_const) {
     Random rand = new Random()
     def op1 = rand.nextInt(MAX+1)
     def op2 = rand.nextInt(MAX+1) + MAX
-    def op3 = rand.nextInt(MAX+1) 
+    def op3 = rand.nextInt(MAX+1)
     def captcha_problem = "CAPTCHA problem: What is the answer to this problem: ${op1} + ${op2} - ${op3}"
     Long captcha_answer = op1 + op2 - op3
     Long captcha_hash = captcha_answer ^ hash_const
@@ -46,36 +46,19 @@ final Long XOR_CONST = 3735928559 // 0xdeadbeef
 properties([
     parameters([
         booleanParam(
-            name: 'Run_Packer', 
-            defaultValue: false, 
+            name: 'Run_Packer',
+            defaultValue: false,
             description: 'Run Packer for this build?'
         ),
         booleanParam(
-            name: 'Apply_Terraform', 
-            defaultValue: false, 
+            name: 'Apply_Terraform',
+            defaultValue: false,
             description: 'Apply Terraform plan on this build?'
         ),
         booleanParam(
-            name: 'Destroy_Terraform', 
-            defaultValue: false, 
+            name: 'Destroy_Terraform',
+            defaultValue: false,
             description: 'Destroy Terraform resources?'
-        ),
-        booleanParam(
-            name: 'Rotate_Servers', 
-            defaultValue: false, 
-            description: """Rotate server instances in Auto Scaling Group?
-                            You should do this if you changed ASG size or baked a new AMI.
-                         """
-        ),
-        string(
-            name: 'CAPTCHA_Guess', 
-            defaultValue: '', 
-            description: captcha_problem
-        ),
-        string(
-            name: 'CAPTCHA_Hash',
-            defaultValue: captcha_hash,
-            description: 'Hash for CAPTCHA answer (DO NOT modify)'
         ),
         string(
             name: 'Terraform_Targets',
@@ -84,20 +67,60 @@ properties([
                             (Use this to modify or delete less than the full set of resources'''
         ),
         text(
-            name: 'Extra_Variables', 
-            defaultValue: '', 
-            description: '''Terraform Variables to define for this run. 
+            name: 'Extra_Variables',
+            defaultValue: '',
+            description: '''Terraform Variables to define for this run.
                             Allows you to override declared variables.
                             Put one variable per line, in JSON or HCL like this:
                             associate_public_ip_address = "true"'''
-        ), 
+        ),
+        booleanParam(
+            name: 'Rotate_Servers',
+            defaultValue: false,
+            description: """Rotate server instances in Auto Scaling Group?
+                            You should do this if you changed ASG size or baked a new AMI.
+                        """
+        ),
+        booleanParam(
+            name: 'Run_JMeter',
+            defaultValue: false,
+            description: "Execute a JMeter load test against the stack"
+        ),
+        string(
+            name: 'JMETER_threads',
+            defaultValue: '2',
+            description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
+            - 2 threads, 3 instances;
+            - 4 threads, 7 instances;
+            """
+        ),
+        string(
+            name: 'JMETER_ramp_duration',
+            defaultValue: '900',
+            description: 'period in seconds of ramp-up time.'
+        ),
+        string(
+            name: 'JMETER_duration',
+            defaultValue: '1800',
+            description: 'time in seconds to the whole Jmeter test'
+        ),
+        string(
+            name: 'CAPTCHA_Guess',
+            defaultValue: '',
+            description: captcha_problem
+        ),
+        string(
+            name: 'CAPTCHA_Hash',
+            defaultValue: captcha_hash,
+            description: 'Hash for CAPTCHA answer (DO NOT modify)'
+        ),
     ])
 ])
 
 stage('Preflight') {
-       
+
     // Check CAPTCHA
-    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform
+    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
@@ -155,6 +178,15 @@ if (params.Run_Packer) {
     }
 }
 
+stage('Build CodeDeploy Archive') {
+    node {
+        unstash 'src'
+        wrap.call({
+            sh ("./codedeploy/bin/build.sh")
+        })
+    }
+}
+
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
 
@@ -200,11 +232,25 @@ if (params.Rotate_Servers) {
     stage('Rotate Servers') {
         node {
             unstash 'src'
-            ansiColor('xterm') {
-                prepEnv()
+            wrap.call({
                 sh ("./bin/rotate-asg.sh infra-demo-asg")
-            }
+            })
         }
     }
 }
 
+if (params.Run_JMeter) {
+    stage('Run JMeter') {
+        node {
+            unstash 'src'
+            wrap.call({
+                sh ("""
+                    HOST=\$(./bin/terraform.sh output route53-dns)
+                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
+                    ls -l build
+                    """)
+                archiveArtifacts artifacts: 'build/*.jtl, build/*.xml, build/*.csv, build/*.html', fingerprint: true
+            })
+        }
+    }
+}

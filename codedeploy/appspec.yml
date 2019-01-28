@@ -1,0 +1,24 @@
+---
+version: 0.0
+os: linux
+files:
+  - source: application
+    destination: /app/application
+  - source: src
+    destination: /app/src
+hooks:
+  ApplicationStop:
+    - location: bin/ApplicationStop.sh
+      timeout: 600
+  BeforeInstall:
+    - location: bin/BeforeInstall.sh
+      timeout: 30
+  AfterInstall:
+    - location: bin/AfterInstall.sh
+      timeout: 300
+  ApplicationStart:
+    - location: bin/ApplicationStart.sh
+      timeout: 120
+  ValidateService:
+    - location: bin/ValidateService.sh
+      timeout: 60

@@ -1,0 +1,26 @@
+server {
+    listen       80;
+    server_name  {{ server_name }};
+
+    location / {
+        root   {{ app_dir }};
+        index  index.html index.htm;
+    }
+
+    location /api/spin {
+        uwsgi_pass  127.0.0.1:8008;
+        include     /etc/nginx/uwsgi_params;
+        uwsgi_param UWSGI_SCRIPT /app/src/wsgi.py;
+        # following config allow us to map /api/spin to /spin on uwsgi:
+        uwsgi_param SCRIPT_NAME /api;   # set SCRIPT_NAME to match subpath
+        uwsgi_modifier1 30;             # strips SCRIPT_NAME from PATH_INFO
+    }
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+

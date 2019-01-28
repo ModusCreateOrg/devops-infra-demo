@@ -1,0 +1,104 @@
+---
+# tasks file for prepare-web-content
+
+- name: Ensure python-virtualenv is present
+  package: name={{item}} state=present
+  with_items:
+      - python-virtualenv
+
+- name: Define VirtualBox variable
+  set_fact:
+      virtualbox: true
+  when: "'VirtualBox' in ansible_bios_version"
+
+- name: Debug ansible_bios_version
+  debug:
+      msg: "{{ ansible_bios_version }}"
+
+- name: Define ec2 variable
+  set_fact:
+      ec2: true
+  when: "'amazon' in ansible_bios_version or 'Amazon EC2' in ansible_system_vendor"
+
+- name: Ensure selinux modules are present
+  package: name={{item}} state=present
+  with_items:
+      - checkpolicy
+      - policycoreutils-python
+      - policycoreutils
+
+- name: Create temp directory
+  tempfile:
+      state: directory
+      suffix: selinux
+  register: tmpdir
+  when: virtualbox
+
+- name: Copy SELinux policy to temp directory
+  copy:
+      src: my_httpd_t.te
+      dest: "{{ tmpdir.path }}"
+  when: virtualbox
+
+- name: Set up SELinux rules for Virtualbox
+  shell: |
+      cd "{{ tmpdir.path }}"
+      checkmodule -M -m -o my_httpd_t.mod my_httpd_t.te
+      semodule_package -o my_httpd_t.pp -m my_httpd_t.mod
+      semodule -i my_httpd_t.pp
+  when: virtualbox
+
+- name: Set up SELinux rules for Amazon EC2
+  shell: |
+      setsebool -P httpd_can_network_connect 1
+      setsebool -P httpd_can_network_relay 1
+      semanage fcontext -a -t httpd_sys_content_t "{{ app_dir }}(/.*)?"
+      restorecon -R "{{ app_dir }}"
+  when: ec2
+
+- name: Ensure default web server config is removed
+  file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+
+- name: Copy web server config into place
+  template:
+      src: app.conf.j2
+      dest: /etc/nginx/conf.d/app.conf
+      mode: 0640
+
+- name: Install python dependencies for app
+  pip:
+    requirements: /app/src/requirements.txt
+    virtualenv: /app/venv
+
+- name: nginx owns /app/socket
+  file:
+    path: /app/socket
+    state: directory
+    owner: nginx
+    group: nginx
+
+- name: Emperor systemd config
+  template:
+    src: emperor.service.j2
+    dest: /etc/systemd/system/emperor.service
+    owner: root
+    group: root
+    mode: 0640
+
+- name: emperor.ini
+  template:
+    src: emperor.ini.j2
+    dest: /app/emperor.ini
+    owner: root
+    group: root
+    mode: 0644
+
+- name: uwsgi app config infra-demo.ini
+  template:
+    src: infra-demo.ini.j2
+    dest: /app/src/infra-demo.ini
+    owner: root
+    group: root
+    mode: 0644

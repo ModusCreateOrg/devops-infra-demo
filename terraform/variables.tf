@@ -12,12 +12,12 @@ variable "desired_capacity" {
 
 variable "min_size" {
   description = "Minimum number of instances in AutoScaling Group"
-  default     = 1
+  default     = 2
 }
 
 variable "max_size" {
   description = "Maximum number of instances in AutoScaling Group"
-  default     = 3
+  default     = 8
 }
 
 # Route 53 related variables
@@ -33,7 +33,7 @@ variable "host" {
 
 variable "instance_type" {
   description = "EC2 instance type for servers"
-  default     = "t2.micro"
+  default     = "t2.large"
 }
 
 # Public key variables - you can specify another file for the public key
@@ -68,6 +68,7 @@ variable "trusted_cidr_blocks" {
 
   default = [
     "107.18.3.178/32",
+    "52.205.207.185/32",
   ]
 }
 
