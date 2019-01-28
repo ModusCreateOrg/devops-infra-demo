@@ -175,7 +175,7 @@
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">build/jmeter-results.xml</stringProp>
+          <stringProp name="filename">/repo/build/jmeter-results.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
