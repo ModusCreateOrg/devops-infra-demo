@@ -58,7 +58,7 @@ done
 
 (
     cd "$BUILD_DIR"
-    zip -r "$ARCHIVE" \
+    zip -q -r "$ARCHIVE" \
         appspec.yml \
         bin \
         ansible \
