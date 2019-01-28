@@ -31,6 +31,7 @@ echo "ARCHIVE=$ARCHIVE"
 # Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 BUCKET="codedeploy-$AWS_ACCOUNT_ID"
+S3_URL="s3://$BUCKET/$ARCHIVE"
 
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
@@ -73,4 +74,6 @@ docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "rm -rf /src/venv"
 
 cd "$BUILD_DIR"
-aws s3 cp "$ARCHIVE" "s3://$BUCKET/$ARCHIVE" --quiet
+aws s3 cp "$ARCHIVE" "$S3_URL" --quiet
+echo "CodeDeploy archive uploaded OK: $S3_URL"
+aws s3 ls "$S3_URL"
