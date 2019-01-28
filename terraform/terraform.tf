@@ -12,3 +12,7 @@ terraform {
     key            = "terraform.tfstate"
   }
 }
+
+provider "template" {
+  version = "~> 2.0"
+}

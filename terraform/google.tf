@@ -1,4 +1,6 @@
-provider "google" {}
+provider "google" {
+  version = "~> 1.20"
+}
 
 resource "google_storage_bucket" "website-storage" {
   name     = "${var.google_project}-website-storage"
