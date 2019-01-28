@@ -81,3 +81,7 @@ variable "project_name" {
   description = "Project name"
   default     = "devops-infra-demo"
 }
+
+variable "newrelic_license_key" {
+  description = "New Relic license key"
+}

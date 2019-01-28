@@ -39,6 +39,11 @@ if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
     echo "Overriding Google Application Credentials" 1>&2
     GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE"
 fi
+NEWRELIC_LICENSE_KEY_OVERRIDE=${NEWRELIC_LICENSE_KEY_OVERRIDE:-}
+if [[ -n "$NEWRELIC_LICENSE_KEY_OVERRIDE" ]]; then
+    echo "Overriding New Relic License Key" 1>&2
+    NEWRELIC_LICENSE_KEY="$NEWRELIC_LICENSE_KEY_OVERRIDE"
+fi
 
 # Set up Google creds in build dir for docker terraform
 mkdir -p "$BUILD_DIR"
@@ -55,6 +60,7 @@ GOOGLE_PROJECT_OVERRIDE=$(awk 'BEGIN { FS = "\"" } /project_id/{print $4}' <$GOO
 cat <<EOF >>"$ENV_FILE"
 GOOGLE_APPLICATION_CREDENTIALS=/app/build/google.json
 GOOGLE_PROJECT=$GOOGLE_PROJECT_OVERRIDE
+NEWRELIC_LICENSE_KEY=$NEWRELIC_LICENSE_KEY
 EOF
 
 # http://redsymbol.net/articles/bash-exit-traps/
@@ -90,6 +96,7 @@ function plan() {
         -lock=true \
         -input="$INPUT_ENABLED" \
         -var project_name="$PROJECT_NAME" \
+        -var newrelic_license_key="$NEWRELIC_LICENSE_KEY" \
         -var-file="/app/build/extra.tfvars" \
         -out="$TF_PLAN" \
         "$TF_DIR" \

@@ -3,6 +3,20 @@
 
 # Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
 # the trick on installing locally using "hosts: 127.0.0.1" and "connection:local"
+- name: Install New Relic Infrastructure
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  roles: 
+    - newrelic.newrelic-infra
+  vars:
+    nrinfragent_os_name: CentOS
+    nrinfragent_os_version: 7
+    nrinfragent_config:
+      license_key: ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+      log_file: /var/log/newrelic/nr-infra.log
+      log_to_stdout: false
+
 - name: Install Web Application
   hosts: 127.0.0.1
   connection: local
@@ -11,6 +25,7 @@
     - nginxinc.nginx
     - prepare-web-content
     - prepare-codedeploy
+
 
 - name: Harden Server
   hosts: 127.0.0.1

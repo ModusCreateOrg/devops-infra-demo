@@ -29,12 +29,15 @@ def wrap = { fn->
         ansiColor('xterm') {
             withCredentials([file(credentialsId: 'terraform-demo.json',
                 variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
-                sh ("""
-                    cp env.sh.sample env.sh
-                    rm -rf build
-                    mkdir build
-                """)
-                fn()
+                withCredentials([string(credentialsId: 'newrelic.license.key',
+                    variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE')]) {
+                    sh ("""
+                        cp env.sh.sample env.sh
+                        rm -rf build
+                        mkdir build
+                    """)
+                    fn()
+                }
             }
         }
 }

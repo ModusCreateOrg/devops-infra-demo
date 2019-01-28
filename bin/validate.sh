@@ -30,7 +30,8 @@ $DOCKER_PACKER validate app/packer/machines/web-server.json
 echo "Linting terraform files for correctness"
 DOCKER_TERRAFORM=$(get_docker_terraform)
 init_terraform
-$DOCKER_TERRAFORM validate
+$DOCKER_TERRAFORM validate \
+    -var 'newrelic_license_key=ZZZZ'
 echo "Linting terraform files for formatting"
 fmt=$($DOCKER_TERRAFORM fmt)
 if [[ -n "$fmt" ]]; then
