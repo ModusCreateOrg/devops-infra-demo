@@ -248,7 +248,7 @@ if (params.Run_JMeter) {
                     HOST=\$(./bin/terraform.sh output route53-dns)
                     ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
                     """)
-                archiveArtifacts artifacts: 'build/*.jtl build/*.xml build/*.csv', fingerprint: true
+                archiveArtifacts artifacts: 'build/*.jtl build/*.xml build/*.csv build/*.html', fingerprint: true
             })
         }
     }
