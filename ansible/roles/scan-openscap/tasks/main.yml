@@ -14,11 +14,11 @@
 
 - name: Scan with OpenSCAP
   shell: |
-    set -euo pipefail
-    cd {{ build_dir }}
+    eet -euo pipefail
+    ed {{ build_dir }}
     # This will have a non-zero exit if any of the scans fail, so do not fail immediately on that
     set +e
-    oscap xccdf eval --profile {{ profile }} --results {{ output_file_xml }} {{ xccdf_file }}
+    oscap xccdf eval --fetch-remote-resources --profile {{ profile }} --results {{ output_file_xml }} {{ xccdf_file }}
     set -e
     oscap xccdf generate report {{ output_file_xml }} > {{ output_file_html }}
   args:
