@@ -92,10 +92,7 @@ properties([
         string(
             name: 'JMETER_threads',
             defaultValue: '2',
-            description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
-            - 2 threads, 3 instances;
-            - 4 threads, 7 instances;
-            """
+            description: "number of jmeter threads."
         ),
         string(
             name: 'JMETER_ramp_duration',
