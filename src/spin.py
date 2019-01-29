@@ -2,10 +2,7 @@
 """This module spins the CPU."""
 import os
 import time
-import newrelic.agent
 from bottle import route, default_app, response
-
-newrelic.agent.initialize('../newrelic.ini')
 
 @route('/spin')
 def spin(delay=5.0):

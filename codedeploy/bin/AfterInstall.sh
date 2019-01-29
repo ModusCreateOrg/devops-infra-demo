@@ -21,12 +21,3 @@ ANSIBLE_DIR="$BASE_DIR/ansible"
 
 # Invoke Ansible for final set up
 ansible-playbook -l localhost "$ANSIBLE_DIR/app-AfterInstall.yml"
-
-# Configure New Relic
-NEWRELIC_CONFIG_DIR=/app
-VENV_DIR=/app/venv
-NEWRELIC_LICENSE_KEY=$(aws secretsmanager get-secret-value --secret-id newrelic_license --output text --query '[SecretString]')
-${VENV_DIR}/bin/activate
-newrelic-admin generate-config "${NEWRELIC_LICENSE_KEY}" "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig"
-sed 's/^app_name =.*$/app_name = Spin/' "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig" > "${NEWRELIC_CONFIG_DIR}/newrelic.ini"
-#rm -f "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig"

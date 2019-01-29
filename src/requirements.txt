@@ -1,4 +1,2 @@
 bottle==0.12.13
 uwsgi
-newrelic
-
