@@ -6,6 +6,10 @@ files:
     destination: /app/application
   - source: src
     destination: /app/src
+  - source: bin
+    destination: /app/bin
+  - source: ansible
+    destination: /app/ansible
 hooks:
   ApplicationStop:
     - location: bin/ApplicationStop.sh
