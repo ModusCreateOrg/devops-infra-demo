@@ -17,5 +17,10 @@
       log_file: /var/log/newrelic/nr-infra.log
       log_to_stdout: false
 
--name: Set the newrelic license key
-  local_action: bash /app/bin/set-newrelic-license-key.sh
+- name: Set the newrelic license key
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+    - command: ansible-galaxy install newrelic.newrelic-infra
+    - command: bash /app/bin/set-newrelic-license-key.sh

@@ -1,4 +1,4 @@
 #cloud-config
 runcmd:
  - sudo -u centos ansible-playbook -l localhost /app/ansible/codedeploy.yml
- - sudo -u centos ansible-playbook -l localhost /app/ansible/newrelic-infrastructure.yml
+ - ansible-playbook -l localhost /app/ansible/newrelic-infrastructure.yml
