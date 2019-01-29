@@ -3,6 +3,13 @@
 
 # Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
 # the trick on installing locally using "hosts: 127.0.0.1" and "connection:local"
+- name: Install newrelic.newrelic-infra
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+    - command: ansible-galaxy install newrelic.newrelic-infra
+
 - name: Install New Relic Infrastructure
   hosts: 127.0.0.1
   connection: local
@@ -22,5 +29,5 @@
   connection: local
   become: yes
   tasks:
-    - command: ansible-galaxy install newrelic.newrelic-infra
     - command: bash /app/bin/set-newrelic-license-key.sh
+    
