@@ -23,12 +23,12 @@ ANSIBLE_DIR="$BASE_DIR/ansible"
 ansible-playbook -l localhost "$ANSIBLE_DIR/app-AfterInstall.yml"
 
 # Configure New Relic
+# TODO: move into Ansible playbook app-AfterInstall.yml
 NEWRELIC_CONFIG_DIR=/app
 VENV_DIR=/app/venv
 # Thanks Stack Overflow https://stackoverflow.com/a/9735663/424301
 EC2_AVAIL_ZONE=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
-#shellcheck disable=SC2001
-EC2_REGION="$(echo "$EC2_AVAIL_ZONE" | sed 's/[a-z]$//')"
+EC2_REGION="$(sed 's/[a-z]$//' <<<"$EC2_AVAIL_ZONE")"
 
 NEWRELIC_LICENSE_KEY=$(aws secretsmanager get-secret-value \
     --region="$EC2_REGION" \
@@ -41,4 +41,3 @@ source ${VENV_DIR}/bin/activate
 set -u
 newrelic-admin generate-config "${NEWRELIC_LICENSE_KEY}" "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig"
 sed 's/^app_name =.*$/app_name = Spin/' "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig" > "${NEWRELIC_CONFIG_DIR}/newrelic.ini"
-#rm -f "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig"
