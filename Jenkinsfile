@@ -33,6 +33,8 @@ def wrap = { fn->
                     variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE')]) {
                     sh ("""
                         cp env.sh.sample env.sh
+                        . bin/common.sh
+                        clean_root_owned_docker_files
                         rm -rf build
                         mkdir build
                     """)
