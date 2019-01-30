@@ -82,8 +82,9 @@ resource "newrelic_dashboard" "spindash" {
     title         = "Average CPU Percent"
     row           = 3
     column        = 1
+    height        = 1
     width         = 2
-    visualization = "faceted_line_chart"
+    visualization = "line_chart"
     nrql          = "SELECT average(cpuPercent) FROM SystemSample TIMESERIES auto"
   }
 }
