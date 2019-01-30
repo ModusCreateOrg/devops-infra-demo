@@ -14,7 +14,7 @@ if os.path.isfile(NEWRELIC_INI):
 
 
 @route("/spin")
-def spin(delay=0.1, max_duration=10.0, simulate_congestion=True):
+def spin(delay=0.05, max_duration=10.0, simulate_congestion=True):
     """Spin the CPU, return the process id at the end"""
     spin.invocations += 1
     child_pid = os.getpid()
@@ -31,7 +31,7 @@ def spin(delay=0.1, max_duration=10.0, simulate_congestion=True):
     scratch = 42 + int(current_time)
     congestion_slowdown = 0.0
     if simulate_congestion:
-        congestion_slowdown = delay * 10 / (current_time - spin.last_time)
+        congestion_slowdown = delay * 2 / (current_time - spin.last_time)
     end_time = start_time + (delay + congestion_slowdown) * pareto_factor
     time_limit = start_time + (max_duration)
     calcs = 0
@@ -48,8 +48,8 @@ def spin(delay=0.1, max_duration=10.0, simulate_congestion=True):
     spin.last_time = current_time
     rate = calcs / interval
     response.set_header("Content-Type", "text/plain")
-    return "node {0} pid {1} spun {2} times over {3}s (rate {4} invoked {5} times/s)\n".format(
-        spin.node, child_pid, calcs, interval, rate, spin.invocations
+    return "node {0} pid {1} spun {2} times over {3}s (rate {4} invoked {5} times. Congestion slowdown {6}s)\n".format(
+        spin.node, child_pid, calcs, interval, rate, spin.invocations, congestion_slowdown
     )
 
 
