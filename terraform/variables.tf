@@ -98,7 +98,7 @@ variable "newrelic_apm_entities" {
 
 variable "newrelic_runbook_url" {
   description = "New Relic runbook URL"
-  default = "https://github.com/ModusCreateOrg/devops-infra-demo/wiki/runbook"
+  default     = "https://github.com/ModusCreateOrg/devops-infra-demo/wiki/runbook"
 }
 
 variable "newrelic_alert_email" {
