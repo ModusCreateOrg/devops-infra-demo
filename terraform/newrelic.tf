@@ -95,5 +95,4 @@ resource "newrelic_dashboard" "spindash" {
     visualization = "faceted_line_chart"
     nrql          = "SELECT average(cpuPercent) FROM SystemSample SINCE 1 HOUR AGO COMPARE WITH 3 HOUR AGO TIMESERIES"
   }
-  
 }
