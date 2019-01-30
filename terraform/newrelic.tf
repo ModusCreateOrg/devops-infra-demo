@@ -30,6 +30,8 @@ resource "newrelic_alert_condition" "spin-appdex" {
     time_function = "all"
   }
 
+  condition_scope = "application"
+
   count = "${length(var.newrelic_apm_entities) > 0 ? 1 : 0}"
 }
 
