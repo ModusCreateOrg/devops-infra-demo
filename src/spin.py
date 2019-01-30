@@ -28,8 +28,9 @@ def spin(delay=0.1):
 
     current_time = start_time
     scratch = 42 + int(current_time)
-    end_time = start_time + pareto_factor * (delay + (delay * 10 / (current_time - spin.last_time)))
-    time_limit = start_time + (delay * 50)
+    congestion_slowdown = delay * 10 / (current_time - spin.last_time)
+    end_time = start_time + (delay + congestion_slowdown) * pareto_factor
+    time_limit = start_time + (delay * 100)
     calcs = 0
     while current_time < end_time:
         calcs += 1
