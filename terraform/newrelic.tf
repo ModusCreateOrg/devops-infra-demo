@@ -55,3 +55,25 @@ resource "newrelic_alert_policy_channel" "alert_email" {
 
   count = "${length(var.newrelic_alert_email) > 0 ? 1 : 0}"
 }
+
+# Add a dashboard
+resource "newrelic_dashboard" "spindash" {
+  title = "Spin Dashboard"
+
+  widget {
+    title         = "Average Transaction Duration"
+    row           = 1
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT AVERAGE(duration) from Transaction FACET appName TIMESERIES auto"
+  }
+
+  widget {
+    title         = "Page Views"
+    row           = 1
+    column        = 3
+    visualization = "billboard"
+    nrql          = "SELECT count(*) FROM PageView SINCE 1 week ago"
+  }
+}
