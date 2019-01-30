@@ -2,17 +2,19 @@
 """This module spins the CPU."""
 import os
 import time
-import newrelic.agent
 import random
+import socket
+import urllib2
+import newrelic.agent
 from bottle import route, default_app, response, HTTPError
 
-newrelic_ini = '../newrelic.ini'
-if os.path.isfile(newrelic_ini):
-    newrelic.agent.initialize(newrelic_ini)
+NEWRELIC_INI = "../newrelic.ini"
+if os.path.isfile(NEWRELIC_INI):
+    newrelic.agent.initialize(NEWRELIC_INI)
 
 
-@route('/spin')
-def spin(delay=0.1):
+@route("/spin")
+def spin(delay=0.1, max_duration=10.0, simulate_congestion=True):
     """Spin the CPU, return the process id at the end"""
     spin.invocations += 1
     child_pid = os.getpid()
@@ -25,12 +27,13 @@ def spin(delay=0.1):
     pareto_factor = random.paretovariate(alpha)
     start_time = time.time()
 
-
     current_time = start_time
     scratch = 42 + int(current_time)
-    congestion_slowdown = delay * 10 / (current_time - spin.last_time)
+    congestion_slowdown = 0.0
+    if simulate_congestion:
+        congestion_slowdown = delay * 10 / (current_time - spin.last_time)
     end_time = start_time + (delay + congestion_slowdown) * pareto_factor
-    time_limit = start_time + (delay * 100)
+    time_limit = start_time + (max_duration)
     calcs = 0
     while current_time < end_time:
         calcs += 1
@@ -38,15 +41,29 @@ def spin(delay=0.1):
         current_time = time.time()
         interval = current_time - start_time
         if current_time > time_limit:
-            raise HTTPError(500, "Allowed transaction time exceeded ({} ms elapsed)".format(interval))
+            raise HTTPError(
+                500,
+                "Allowed transaction time exceeded ({} ms elapsed)".format(interval),
+            )
     spin.last_time = current_time
     rate = calcs / interval
-    response.set_header('Content-Type', 'text/plain')
-    return ('pid {0} spun {1} times over {2}s (rate {3} invoked {4} times/s)\n'
-            .format(child_pid, calcs, interval, rate, spin.invocations))
+    response.set_header("Content-Type", "text/plain")
+    return "node {0} pid {1} spun {2} times over {3}s (rate {4} invoked {5} times/s)\n".format(
+        spin.node, child_pid, calcs, interval, rate, spin.invocations
+    )
+
 
 spin.invocations = 0
 spin.last_time = time.time() - 10
 spin.slowdown = 0
+try:
+    # Thanks stack overflow https://stackoverflow.com/a/43816449/424301
+    spin.node = urllib2.urlopen(
+        "http://169.254.169.254/latest/meta-data/instance-id", timeout=1
+    ).read()
+# Thanks stack overflow https://stackoverflow.com/questions/2712524/handling-urllib2s-timeout-python
+except urllib2.URLError:
+    # Thanks stack overflow: https://stackoverflow.com/a/4271755/424301
+    spin.node = socket.gethostname()
 
 application = default_app()
