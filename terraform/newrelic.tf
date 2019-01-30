@@ -71,7 +71,7 @@ resource "newrelic_dashboard" "spindash" {
 
   widget {
     title         = "Average Apdex"
-    row           = 3
+    row           = 2
     column        = 1
     width         = 2
     visualization = "faceted_line_chart"
@@ -80,7 +80,7 @@ resource "newrelic_dashboard" "spindash" {
 
   widget {
     title         = "Average CPU Percent"
-    row           = 4
+    row           = 3
     column        = 1
     width         = 2
     visualization = "faceted_line_chart"
