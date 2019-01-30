@@ -89,7 +89,7 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
-    title         = "Throughput faceted"
+    title         = "Throughput (faceted)"
     row           = 4
     column        = 1
     height        = 1
