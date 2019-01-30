@@ -70,8 +70,17 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
-    title         = "Average Apdex"
-    row           = 1
+    title         = "Average Apdex 1"
+    row           = 2
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT apdex(duration, 0.5) FROM Transaction SINCE 3 HOURS AGO COMPARE WITH 6 HOURS AGO TIMESERIES"
+  }
+
+  widget {
+    title         = "Average Apdex 2"
+    row           = 3
     column        = 1
     width         = 2
     visualization = "faceted_line_chart"
@@ -80,18 +89,18 @@ resource "newrelic_dashboard" "spindash" {
 
   widget {
     title         = "Average CPU Percent"
-    row           = 1
+    row           = 4
     column        = 1
     width         = 2
     visualization = "faceted_line_chart"
     nrql          = "SELECT average(cpuPercent) FROM SystemSample SINCE 1 HOUR AGO COMPARE WITH 3 HOUR AGO TIMESERIES"
   }
 
-  widget {
-    title         = "Page Views"
-    row           = 1
-    column        = 3
-    visualization = "billboard"
-    nrql          = "SELECT count(*) FROM PageView SINCE 1 week ago"
-  }
+#  widget {
+#    title         = "Page Views"
+#    row           = 1
+#    column        = 3
+#    visualization = "billboard"
+#    nrql          = "SELECT count(*) FROM PageView SINCE 1 week ago"
+#  }
 }
