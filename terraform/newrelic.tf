@@ -55,3 +55,56 @@ resource "newrelic_alert_policy_channel" "alert_email" {
 
   count = "${length(var.newrelic_alert_email) > 0 ? 1 : 0}"
 }
+
+# Add a dashboard
+resource "newrelic_dashboard" "spindash" {
+  title = "Spin Dashboard"
+
+  widget {
+    title         = "Average Transaction Duration"
+    row           = 1
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT AVERAGE(duration) from Transaction FACET appName TIMESERIES auto"
+  }
+
+  widget {
+    title         = "Average Apdex"
+    row           = 2
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT apdex(duration, t: 0.4) from Transaction FACET appName TIMESERIES auto"
+  }
+
+  widget {
+    title         = "Average CPU Percent"
+    row           = 3
+    column        = 1
+    height        = 1
+    width         = 2
+    visualization = "line_chart"
+    nrql          = "SELECT average(cpuPercent) FROM SystemSample TIMESERIES auto"
+  }
+
+  widget {
+    title         = "Throughput (by host)"
+    row           = 4
+    column        = 1
+    height        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT count(*) AS 'rpm' FROM Transaction WHERE appName = 'Spin' FACET host SINCE 30 minutes ago TIMESERIES 1 minute"
+  }
+
+  widget {
+    title         = "Throughput (total)"
+    row           = 4
+    column        = 1
+    height        = 1
+    width         = 2
+    visualization = "line_chart"
+    nrql          = "SELECT count(*) AS 'rpm' FROM Transaction WHERE appName = 'Spin' SINCE 30 minutes ago TIMESERIES 1 minute"
+  }
+}
