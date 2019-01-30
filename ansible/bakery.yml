@@ -14,7 +14,7 @@
     nrinfragent_os_version: 7
     nrinfragent_config:
       license_key: ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-      log_file: /var/log/newrelic/nr-infra.log
+      log_file: /var/log/newrelic-infra/nr-infra.log
       log_to_stdout: false
 
 - name: Install Web Application
