@@ -70,6 +70,24 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
+    title         = "Average Apdex"
+    row           = 1
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT apdex(duration, t: 0.4) from Transaction FACET appName TIMESERIES auto"
+  }
+
+  widget {
+    title         = "Average CPU Percent"
+    row           = 1
+    column        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT average(cpuPercent) FROM SystemSample SINCE 1 HOUR AGO COMPARE WITH 3 HOUR AGO TIMESERIES"
+  }
+
+  widget {
     title         = "Page Views"
     row           = 1
     column        = 3
