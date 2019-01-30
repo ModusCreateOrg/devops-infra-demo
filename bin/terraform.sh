@@ -93,6 +93,7 @@ function output () {
 
 function plan() {
     local extra
+    local nr_app_id
     local output
     local -i retcode
     local targets
@@ -101,6 +102,15 @@ function plan() {
     targets=$(get_targets)
 
     set +e
+
+    nr_app_id=$(curl \
+        -s \
+        -X GET \
+        'https://api.newrelic.com/v2/applications.json' \
+        -H "X-Api-Key:${NEWRELIC_API_KEY}" \
+        -d "filter[name]=${NEWRELIC_APP_NAME}" \
+        | jq '.applications[].id')
+    
     #shellcheck disable=SC2086
     $DOCKER_TERRAFORM plan \
         $extra \
@@ -111,6 +121,7 @@ function plan() {
         -var newrelic_license_key="$NEWRELIC_LICENSE_KEY" \
         -var newrelic_api_key="$NEWRELIC_API_KEY" \
         -var newrelic_alert_email="$NEWRELIC_ALERT_EMAIL" \
+        -var newrelic_apm_entities="[$nr_app_id]" \
         -var-file="/app/build/extra.tfvars" \
         -out="$TF_PLAN" \
         "$TF_DIR" \
