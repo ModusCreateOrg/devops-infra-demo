@@ -27,10 +27,17 @@ def get_captcha(Long hash_const) {
 
 def wrap = { fn->
         ansiColor('xterm') {
-            withCredentials([file(credentialsId: 'terraform-demo.json',
-                variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
-                withCredentials([string(credentialsId: 'newrelic.license.key',
-                    variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE')]) {
+            withCredentials(
+                [
+                    file(credentialsId: 'terraform-demo.json',
+                         variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE'),
+                    string(credentialsId: 'newrelic.license.key',
+                           variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE'),
+                    string(credentialsId: 'newrelic.api.key',
+                           variable: 'NEWRELIC_API_KEY_OVERRIDE'),
+                    string(credentialsId: 'newrelic.alert.email',
+                           variable: 'NEWRELIC_ALERT_EMAIL_OVERRIDE'),
+                ]) {
                     sh ("""
                         cp env.sh.sample env.sh
                         rm -rf build
