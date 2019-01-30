@@ -4,6 +4,7 @@
 
 provider "newrelic" {
   api_key = "${var.newrelic_api_key}"
+  version = "~> 1.2"
 }
 
 # Create an alert policy
