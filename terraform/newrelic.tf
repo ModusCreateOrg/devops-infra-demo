@@ -89,12 +89,22 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
+    title         = "Throughput faceted"
+    row           = 4
+    column        = 1
+    height        = 1
+    width         = 2
+    visualization = "faceted_line_chart"
+    nrql          = "SELECT count(*) AS 'rpm' FROM Transaction WHERE appName = 'Spin' FACET host SINCE 30 minutes ago TIMESERIES 1 minute"
+  }
+
+  widget {
     title         = "Throughput"
     row           = 4
     column        = 1
     height        = 1
     width         = 2
     visualization = "line_chart"
-    nrql          = "SELECT count(*) AS 'rpm' FROM Transaction WHERE appName = 'Spin' FACET host SINCE 30 minutes ago TIMESERIES 1 minute"
+    nrql          = "SELECT count(*) AS 'rpm' FROM Transaction WHERE appName = 'Spin' SINCE 30 minutes ago TIMESERIES 1 minute"
   }
 }
