@@ -10,4 +10,11 @@
   become: yes
   tasks:
     - command: bash /app/bin/set-newrelic-license-key.sh
+
+- name: Restart newrelic
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+    - command: service newrelic-infra restart
     
