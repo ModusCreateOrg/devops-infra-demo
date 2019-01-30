@@ -23,6 +23,7 @@ Instructions
 * [Docker](https://docker.com/) (tested with 18.05.0-ce)
 * [Packer](https://www.packer.io/) (tested with 1.0.3)
 * [Terraform](https://www.terraform.io/) (tested with  v0.11.7)
+* [JQ](https://stedolan.github.io/jq/) (tested with 1.3 and 1.5)
 
 Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
 
@@ -115,6 +116,8 @@ A JMeter test harness that will allow testing of a the application
 ### Jenkins
 
 A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform, package a CodeDeploy application, and even run JMeter performance tests. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account, and write access to the S3 bucket used for storing CodeDeploy applications. Packer needs this in order to create AMIs, key pairs, etc, Terraform needs this to create a VPC and EC2 resources, and CodeDeploy needs this to store the artifact it creates. This could be pared down further through some careful logging and role work.
+
+The Jenkins executor running this job needs to have both a recent Docker and the jq utility (version 1.3 or higher) installed.
 
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
