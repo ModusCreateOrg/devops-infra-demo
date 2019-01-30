@@ -70,16 +70,7 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
-    title         = "Average Apdex 1"
-    row           = 2
-    column        = 1
-    width         = 2
-    visualization = "faceted_line_chart"
-    nrql          = "SELECT apdex(duration, 0.5) FROM Transaction SINCE 3 HOURS AGO COMPARE WITH 6 HOURS AGO TIMESERIES"
-  }
-
-  widget {
-    title         = "Average Apdex 2"
+    title         = "Average Apdex"
     row           = 3
     column        = 1
     width         = 2
