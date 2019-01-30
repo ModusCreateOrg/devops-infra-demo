@@ -182,7 +182,7 @@ stage('Build CodeDeploy Archive') {
     node {
         unstash 'src'
         wrap.call({
-            sh ("./codedeploy/bin/build.sh")
+            sh ("./bin/build-codedeploy.sh")
         })
     }
 }
