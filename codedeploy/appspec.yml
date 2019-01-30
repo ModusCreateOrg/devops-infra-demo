@@ -6,19 +6,23 @@ files:
     destination: /app/application
   - source: src
     destination: /app/src
+  - source: bin
+    destination: /app/bin
+  - source: ansible
+    destination: /app/ansible
 hooks:
   ApplicationStop:
-    - location: bin/ApplicationStop.sh
+    - location: bin/codedeploy/ApplicationStop.sh
       timeout: 600
   BeforeInstall:
-    - location: bin/BeforeInstall.sh
+    - location: bin/codedeploy/BeforeInstall.sh
       timeout: 30
   AfterInstall:
-    - location: bin/AfterInstall.sh
+    - location: bin/codedeploy/AfterInstall.sh
       timeout: 300
   ApplicationStart:
-    - location: bin/ApplicationStart.sh
+    - location: bin/codedeploy/ApplicationStart.sh
       timeout: 120
   ValidateService:
-    - location: bin/ValidateService.sh
+    - location: bin/codedeploy/ValidateService.sh
       timeout: 60

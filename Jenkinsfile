@@ -38,11 +38,7 @@ def wrap = { fn->
                 string(credentialsId: 'newrelic.alert.email',
                        variable: 'NEWRELIC_ALERT_EMAIL_OVERRIDE'),
             ]) {
-                sh ("""
-                    cp env.sh.sample env.sh
-                    rm -rf build
-                    mkdir build
-                """)
+                sh ("bin/clean-workspace.sh")
                 fn()
             }
     }
@@ -188,7 +184,7 @@ stage('Build CodeDeploy Archive') {
     node {
         unstash 'src'
         wrap.call({
-            sh ("./codedeploy/bin/build.sh")
+            sh ("./bin/build-codedeploy.sh")
         })
     }
 }
