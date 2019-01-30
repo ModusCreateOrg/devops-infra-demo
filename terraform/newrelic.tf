@@ -89,7 +89,7 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
-    title         = "Throughput (faceted)"
+    title         = "Throughput (by host)"
     row           = 4
     column        = 1
     height        = 1
@@ -99,7 +99,7 @@ resource "newrelic_dashboard" "spindash" {
   }
 
   widget {
-    title         = "Throughput"
+    title         = "Throughput (total)"
     row           = 4
     column        = 1
     height        = 1
