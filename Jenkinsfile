@@ -31,13 +31,7 @@ def wrap = { fn->
                 variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
                 withCredentials([string(credentialsId: 'newrelic.license.key',
                     variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE')]) {
-                    sh ("""
-                        cp env.sh.sample env.sh
-                        . bin/common.sh
-                        clean_root_owned_docker_files
-                        rm -rf build
-                        mkdir build
-                    """)
+                    sh ("bin/clean-workspace.sh")
                     fn()
                 }
             }
