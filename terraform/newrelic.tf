@@ -18,9 +18,9 @@ resource "newrelic_alert_condition" "spin-appdex" {
 
   name        = "spin-appdex"
   type        = "apm_app_metric"
-  entities    = ["179953338"]                                       # You can look this up in New Relic
+  entities    = "${var.newrelic_apm_entities}"
   metric      = "apdex"
-  runbook_url = "https://github.com/devops-infra-demo/wiki/runbook"
+  runbook_url = "${var.newrelic_runbook_url}"
 
   term {
     duration      = 5
