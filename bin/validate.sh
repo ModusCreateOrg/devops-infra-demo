@@ -31,7 +31,9 @@ echo "Linting terraform files for correctness"
 DOCKER_TERRAFORM=$(get_docker_terraform)
 init_terraform
 $DOCKER_TERRAFORM validate \
-    -var 'newrelic_license_key=ZZZZ'
+    -var 'newrelic_license_key=ZZZZ' \
+    -var 'newrelic_api_key=ZZZZ' \
+    -var 'newrelic_alert_email=ferd.berferd@example.com' \
 echo "Linting terraform files for formatting"
 fmt=$($DOCKER_TERRAFORM fmt)
 if [[ -n "$fmt" ]]; then

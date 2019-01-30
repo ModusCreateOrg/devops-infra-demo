@@ -85,3 +85,18 @@ variable "project_name" {
 variable "newrelic_license_key" {
   description = "New Relic license key"
 }
+
+variable "newrelic_api_key" {
+  description = "New Relic api key"
+}
+
+variable "newrelic_apm_entities" {
+  description = "New Relic APM entity IDs"
+  type        = "list"
+  default     = []
+}
+
+variable "newrelic_alert_email" {
+  description = "New Relic alert email"
+  default     = ""
+}
