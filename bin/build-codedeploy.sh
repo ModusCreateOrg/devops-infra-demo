@@ -13,11 +13,9 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE_DIR="$DIR/.."
 BUILD_DIR="$BASE_DIR/build"
-ANSIBLE_DIR="$BASE_DIR/../ansible"
-APPLICTION_DIR="$BASE_DIR/../application"
-SRC_DIR="$BASE_DIR/../src"
-VENV_DIR="$BASE_DIR/../venv"
-DOCKER_DIR="$BASE_DIR/.."
+ANSIBLE_DIR="$BASE_DIR/ansible"
+APPLICTION_DIR="$BASE_DIR/application"
+SRC_DIR="$BASE_DIR/src"
 
 GIT_REV="$(git rev-parse --short HEAD)"
 BUILD_NUMBER=${BUILD_NUMBER:-0}
@@ -39,20 +37,22 @@ fi
 mkdir -p "$BUILD_DIR/socket"
 
 echo Build docker container $CONTAINERNAME
-docker build -f=Dockerfile -t "$CONTAINERNAME" "$DOCKER_DIR"
+docker build -f=Dockerfile -t "$CONTAINERNAME" "$BASE_DIR"
 
 echo Create python virtual environment
-docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
-    "mkdir -p /src/venv ; \
-    cp -fa /app/venv/* /src/venv"
+docker run \
+    --rm \
+    -v "$BASE_DIR:/src" \
+    "$CONTAINERNAME" \
+    /bin/bash -c \
+        "mkdir -p /src/build/venv ; \
+        cp -fa /app/venv/* /src/build/venv"
 
 SOURCES="$BASE_DIR/bin
 $ANSIBLE_DIR
 $APPLICTION_DIR
 $SRC_DIR
-$BASE_DIR/appspec.yml
-$BASE_DIR/bin
-$VENV_DIR"
+$BASE_DIR/codedeploy/appspec.yml"
 for src in $SOURCES; do
     cp -a "$src" "$BUILD_DIR"
 done
@@ -70,7 +70,7 @@ done
 )
 
 echo Remove docker generated files
-docker run --rm -v "$DOCKER_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
+docker run --rm -v "$BASE_DIR:/src" "$CONTAINERNAME" /bin/bash -c \
     "rm -rf /src/venv"
 
 cd "$BUILD_DIR"
