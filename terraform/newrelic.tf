@@ -96,11 +96,4 @@ resource "newrelic_dashboard" "spindash" {
     nrql          = "SELECT average(cpuPercent) FROM SystemSample SINCE 1 HOUR AGO COMPARE WITH 3 HOUR AGO TIMESERIES"
   }
 
-#  widget {
-#    title         = "Page Views"
-#    row           = 1
-#    column        = 3
-#    visualization = "billboard"
-#    nrql          = "SELECT count(*) FROM PageView SINCE 1 week ago"
-#  }
 }
