@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
+# clean workspace
 #
-# ApplicationStart.sh
-#
-# AWS CodeDeploy Application Start hook script
-
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
-IFS=$'\n\t'
 
 # Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
 ${DEBUG:-false} && set -vx
@@ -16,8 +12,14 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE_DIR="$DIR/../.."
-ANSIBLE_DIR="$BASE_DIR/ansible"
+BASE_DIR="$DIR/.."
+BUILD_DIR="$BASE_DIR/build"
+export BASE_DIR
 
-# Invoke Ansible for final set up
-ansible-playbook -l localhost "$ANSIBLE_DIR/app-StartServer.yml"
+# shellcheck disable=SC1090
+. "$DIR/common.sh"
+
+cp "$BASE_DIR/env.sh.sample" "$BASE_DIR/env.sh"
+clean_root_owned_docker_files
+rm -rf "$BUILD_DIR"
+mkdir "$BUILD_DIR"
