@@ -92,12 +92,12 @@ properties([
             description: "Execute a JMeter load test against the stack"
         ),
         string(
-            name: 'JMETER_threads',
+            name: 'JMETER_num_threads',
             defaultValue: '2',
             description: "number of jmeter threads."
         ),
         string(
-            name: 'JMETER_ramp_duration',
+            name: 'JMETER_ramp_time',
             defaultValue: '900',
             description: 'period in seconds of ramp-up time.'
         ),
@@ -248,7 +248,7 @@ if (params.Run_JMeter) {
             wrap.call({
                 sh ("""
                     HOST=\$(./bin/terraform.sh output route53-dns)
-                    ./bin/jmeter.sh -Jnum_threads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
+                    ./bin/jmeter.sh -Jnum_threads=${params.JMETER_num_threads} -Jramp_time=${params.JMETER_ramp_time} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
                     ls -l build
                     """)
                 archiveArtifacts artifacts: 'build/*.jtl, build/*.xml, build/*.csv, build/*.html', fingerprint: true
