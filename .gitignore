@@ -12,4 +12,6 @@
 __pycache__
 build/
 jmeter.log
+scan-xccdf-results.html
+scan-xccdf-results.xml
 venv/

@@ -64,6 +64,15 @@
                 "arn:aws:s3:::aws-codedeploy-us-west-2/*",
                 "arn:aws:s3:::aws-codedeploy-us-east-1/*"
             ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:*:*:secret:newrelic_license*"
+            ]
         }
     ]
 }

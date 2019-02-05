@@ -1,0 +1,21 @@
+---
+# Use ansible to install the newrelic infra agent.
+
+# Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
+# the trick on installing locally using "hosts: 127.0.0.1" and "connection:local"
+
+- name: Set the newrelic license key
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+    - command: bash /app/bin/set-newrelic-license-key.sh
+
+- name: Restart newrelic-infra
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  service:
+    name: newerelic-infra
+    state: restarted
+    

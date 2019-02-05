@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# AfterInstall.sh
+# ApplicationStart.sh
 #
-# AWS CodeDeploy After Install hook script
+# AWS CodeDeploy Application Start hook script
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
@@ -16,8 +16,8 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE_DIR="$DIR/.."
+BASE_DIR="$DIR/../.."
 ANSIBLE_DIR="$BASE_DIR/ansible"
 
 # Invoke Ansible for final set up
-ansible-playbook -l localhost "$ANSIBLE_DIR/app-AfterInstall.yml"
+ansible-playbook -l localhost "$ANSIBLE_DIR/app-StartServer.yml"

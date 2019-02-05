@@ -33,7 +33,7 @@ variable "host" {
 
 variable "instance_type" {
   description = "EC2 instance type for servers"
-  default     = "t2.large"
+  default     = "c5.large"
 }
 
 # Public key variables - you can specify another file for the public key
@@ -80,4 +80,28 @@ variable "associate_public_ip_address" {
 variable "project_name" {
   description = "Project name"
   default     = "devops-infra-demo"
+}
+
+variable "newrelic_license_key" {
+  description = "New Relic license key"
+}
+
+variable "newrelic_api_key" {
+  description = "New Relic api key"
+}
+
+variable "newrelic_apm_entities" {
+  description = "New Relic APM entity IDs"
+  type        = "list"
+  default     = []
+}
+
+variable "newrelic_runbook_url" {
+  description = "New Relic runbook URL"
+  default     = "https://github.com/ModusCreateOrg/devops-infra-demo/wiki/runbook"
+}
+
+variable "newrelic_alert_email" {
+  description = "New Relic alert email"
+  default     = ""
 }

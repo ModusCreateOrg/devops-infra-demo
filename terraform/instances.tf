@@ -93,7 +93,7 @@ resource "aws_autoscaling_group" "infra-demo-web-asg" {
   max_size = "${var.max_size}"
 
   launch_configuration = "${aws_launch_configuration.infra-demo-web-lc.name}"
-  health_check_type    = "EC2"
+  health_check_type    = "ELB"
 
   vpc_zone_identifier = [
     "${module.vpc.public_subnets}",

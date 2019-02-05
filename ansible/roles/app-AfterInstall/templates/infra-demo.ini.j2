@@ -3,12 +3,14 @@ venv = /app/venv
 wsgi-file = /app/src/wsgi.py
 chdir = /app/src
 master = 1
-workers = 2
-threads = 8
+workers = 64
+threads = 1
 lazy-apps = 1
 wsgi-env-behaviour = holy
-enable-threads = 1
+enable-threads = 0
 http-auto-chunked = 1
 http-keepalive = 1
 uwsgi-socket = 127.0.0.1:8008
-
+harakiri = 120
+harakiri-verbose
+max-requests = 2048

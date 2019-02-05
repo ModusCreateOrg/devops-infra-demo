@@ -26,17 +26,22 @@ def get_captcha(Long hash_const) {
 }
 
 def wrap = { fn->
-        ansiColor('xterm') {
-            withCredentials([file(credentialsId: 'terraform-demo.json',
-                variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE')]) {
-                sh ("""
-                    cp env.sh.sample env.sh
-                    rm -rf build
-                    mkdir build
-                """)
+    ansiColor('xterm') {
+        withCredentials(
+            [
+                file(credentialsId: 'terraform-demo.json',
+                     variable: 'GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE'),
+                string(credentialsId: 'newrelic.license.key',
+                       variable: 'NEWRELIC_LICENSE_KEY_OVERRIDE'),
+                string(credentialsId: 'newrelic.api.key',
+                       variable: 'NEWRELIC_API_KEY_OVERRIDE'),
+                string(credentialsId: 'newrelic.alert.email',
+                       variable: 'NEWRELIC_ALERT_EMAIL_OVERRIDE'),
+            ]) {
+                sh ("bin/clean-workspace.sh")
                 fn()
             }
-        }
+    }
 }
 
 final Long XOR_CONST = 3735928559 // 0xdeadbeef
@@ -87,15 +92,12 @@ properties([
             description: "Execute a JMeter load test against the stack"
         ),
         string(
-            name: 'JMETER_threads',
+            name: 'JMETER_num_threads',
             defaultValue: '2',
-            description: """number of jmeter threads. Resulting ASG stable sizes for t2.large instances are:
-            - 2 threads, 3 instances;
-            - 4 threads, 7 instances;
-            """
+            description: "number of jmeter threads."
         ),
         string(
-            name: 'JMETER_ramp_duration',
+            name: 'JMETER_ramp_time',
             defaultValue: '900',
             description: 'period in seconds of ramp-up time.'
         ),
@@ -182,7 +184,7 @@ stage('Build CodeDeploy Archive') {
     node {
         unstash 'src'
         wrap.call({
-            sh ("./codedeploy/bin/build.sh")
+            sh ("./bin/build-codedeploy.sh")
         })
     }
 }
@@ -246,7 +248,7 @@ if (params.Run_JMeter) {
             wrap.call({
                 sh ("""
                     HOST=\$(./bin/terraform.sh output route53-dns)
-                    ./bin/jmeter.sh -Jthreads=${params.JMETER_threads} -Jramp_duration=${params.JMETER_ramp_duration} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
+                    ./bin/jmeter.sh -Jnum_threads=${params.JMETER_num_threads} -Jramp_time=${params.JMETER_ramp_time} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
                     ls -l build
                     """)
                 archiveArtifacts artifacts: 'build/*.jtl, build/*.xml, build/*.csv, build/*.html', fingerprint: true

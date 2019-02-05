@@ -15,3 +15,6 @@
 # And the ModusCreateOrg fork has been fixed to avoid running stuff from /tmp
 - src: https://github.com/ModusCreateOrg/ansible-aws-codedeploy-agent
 
+# New Relic Infrastructure
+- src: newrelic.newrelic-infra
+

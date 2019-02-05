@@ -39,6 +39,21 @@ if [[ -n "$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE" ]]; then
     echo "Overriding Google Application Credentials" 1>&2
     GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE"
 fi
+NEWRELIC_LICENSE_KEY_OVERRIDE=${NEWRELIC_LICENSE_KEY_OVERRIDE:-}
+if [[ -n "$NEWRELIC_LICENSE_KEY_OVERRIDE" ]]; then
+    echo "Overriding New Relic License Key" 1>&2
+    NEWRELIC_LICENSE_KEY="$NEWRELIC_LICENSE_KEY_OVERRIDE"
+fi
+NEWRELIC_API_KEY_OVERRIDE=${NEWRELIC_API_KEY_OVERRIDE:-}
+if [[ -n "$NEWRELIC_API_KEY_OVERRIDE" ]]; then
+    echo "Overriding New Relic API Key" 1>&2
+    NEWRELIC_API_KEY="$NEWRELIC_API_KEY_OVERRIDE"
+fi
+NEWRELIC_ALERT_EMAIL_OVERRIDE=${NEWRELIC_ALERT_EMAIL_OVERRIDE:-}
+if [[ -n "$NEWRELIC_ALERT_EMAIL_OVERRIDE" ]]; then
+    echo "Overriding New Relic Alert Email" 1>&2
+    NEWRELIC_ALERT_EMAIL="$NEWRELIC_ALERT_EMAIL_OVERRIDE"
+fi
 
 # Set up Google creds in build dir for docker terraform
 mkdir -p "$BUILD_DIR"
@@ -55,6 +70,9 @@ GOOGLE_PROJECT_OVERRIDE=$(awk 'BEGIN { FS = "\"" } /project_id/{print $4}' <$GOO
 cat <<EOF >>"$ENV_FILE"
 GOOGLE_APPLICATION_CREDENTIALS=/app/build/google.json
 GOOGLE_PROJECT=$GOOGLE_PROJECT_OVERRIDE
+NEWRELIC_LICENSE_KEY=$NEWRELIC_LICENSE_KEY
+NEWRELIC_API_KEY=$NEWRELIC_API_KEY
+NEWRELIC_ALERT_EMAIL=$NEWRELIC_ALERT_EMAIL
 EOF
 
 # http://redsymbol.net/articles/bash-exit-traps/
@@ -75,14 +93,24 @@ function output () {
 
 function plan() {
     local extra
+    local nr_app_id
     local output
     local -i retcode
     local targets
-    extra=${1:-}
+    extra="$*"
     output="$(mktemp)"
     targets=$(get_targets)
 
     set +e
+
+    nr_app_id=$(curl \
+        -s \
+        -X GET \
+        'https://api.newrelic.com/v2/applications.json' \
+        -H "X-Api-Key:${NEWRELIC_API_KEY}" \
+        -d "filter[name]=${NEWRELIC_APP_NAME}" \
+        | jq '.applications[].id')
+    
     #shellcheck disable=SC2086
     $DOCKER_TERRAFORM plan \
         $extra \
@@ -90,6 +118,10 @@ function plan() {
         -lock=true \
         -input="$INPUT_ENABLED" \
         -var project_name="$PROJECT_NAME" \
+        -var newrelic_license_key="$NEWRELIC_LICENSE_KEY" \
+        -var newrelic_api_key="$NEWRELIC_API_KEY" \
+        -var newrelic_alert_email="$NEWRELIC_ALERT_EMAIL" \
+        -var newrelic_apm_entities="[$nr_app_id]" \
         -var-file="/app/build/extra.tfvars" \
         -out="$TF_PLAN" \
         "$TF_DIR" \
