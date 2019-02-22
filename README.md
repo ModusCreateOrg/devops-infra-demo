@@ -11,7 +11,7 @@ See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-de
 
 See the branch [demo-20181205](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20181205) for the code for the demo for the [Ansible NYC talk _Ansible Image Bakeries: Best Practices & Pitfalls_](https://www.meetup.com/Ansible-NYC/events/256728741/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/ansible-image-bakeries-best-practices-and-pitfalls).
  
-See the branch [demo-20190130](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180130) for the code for the demo for the [Big Apple DevOps  talk _Monitoring and Alerting as code with Terraform and New Relic_](https://www.meetup.com/Big-Apple-DevOps/events/257744262/).
+See the branch [demo-20190130](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180130) for the code for the demo for the [Big Apple DevOps  talk _Monitoring and Alerting as code with Terraform and New Relic_](https://www.meetup.com/Big-Apple-DevOps/events/257744262/). Slides from this presentation are on [Slideshare](https://www.slideshare.net/RichardBullingtonMcG/monitoring-and-alerting-as-code-with-terraform-and-new-relic).
  
 Instructions
 ------------
@@ -112,7 +112,8 @@ The application contains both a simple HTML web site, and a Python app that has 
 
 ### JMeter
 
-A JMeter test harness that will allow testing of a the application 
+A JMeter test harness allows testing of the application at scale. This uses a Docker container to run JMeter, and has a Jenkins test harness to allow you to run JMeter through Jenkins and record its outputs. See [`bin/jmeter.sh`](bin/jmeter.sh) and the JMeter test file [`jmeter/api-spin.jmx`](jmeter/api-spin.jmx).
+
 ### Jenkins
 
 A `Jenkinsfile` is provided that will allow Jenkins to execute Packer and Terraform, package a CodeDeploy application, and even run JMeter performance tests. In order for Jenkins to do this, it needs to have AWS credentials set up, preferably through an IAM role, granting full control of EC2 and VPC resources in that account, and write access to the S3 bucket used for storing CodeDeploy applications. Packer needs this in order to create AMIs, key pairs, etc, Terraform needs this to create a VPC and EC2 resources, and CodeDeploy needs this to store the artifact it creates. This could be pared down further through some careful logging and role work.
@@ -121,7 +122,7 @@ The Jenkins executor running this job needs to have both a recent Docker and the
 
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
-This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id "terraform-demo.json". You will need to add that to your Jenkins server's credentials.
+This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id `terraform-demo.json`. You will need to add that to your Jenkins server's credentials.
 
 # Modus Create
 
