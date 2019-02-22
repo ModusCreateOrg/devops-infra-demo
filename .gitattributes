@@ -1,0 +1,2 @@
+application/assets/**/* linguist-vendored
+application/*.html linguist-vendored
