@@ -1,0 +1,18 @@
+Feature: OS detection
+
+  Background:
+    Given "nmap" is installed
+    And the following profile:
+      | name     | value      |
+      | hostname | scanme.nmap.org |
+
+  @slow
+  Scenario: Detect OS
+    When I launch an "nmap" attack with:
+      """
+      nmap -sV -p80 -PN <hostname>
+      """
+    Then the output should contain:
+      """
+      Apache
+      """
