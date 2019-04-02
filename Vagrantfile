@@ -13,5 +13,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: "rvm alias create default ruby-2.6.0"
   config.vm.provision "shell", inline: "rvm list && rvm use 2.6 --default && ruby --version"
   config.vm.provision "shell", inline: "yum -y install ruby-devel && gem install gauntlt" 
+  config.vm.provision "shell", inline: "yum -y install nmap"
   config.vm.network "forwarded_port", guest: 80, host: 6080, auto_correct: true
 end
