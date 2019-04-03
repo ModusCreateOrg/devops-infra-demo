@@ -21,6 +21,8 @@ function quick_yum_install() {
     package=${1?"You must specify a package to install"}
     if ! rpm -q  "$package" > /dev/null; then
         sudo yum -y -q install "$package"
+    else
+        echo "$package already installed, skipping"
     fi
 }
 
@@ -57,4 +59,6 @@ else
 fi
 ruby --version
 
-gem list gauntlt || gem install gauntlt --no-ri --no-rdoc
+if ! (gem list gauntlt | grep gauntlt > /dev/null); then
+    gem install gauntlt --no-ri --no-rdoc
+fi
