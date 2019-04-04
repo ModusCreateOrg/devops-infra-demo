@@ -60,5 +60,6 @@ fi
 ruby --version
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
-    gem install gauntlt --no-ri --no-rdoc
+    echo 'gem: --no-rdoc --no-ri' > ~/.gemrc
+    gem install gauntlt
 fi
