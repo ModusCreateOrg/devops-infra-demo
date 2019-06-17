@@ -1,5 +1,6 @@
 module "vpc" {
-  source = "github.com/terraform-aws-modules/terraform-aws-vpc"
+  source = "terraform-aws-modules/vpc/aws"
+  version = "~> v1.0"
 
   name = "infra-demo-vpc"
 
