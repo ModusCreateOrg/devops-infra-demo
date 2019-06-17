@@ -32,7 +32,7 @@ resource "newrelic_alert_condition" "spin-appdex" {
 
   condition_scope = "application"
 
-  count = "${length(var.newrelic_apm_entities) > 0 ? 1 : 0}"
+  count = "${length(var.newrelic_apm_entities) > 0 ? (var.newrelic_alerts ? 1 : 0) : 0}"
 }
 
 # Add a notification channel
@@ -45,7 +45,7 @@ resource "newrelic_alert_channel" "email" {
     include_json_attachment = "1"
   }
 
-  count = "${length(var.newrelic_alert_email) > 0 ? 1 : 0}"
+  count = "${length(var.newrelic_alert_email) > 0 ? (var.newrelic_alerts ? 1 : 0) : 0}"
 }
 
 # Link the channel to the policy
