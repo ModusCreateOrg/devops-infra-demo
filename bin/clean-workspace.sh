@@ -22,4 +22,5 @@ export BASE_DIR
 cp "$BASE_DIR/env.sh.sample" "$BASE_DIR/env.sh"
 clean_root_owned_docker_files
 rm -rf "$BUILD_DIR"
+git clean -fdx
 mkdir "$BUILD_DIR"
