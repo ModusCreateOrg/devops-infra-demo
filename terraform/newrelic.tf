@@ -53,7 +53,7 @@ resource "newrelic_alert_policy_channel" "alert_email" {
   policy_id  = "${newrelic_alert_policy.alert.id}"
   channel_id = "${newrelic_alert_channel.email.id}"
 
-  count = "${length(var.newrelic_alert_email) > 0 ? 1 : 0}"
+  count = "${length(var.newrelic_alert_email) > 0 ? (var.newrelic_alerts ? 1 : 0) : 0}"
 }
 
 # Add a dashboard
