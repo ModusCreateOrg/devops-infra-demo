@@ -151,8 +151,8 @@ stage('Checkout') {
 
 stage('Validate') {
     node {
-        unstash 'src'
         wrap.call({
+            unstash 'src'
             // Validate packer templates, check branch
             sh ("./bin/validate.sh")
         })
@@ -163,8 +163,8 @@ stage('Validate') {
 if (params.Run_Packer) {
     stage('Pack') {
         node {
-            unstash 'src'
             wrap.call({
+                unstash 'src'
                 sh ("./bin/pack.sh")
                 archive (includes: 'build/**')
                 publishHTML (target: [
@@ -182,8 +182,8 @@ if (params.Run_Packer) {
 
 stage('Build CodeDeploy Archive') {
     node {
-        unstash 'src'
         wrap.call({
+            unstash 'src'
             sh ("./bin/build-codedeploy.sh")
         })
     }
@@ -194,8 +194,8 @@ def terraform_prompt = 'Should we apply the Terraform plan?'
 
 stage('Plan Terraform') {
     node {
-        unstash 'src'
         wrap.call({
+            unstash 'src'
             def verb = "plan"
             if (params.Destroy_Terraform) {
                 verb += '-destroy';
@@ -218,8 +218,8 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
         }
         stage('Apply Terraform') {
             node {
-                unstash 'plan'
                 wrap.call({
+                    unstash 'plan'
                     sh ("./bin/terraform.sh apply")
                 })
             }
@@ -233,8 +233,8 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
 if (params.Rotate_Servers) {
     stage('Rotate Servers') {
         node {
-            unstash 'src'
             wrap.call({
+                unstash 'src'
                 sh ("./bin/rotate-asg.sh infra-demo-asg")
             })
         }
@@ -244,8 +244,8 @@ if (params.Rotate_Servers) {
 if (params.Run_JMeter) {
     stage('Run JMeter') {
         node {
-            unstash 'src'
             wrap.call({
+                unstash 'src'
                 sh ("""
                     HOST=\$(./bin/terraform.sh output route53-dns)
                     ./bin/jmeter.sh -Jnum_threads=${params.JMETER_num_threads} -Jramp_time=${params.JMETER_ramp_time} -Jduration=${params.JMETER_duration} -Jhost=\$HOST
