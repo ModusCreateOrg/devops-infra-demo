@@ -19,7 +19,7 @@ export BASE_DIR
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
 
-cp "$BASE_DIR/env.sh.sample" "$BASE_DIR/env.sh"
 clean_root_owned_docker_files
-rm -rf "$BUILD_DIR"
+cp "$BASE_DIR/env.sh.sample" "$BASE_DIR/env.sh"
+rm -rf "$BUILD_DIR" "$BASE_DIR/terraform/.terraform"
 mkdir "$BUILD_DIR"

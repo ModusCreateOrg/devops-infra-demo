@@ -96,6 +96,12 @@ variable "newrelic_apm_entities" {
   default     = []
 }
 
+# You have to have a full-blown New Relic subscription in order to deal with Alerts
+variable "newrelic_alerts" {
+  description = "Enable New Relic alerts"
+  default     = false
+}
+
 variable "newrelic_runbook_url" {
   description = "New Relic runbook URL"
   default     = "https://github.com/ModusCreateOrg/devops-infra-demo/wiki/runbook"
