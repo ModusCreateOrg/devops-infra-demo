@@ -1,0 +1,7 @@
+---
+# tasks file for ssm-agent
+
+- name: Ensure ssm agent is present
+  package: name={{item}} state=present
+  with_items:
+      - https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
