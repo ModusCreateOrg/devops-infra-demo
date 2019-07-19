@@ -10,7 +10,7 @@
 - name: Copy cloudwatch config file
   copy:
     src: config.json
-    dest: /opt/aws/amazon-cloudwatch-agent/bin/config.json
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
   tags: cloudwatch 
   
 - name: Enable cloudwatch-agent, as it should start off disabled
