@@ -13,8 +13,9 @@
     dest: /opt/aws/amazon-cloudwatch-agent/bin/config.json
   tags: cloudwatch 
   
-- name: Start and enable cloudwatch-agent, as it should start off disabled
+- name: Enable cloudwatch-agent, as it should start off disabled
   service:
     name: amazon-cloudwatch-agent
     enabled: yes
     state: stopped
+  tags: cloudwatch
