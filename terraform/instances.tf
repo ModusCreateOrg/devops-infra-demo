@@ -37,6 +37,11 @@ resource "aws_iam_role" "EC2ServiceRole" {
   assume_role_policy = "${file("assume-role-policy-ec2.json")}"
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch-agent-server" {
+  role       = "${aws_iam_role.EC2ServiceRole.name}"
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
 resource "aws_iam_policy" "codedeploy-policy" {
   name        = "infra-demo-codedeploy-policy"
   description = "Policy allowing codedeploy to work"
