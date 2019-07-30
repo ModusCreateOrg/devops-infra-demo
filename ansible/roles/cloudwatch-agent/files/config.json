@@ -51,6 +51,16 @@
 						"file_path": "/var/log/audit/audit.log",
 						"log_group_name": "selinux",
 						"log_stream_name": "{instance_id}"
+					},
+					{
+						"file_path": "/var/log/nginx/access.log",
+						"log_group_name": "nginx-access",
+						"log_stream_name": "{instance_id}"
+					},
+					{
+						"file_path": "/var/log/nginx/error.log",
+						"log_group_name": "nginx-error",
+						"log_stream_name": "{instance_id}"
 					}
 				]
 			}
