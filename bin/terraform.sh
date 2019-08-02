@@ -78,6 +78,12 @@ EOF
 # http://redsymbol.net/articles/bash-exit-traps/
 trap clean_root_owned_docker_files EXIT
 
+function import() {
+    local -i retcode
+    #shellcheck disable=SC2086
+    $DOCKER_TERRAFORM import "$@"
+}
+
 function show() {
     local -i retcode
     #shellcheck disable=SC2086
@@ -173,8 +179,11 @@ show)
 output)
   Message="Executing terraform output."
   ;;
+import)
+  Message="Executing terraform import."
+  ;;
 *)
-  echo 'Unrecognized verb "'"$verb"'" specified. Use plan, plan-destroy, apply, or show' 1>&2
+  echo 'Unrecognized verb "'"$verb"'" specified. Use apply, plan, plan-destroy, import, output or show' 1>&2
   exit 1
   ;;
 esac

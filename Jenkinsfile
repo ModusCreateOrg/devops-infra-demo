@@ -44,7 +44,7 @@ def wrap = { fn->
     }
 }
 
-final Long XOR_CONST = 3735928559 // 0xdeadbeef
+final Long XOR_CONST = 4919 // 0x1337 see https://en.wikipedia.org/wiki/Leet
 (captcha_problem, captcha_hash) = get_captcha(XOR_CONST)
 
 /** Gather properties from user parameters */
