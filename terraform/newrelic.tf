@@ -9,7 +9,7 @@ provider "newrelic" {
 
 # Create an alert policy
 resource "newrelic_alert_policy" "alert" {
-  name = "Alert"
+  name  = "Alert"
   count = "${length(var.newrelic_apm_entities) > 0 ? (var.newrelic_alerts ? 1 : 0) : 0}"
 }
 
