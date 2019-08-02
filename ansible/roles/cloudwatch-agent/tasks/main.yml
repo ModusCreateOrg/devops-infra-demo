@@ -1,0 +1,21 @@
+---
+# tasks file for cloudwatch-agent
+
+- name: Ensure cloudwatch agent is present
+  package: name={{item}} state=present
+  with_items:
+      - https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm
+  tags: cloudwatch 
+
+- name: Copy cloudwatch config file
+  copy:
+    src: config.json
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+  tags: cloudwatch 
+  
+- name: Enable cloudwatch-agent, as it should start off disabled
+  service:
+    name: amazon-cloudwatch-agent
+    enabled: yes
+    state: stopped
+  tags: cloudwatch

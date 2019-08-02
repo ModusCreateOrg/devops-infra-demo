@@ -23,7 +23,7 @@ variable "max_size" {
 # Route 53 related variables
 variable "domain" {
   description = "Domain name hosted by Route 53"
-  default     = "modus.app"
+  default     = "moduscreate.com"
 }
 
 variable "host" {
