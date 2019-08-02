@@ -31,7 +31,8 @@ BUILD_DIR="$BASE_DIR/build"
 DOCKER_TERRAFORM=$(get_docker_terraform)
 DOCKER_LANDSCAPE=$(get_docker_landscape)
 
-verb=${1:?You must specify a verb: plan, plan-destroy, apply, show, output}
+HELP_TEXT="You must specify a verb: apply, plan, plan-destroy, import, output or show"
+verb=${1:?$HELP_TEXT}
 
 # Inject Google application credentials into env file for docker
 GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE=${GOOGLE_APPLICATION_CREDENTIALS_OVERRIDE:-}
@@ -183,7 +184,8 @@ import)
   Message="Executing terraform import."
   ;;
 *)
-  echo 'Unrecognized verb "'"$verb"'" specified. Use apply, plan, plan-destroy, import, output or show' 1>&2
+  echo 'Unrecognized verb "'"$verb"'" specified.'
+  echo "$HELP_TEXT" 1>&2
   exit 1
   ;;
 esac
