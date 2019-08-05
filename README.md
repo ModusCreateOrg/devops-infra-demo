@@ -104,11 +104,23 @@ You need to either edit variables.tf to match your domain and AWS zone or specif
 
 The application loads an image from Google storage. To get it loading correctly, edit the `application/assets/css/main.css` file and replace `example-media-website-storage.storage.googleapis.com` with a DNS reference for your Google storage location.
 
+### Auto Scaling Groups
+
+The application in this demo uses an AWS Auto Scaling Group in order to dynamically change the number of servers deployed in response to load. Two policies help guide how many instances are available: a CPU scaling policy that seeks to keep the average CPU load below 40% in the cluster, and a scheduled scaling policy that scales the entire cluster down to 0 instances at 02:00 UTC every night, to minimize the charges should you forget to destroy the cluster. If the cluster is scaled down to 0 instances, you will need to edit the Auto Scaling Group through the console, the CLI, or an API call to set the sizes to non-zero, for example 
+
+### Elastic Load Balancing
+
+This demo allocates a single Classic ELB in order to load balance HTTP traffic among the running instances. This load balancer integrates with the auto scaling group and instances will join and leave the ELB automatically when created or destroyed.
+
 ### CodeDeploy
 
 The application enclosed in this demo is packaged and deployed using [AWS CodeDeploy](https://aws.amazon.com/codedeploy/). The script `codedeploy/bin/build.sh` will package the application so that it can be deployed on the AMI built with Ansible and Packer.
 
 The application contains both a simple HTML web site, and a Python app that has an API endpoint of `/api/spin` that spins the CPU of the server, in order to more easily test CPU-sensing auto scaling scale-out operations.
+
+You must deploy the application at least once in order to begin testing the web server and spin service, as it starts the web server as part of its deployment process. New instances scaled out should automatically have a deployment triggered on them through an Auto Scaling Group hook.
+
+There's an explicit dependency between the CodeDeploy application and the auto scaling group because the hook will not get created if the CodeDeploy application is created before the Auto Scaling Group.
 
 ### JMeter
 
