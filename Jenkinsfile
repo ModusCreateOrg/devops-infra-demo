@@ -175,6 +175,14 @@ if (params.Run_Packer) {
                     reportFiles: 'scan-xccdf-results.html',
                     reportName: "OpenSCAP Report"
                 ])
+                publishHTML (target: [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: 'build',
+                    reportFiles: 'gauntlt-results.txt',
+                    reportName: "Gauntlt Report"
+                ])
             })
         }
     }
