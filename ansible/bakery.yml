@@ -42,5 +42,3 @@
   roles:
     - extra-cis-remediation
     #- MindPointGroup.RHEL7-CIS
-    - scan-openscap
-    - scan-gauntlt
