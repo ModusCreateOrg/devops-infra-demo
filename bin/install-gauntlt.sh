@@ -16,16 +16,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 
-function quick_yum_install() {
-    declare package
-    package=${1?"You must specify a package to install"}
-    if ! rpm -q  "$package" > /dev/null; then
-        sudo yum -y -q install "$package"
-    else
-        echo "$package already installed, skipping"
-    fi
-}
-
+ensure_root
 quick_yum_install ruby-devel
 quick_yum_install nmap
 
@@ -40,7 +31,7 @@ if [[ ! -f /etc/profile.d/rvm.sh ]]; then
     rvm reload
     rvm requirements run
 else
-    echo "rvm already installed"
+    echo "rvm already installed" >&2
 fi
 # rvm hates the bash options -eu
 set +eu

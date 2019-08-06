@@ -85,3 +85,20 @@ function get_docker_shellcheck() {
     echo "docker run --rm -i ${USE_TTY} -v $(pwd):/mnt koalaman/shellcheck"
 }
 
+function ensure_root () {
+    # Thanks Unix Stack Exchange https://unix.stackexchange.com/a/389407
+    if ((EUID != 0)); then
+        echo >&2 "Error: script not running as root or with sudo! Exiting..."
+        exit 1
+    fi
+}
+
+function quick_yum_install() {
+    declare package
+    package=${1?"You must specify a package to install"}
+    if ! rpm -q  "$package" > /dev/null; then
+        yum -y -q install "$package"
+    else
+        echo "$package already installed, skipping" >&2
+    fi
+}
