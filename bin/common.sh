@@ -96,8 +96,10 @@ function ensure_root () {
 function quick_yum_install() {
     declare package
     package=${1?"You must specify a package to install"}
+    local sudo_maybe=''
+    ((EUID != 0)) && sudo_maybe='sudo'
     if ! rpm -q  "$package" > /dev/null; then
-        yum -y -q install "$package"
+        $sudo_maybe yum -y -q install "$package"
     else
         echo "$package already installed, skipping" >&2
     fi
