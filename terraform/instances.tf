@@ -147,3 +147,12 @@ resource "aws_autoscaling_policy" "infra-demo-asp" {
     target_value = 40.0
   }
 }
+
+resource "aws_autoscaling_schedule" "infra-demo-app" {
+  scheduled_action_name  = "nightly-scaledown"
+  autoscaling_group_name = "${aws_autoscaling_group.infra-demo-web-asg.name}"
+  min_size               = 0
+  max_size               = 0
+  desired_capacity       = 0
+  recurrence             = "0 2 * * *"
+}

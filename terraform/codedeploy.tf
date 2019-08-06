@@ -33,6 +33,7 @@ resource "aws_codedeploy_deployment_group" "infra-demo" {
   app_name              = "${aws_codedeploy_app.infra-demo.name}"
   deployment_group_name = "dev"
   service_role_arn      = "${aws_iam_role.infra-demo.arn}"
+  depends_on            = ["aws_autoscaling_group.infra-demo-web-asg"]
 
   autoscaling_groups = [
     "infra-demo-asg",
