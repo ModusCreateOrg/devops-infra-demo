@@ -180,7 +180,7 @@ if (params.Run_Packer) {
                     alwaysLinkToLastBuild: false,
                     keepAll: true,
                     reportDir: 'build',
-                    reportFiles: 'gauntlt-results.txt',
+                    reportFiles: 'gauntlt-results.html',
                     reportName: "Gauntlt Report"
                 ])
             })

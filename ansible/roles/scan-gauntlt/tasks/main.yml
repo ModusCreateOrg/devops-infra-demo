@@ -9,4 +9,4 @@
     mode: 0775
 
 - name: Scan using gauntlt
-  shell: gauntlt "{{ gauntlt_attacks }}" | cat >> "{{ build_dir}}""{{ output_file_html }}" 
+  shell: gauntlt -f html -o "{{ build_dir}}/{{ output_file_html }}" "{{ gauntlt_attacks }}"

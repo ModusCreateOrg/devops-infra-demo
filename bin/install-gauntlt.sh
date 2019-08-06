@@ -16,6 +16,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 
+RUBY_VERSION=2.6.3
+
 ensure_root
 quick_yum_install ruby-devel
 quick_yum_install nmap
@@ -38,10 +40,10 @@ set +eu
 #shellcheck disable=SC1091
 source /etc/profile.d/rvm.sh
 rvm reload
-rvm install 2.6.0
-rvm alias create default ruby-2.6.0
+rvm install "$RUBY_VERSION"
+rvm alias create default ruby-"$RUBY_VERSION"
 rvm list
-rvm use 2.6 --default
+rvm use "$RUBY_VERSION" --default
 set -eu
 if is_ec2; then
     usermod -a -G rvm centos
@@ -52,5 +54,5 @@ ruby --version
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
     echo 'gem: --no-rdoc --no-ri' > ~/.gemrc
-    gem install gauntlt
+    gem install gauntlt syntax
 fi
