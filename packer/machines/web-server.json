@@ -47,8 +47,7 @@
             "type": "shell",
             "inline": [
                 "bash /app/bin/install-gauntlt.sh",
-                "bash /app/bin/install-ansible.sh",
-                "PATH=$PATH:$HOME/.rvm/bin && . .rvm/scripts/rvm && ansible-playbook -l localhost /app/ansible/bakery.yml /app/ansible/scan-openscap.yml /app/ansible/scan-gauntlt.yml"
+                "PATH=$PATH:$HOME/.rvm/bin && . .rvm/scripts/rvm && ruby --version"
             ]
         },
         {
