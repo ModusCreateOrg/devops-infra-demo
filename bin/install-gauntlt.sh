@@ -16,20 +16,23 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 
-RUBY_VERSION=2.6.3
+ensure_not_root
 
-ensure_root
+RUBY_VERSION=2.6.3
+RVM_SH=/etc/profile.d/rvm.sh
+
 quick_yum_install ruby-devel
 quick_yum_install nmap
 
-if [[ ! -f /etc/profile.d/rvm.sh ]]; then
+
+if [[ ! -f "$RVM_SH" ]]; then
     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
     curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
     curl -L get.rvm.io | bash -s stable
     # rvm hates the bash options -eu
     set +eu
-    #shellcheck disable=SC1091
-    source /etc/profile.d/rvm.sh
+    #shellcheck disable=SC1091,SC1090
+    . "$RVM_SH"
     rvm reload
     rvm requirements run
 else
@@ -37,8 +40,8 @@ else
 fi
 # rvm hates the bash options -eu
 set +eu
-#shellcheck disable=SC1091
-source /etc/profile.d/rvm.sh
+#shellcheck disable=SC1091,SC1090
+. "$RVM_SH"
 rvm reload
 rvm install "$RUBY_VERSION"
 rvm alias create default ruby-"$RUBY_VERSION"
@@ -46,9 +49,9 @@ rvm list
 rvm use "$RUBY_VERSION" --default
 set -eu
 if is_ec2; then
-    usermod -a -G rvm centos
+    sudo usermod -a -G rvm centos
 else
-    usermod -a -G rvm vagrant
+    sudo usermod -a -G rvm vagrant
 fi
 ruby --version
 

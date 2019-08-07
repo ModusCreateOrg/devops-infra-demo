@@ -46,7 +46,7 @@
         {
             "type": "shell",
             "inline": [
-                "sudo bash /app/bin/install-gauntlt.sh",
+                "bash /app/bin/install-gauntlt.sh",
                 "bash /app/bin/install-ansible.sh",
                 "ansible-playbook -l localhost /app/ansible/bakery.yml /app/ansible/scan-openscap.yml /app/ansible/scan-gauntlt.yml"
             ]

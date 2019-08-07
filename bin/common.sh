@@ -93,6 +93,15 @@ function ensure_root () {
     fi
 }
 
+function ensure_not_root () {
+    # Thanks Unix Stack Exchange https://unix.stackexchange.com/a/389407
+    if ((EUID == 0)); then
+        echo >&2 "Error: do not run script as root or with sudo! Exiting..."
+        exit 1
+    fi
+}
+
+
 function quick_yum_install() {
     declare package
     package=${1?"You must specify a package to install"}
