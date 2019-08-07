@@ -9,6 +9,4 @@
     mode: 0775
 
 - name: Scan using gauntlt
-  become: true
-  become_user: root
   command: gauntlt -f html -o "{{ build_dir}}/{{ output_file_html }}" "{{ gauntlt_attacks }}"
