@@ -19,11 +19,41 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ensure_not_root
 
 RUBY_VERSION=2.6.3
-RVM_SH=/etc/profile.d/rvm.sh
+RVM_SH="$HOME/.rvm/scripts/rvm"
 
-quick_yum_install ruby-devel
-quick_yum_install nmap
+PACKAGES='nmap
+ruby-devel
+autoconf
+automake
+bison
+gcc-c++
+libffi-devel
+libtool
+patch
+readline-devel
+sqlite-devel
+zlib-devel
+glibc-headers
+glibc-devel
+openssl-devel
+requirements_centos_libs_install
+patch
+autoconf
+automake
+bison
+gcc-c++
+libffi-devel
+libtool
+patch
+readline-devel
+sqlite-devel
+zlib-devel
+glibc-headers
+glibc-devel
+openssl-devel'
 
+#shellcheck disable=SC2086
+sudo yum install -y $PACKAGES
 
 if [[ ! -f "$RVM_SH" ]]; then
     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
@@ -48,11 +78,6 @@ rvm alias create default ruby-"$RUBY_VERSION"
 rvm list
 rvm use "$RUBY_VERSION" --default
 set -eu
-if is_ec2; then
-    sudo usermod -a -G rvm centos
-else
-    sudo usermod -a -G rvm vagrant
-fi
 ruby --version
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
