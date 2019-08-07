@@ -47,7 +47,7 @@
             "type": "shell",
             "inline": [
                 "bash /app/bin/install-gauntlt.sh",
-                "PATH=$PATH:$HOME/.rvm/bin && . .rvm/scripts/rvm && ruby --version"
+                "PATH=$PATH:$HOME/.rvm/bin && . .rvm/scripts/rvm && id -a && echo $PATH && ruby --version && gauntlt -h"
             ]
         },
         {
