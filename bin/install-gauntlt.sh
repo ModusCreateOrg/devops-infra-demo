@@ -54,7 +54,7 @@ glibc-devel
 openssl-devel'
 
 #shellcheck disable=SC2086
-sudo yum install -y $PACKAGES
+sudo yum -q install -y $PACKAGES
 
 if [[ ! -f "$RVM_SH" ]]; then
     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
