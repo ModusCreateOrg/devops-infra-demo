@@ -58,7 +58,7 @@
         },
         {
             "type": "file",
-            "source": "build/",
+            "source": "/app/build/",
             "direction": "download",
             "destination": "/app"
         }

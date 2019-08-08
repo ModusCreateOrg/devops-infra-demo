@@ -1,7 +1,7 @@
 ---
 # defaults file for scan-oscap
 build_dir: /app/build
-output_file_html: scan-xccdf-results.html
-output_file_xml: scan-xccdf-results.xml
+output_file_html: /app/build/scan-xccdf-results.html
+output_file_xml: /app/build/scan-xccdf-results.xml
 profile: C2S
 xccdf_file: /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml
