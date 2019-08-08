@@ -30,6 +30,11 @@
         },
         {
             "type": "file",
+            "source": "/app/ansible",
+            "destination": "/app"
+        },
+        {
+            "type": "file",
             "source": "/app/application",
             "destination": "/app"
         },
@@ -40,7 +45,7 @@
         },
         {
             "type": "file",
-            "source": "/app/ansible",
+            "source": "/app/gauntlt",
             "destination": "/app"
         },
         {
