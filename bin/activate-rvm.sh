@@ -2,7 +2,7 @@
 # Activate rvm
 # Source this to activate RVM
 
-RVM_SH=${RVM_SH:-$HOMW/.rvm/shell/rvm}
+RVM_SH=${RVM_SH:-$HOME/.rvm/shell/rvm}
 RUBY_VERSION=${RUBY_VERSION:-2.6.3}
 
 # rvm hates the bash options -eu
