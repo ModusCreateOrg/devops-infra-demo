@@ -19,6 +19,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ensure_not_root
 
 RUBY_VERSION=2.6.3
+export RUBY_VERSION
 RVM_SH="$HOME/.rvm/scripts/rvm"
 
 PACKAGES='nmap
@@ -69,6 +70,7 @@ else
     echo "rvm already installed" >&2
 fi
 
+#shellcheck disable=SC1090
 . "$DIR/activate-rvm.sh"
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
