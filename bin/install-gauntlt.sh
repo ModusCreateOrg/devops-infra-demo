@@ -68,17 +68,8 @@ if [[ ! -f "$RVM_SH" ]]; then
 else
     echo "rvm already installed" >&2
 fi
-# rvm hates the bash options -eu
-set +eu
-#shellcheck disable=SC1091,SC1090
-. "$RVM_SH"
-rvm reload
-rvm install "$RUBY_VERSION"
-rvm alias create default ruby-"$RUBY_VERSION"
-rvm list
-rvm use "$RUBY_VERSION" --default
-set -eu
-ruby --version
+
+. "$DIR/activate_rvm.sh"
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
     echo 'gem: --no-rdoc --no-ri' > ~/.gemrc
