@@ -24,8 +24,8 @@
         {
             "type": "shell",
             "inline": [
-                "sudo mkdir /app",
-                "sudo chown centos:centos /app"
+                "sudo mkdir -p /app/build",
+                "sudo chown -R centos:centos /app"
             ]
         },
         {

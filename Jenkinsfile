@@ -168,7 +168,7 @@ if (params.Run_Packer) {
                 try {
                     sh ("./bin/pack.sh")
                 } finally {
-                    archive (includes: 'build/**')
+                    archiveArtifacts artifacts: 'build/**', fingerprint: true
                     publishHTML (target: [
                         allowMissing: true,
                         alwaysLinkToLastBuild: false,
