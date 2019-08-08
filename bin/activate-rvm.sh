@@ -6,6 +6,11 @@ RVM_SH=${RVM_SH:-$HOME/.rvm/shell/rvm}
 RUBY_VERSION=${RUBY_VERSION:-2.6.3}
 
 # rvm hates the bash options -eu
+
+if [[ ! -f "$RVM_SH" ]]; then
+    echo "Error: $0: RVM_SH $RVM_SH not found"
+    exit 1
+fi
 set +eu
 #shellcheck disable=SC1091,SC1090
 . "$RVM_SH"
