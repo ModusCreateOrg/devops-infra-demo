@@ -47,6 +47,7 @@
             "type": "shell",
             "inline": [
                 "bash /app/bin/install-gauntlt.sh",
+                "bash /app/bin/install-ansible.sh",
                 "bash /app/bin/ansible.sh"
             ]
         },
