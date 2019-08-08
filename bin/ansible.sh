@@ -16,7 +16,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
 # shellcheck disable=SC1090
-. "$DIR/activate_rvm.sh"
+. "$DIR/activate-rvm.sh"
 
 ensure_not_root
 

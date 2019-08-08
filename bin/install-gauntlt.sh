@@ -69,7 +69,7 @@ else
     echo "rvm already installed" >&2
 fi
 
-. "$DIR/activate_rvm.sh"
+. "$DIR/activate-rvm.sh"
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
     echo 'gem: --no-rdoc --no-ri' > ~/.gemrc
