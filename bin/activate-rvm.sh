@@ -19,6 +19,10 @@ rvm install "$RUBY_VERSION"
 rvm alias create default ruby-"$RUBY_VERSION"
 rvm list
 rvm use "$RUBY_VERSION" --default
-set -eu
+# We don't reactivate -u because even doing a "cd" will invoke an rvm
+# function in .rvm/scripts/cd that bombs with:
+# .rvm/scripts/functions/environment: line 267: rvm_bash_nounset: unbound variable
+
+set -e
 ruby --version
 
