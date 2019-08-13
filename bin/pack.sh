@@ -18,6 +18,12 @@ export BASE_DIR
 # shellcheck disable=SC1090
 . "$DIR/common.sh"
 
+function finish() {
+    ls -l "$BASE_DIR" "$BASE_DIR/build"
+}
+
+trap finish EXIT
+
 DOCKER_PACKER=$(get_docker_packer)
 $DOCKER_PACKER validate app/packer/machines/web-server.json
 $DOCKER_PACKER build app/packer/machines/web-server.json
