@@ -21,5 +21,5 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ensure_not_root
 
 cd "$DIR/../ansible"
-ansible-playbook -l localhost $@
+ansible-playbook -l localhost "$@"
 /app/ansible/bakery.yml /app/ansible/scan-openscap.yml /app/ansible/scan-gauntlt.yml
