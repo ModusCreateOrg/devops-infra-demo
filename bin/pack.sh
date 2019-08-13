@@ -19,7 +19,8 @@ export BASE_DIR
 . "$DIR/common.sh"
 
 function finish() {
-    ls -l "$BASE_DIR" "$BASE_DIR/build"
+    pwd
+    ls -l "$BASE_DIR" "$BASE_DIR/build" build
 }
 
 trap finish EXIT

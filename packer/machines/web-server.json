@@ -53,12 +53,12 @@
             "inline": [
                 "bash /app/bin/install-gauntlt.sh",
                 "bash /app/bin/install-ansible.sh",
-                "bash /app/bin/ansible.sh"
+                "bash /app/bin/ansible.sh bakery.yml scan-openscap.yml scan-gauntlt.yml"
             ]
         },
         {
             "type": "file",
-            "source": "/app/build/",
+            "source": "build/",
             "direction": "download",
             "destination": "/app"
         }
