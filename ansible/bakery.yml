@@ -33,6 +33,8 @@
     - nginxinc.nginx
     - prepare-web-content
     - prepare-codedeploy
+  vars:
+    nginx_start: false
 
 
 - name: Harden Server
