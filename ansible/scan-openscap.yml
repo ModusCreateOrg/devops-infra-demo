@@ -1,0 +1,10 @@
+---
+# Thanks https://www.tricksofthetrades.net/2017/10/02/ansible-local-playbooks/ for
+# the trick on installing locally using "hosts: 127.0.0.1" and "connection:local"
+
+- name: Scan Server with OpenSCAP
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+  roles:
+    - scan-openscap

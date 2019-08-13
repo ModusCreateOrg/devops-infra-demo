@@ -100,3 +100,207 @@ cucumber /app/gauntlt/simple-env-var.attack:16 # Scenario: Verify server is avai
 6 scenarios (1 failed, 5 passed)
 27 steps (1 failed, 2 skipped, 24 passed)
 0m14.558s
+Feature: OS detection
+
+  Background:                  # /app/gauntlt/os_detection.attack:3
+    Given "nmap" is installed  # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following profile: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name     | value           |
+      | hostname | scanme.nmap.org |
+
+  @slow
+  Scenario: Detect OS                    # /app/gauntlt/os_detection.attack:10
+    When I launch an "nmap" attack with: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -sV -p80 -PN <hostname>
+      """
+    Then the output should contain:      # aruba-0.7.4/lib/aruba/cucumber.rb:182
+      """
+      Apache
+      """
+
+@slow
+Feature: nmap attacks for scanme.nmap.org and to use this for your tests, change the value in the profile
+
+  Background:                  # /app/gauntlt/nmap.attack:4
+    Given "nmap" is installed  # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following profile: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name           | value           |
+      | hostname       | scanme.nmap.org |
+      | host           | scanme.nmap.org |
+      | tcp_ping_ports | 22,25,80,443    |
+
+  Scenario: Verify server is open on expected set of ports using the nmap-fast attack step # /app/gauntlt/nmap.attack:12
+Checking nmap-fast and nmap-fastRunning a nmap-fast attack. This attack has this description:
+ This is a fast nmap scan that should run in 10 seconds or less on most networks.  It looks for the most common ports and services.
+    When I launch a "nmap-fast" attack                                                     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:12
+    Then the output should match /80.tcp\s+open/                                           # aruba-0.7.4/lib/aruba/cucumber.rb:206
+
+  Scenario: Verify server is open on expected set of ports using the nmap fast flag # /app/gauntlt/nmap.attack:16
+    When I launch an "nmap" attack with:                                            # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -F <hostname>
+      """
+    Then the output should match:                                                   # aruba-0.7.4/lib/aruba/cucumber.rb:210
+      """
+      80/tcp\s+open
+      """
+
+  Scenario: Verify that there are no unexpected ports open # /app/gauntlt/nmap.attack:26
+    When I launch an "nmap" attack with:                   # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -F <hostname>
+      """
+    Then the output should not contain:                    # aruba-0.7.4/lib/aruba/cucumber.rb:186
+      """
+      22/tcp
+      25/tcp
+      """
+
+  Scenario: Output to XML                          # /app/gauntlt/nmap.attack:37
+    When I launch an "nmap" attack with:           # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -p 80,443 -oX foo.xml <hostname>
+      """
+    And the file "foo.xml" should contain XML:     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:15
+      | css                                                         |
+      | ports port[protocol="tcp"][portid="80"] state[state="open"] |
+    And the file "foo.xml" should not contain XML: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:21
+      | css                                                          |
+      | ports port[protocol="tcp"][portid="123"] state[state="open"] |
+      | ports port[protocol="tcp"][portid="443"] state[state="open"] |
+
+@slow
+Feature: simple nmap attack (sanity check)
+
+  Background:                                # /app/gauntlt/simple-env-var.attack:4
+    Given "nmap" is installed                # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following environment variables: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:3
+      | name     | environment_variable_name |
+      | hostname | TEST_HOSTNAME             |
+    And the following profile:               # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name       | value |
+      | https_port | 443   |
+      | http_port  | 80    |
+
+  Scenario: Verify server is available on standard web ports # /app/gauntlt/simple-env-var.attack:16
+    When I launch an "nmap" attack with:                     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -p <http_port>,<https_port> <hostname>
+      """
+      no implicit conversion of nil into String (TypeError)
+      /app/gauntlt/simple-env-var.attack:17:in `When I launch an "nmap" attack with:'
+    Then the output should match /80.tcp\s+open/             # aruba-0.7.4/lib/aruba/cucumber.rb:206
+    And the output should not match:                         # aruba-0.7.4/lib/aruba/cucumber.rb:219
+      """
+      443/tcp\s+open 
+      """
+
+Failing Scenarios:
+cucumber /app/gauntlt/simple-env-var.attack:16 # Scenario: Verify server is available on standard web ports
+
+6 scenarios (1 failed, 5 passed)
+27 steps (1 failed, 2 skipped, 24 passed)
+0m17.076s
+Feature: OS detection
+
+  Background:                  # /app/gauntlt/os_detection.attack:3
+    Given "nmap" is installed  # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following profile: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name     | value           |
+      | hostname | scanme.nmap.org |
+
+  @slow
+  Scenario: Detect OS                    # /app/gauntlt/os_detection.attack:10
+    When I launch an "nmap" attack with: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -sV -p80 -PN <hostname>
+      """
+    Then the output should contain:      # aruba-0.7.4/lib/aruba/cucumber.rb:182
+      """
+      Apache
+      """
+
+@slow
+Feature: nmap attacks for scanme.nmap.org and to use this for your tests, change the value in the profile
+
+  Background:                  # /app/gauntlt/nmap.attack:4
+    Given "nmap" is installed  # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following profile: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name           | value           |
+      | hostname       | scanme.nmap.org |
+      | host           | scanme.nmap.org |
+      | tcp_ping_ports | 22,25,80,443    |
+
+  Scenario: Verify server is open on expected set of ports using the nmap-fast attack step # /app/gauntlt/nmap.attack:12
+Checking nmap-fast and nmap-fastRunning a nmap-fast attack. This attack has this description:
+ This is a fast nmap scan that should run in 10 seconds or less on most networks.  It looks for the most common ports and services.
+    When I launch a "nmap-fast" attack                                                     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:12
+    Then the output should match /80.tcp\s+open/                                           # aruba-0.7.4/lib/aruba/cucumber.rb:206
+
+  Scenario: Verify server is open on expected set of ports using the nmap fast flag # /app/gauntlt/nmap.attack:16
+    When I launch an "nmap" attack with:                                            # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -F <hostname>
+      """
+    Then the output should match:                                                   # aruba-0.7.4/lib/aruba/cucumber.rb:210
+      """
+      80/tcp\s+open
+      """
+
+  Scenario: Verify that there are no unexpected ports open # /app/gauntlt/nmap.attack:26
+    When I launch an "nmap" attack with:                   # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -F <hostname>
+      """
+    Then the output should not contain:                    # aruba-0.7.4/lib/aruba/cucumber.rb:186
+      """
+      22/tcp
+      25/tcp
+      """
+
+  Scenario: Output to XML                          # /app/gauntlt/nmap.attack:37
+    When I launch an "nmap" attack with:           # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -p 80,443 -oX foo.xml <hostname>
+      """
+    And the file "foo.xml" should contain XML:     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:15
+      | css                                                         |
+      | ports port[protocol="tcp"][portid="80"] state[state="open"] |
+    And the file "foo.xml" should not contain XML: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:21
+      | css                                                          |
+      | ports port[protocol="tcp"][portid="123"] state[state="open"] |
+      | ports port[protocol="tcp"][portid="443"] state[state="open"] |
+
+@slow
+Feature: simple nmap attack (sanity check)
+
+  Background:                                # /app/gauntlt/simple-env-var.attack:4
+    Given "nmap" is installed                # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:4
+    And the following environment variables: # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:3
+      | name     | environment_variable_name |
+      | hostname | TEST_HOSTNAME             |
+    And the following profile:               # gauntlt-1.0.13/lib/gauntlt/attack_adapters/gauntlt.rb:9
+      | name       | value |
+      | https_port | 443   |
+      | http_port  | 80    |
+
+  Scenario: Verify server is available on standard web ports # /app/gauntlt/simple-env-var.attack:16
+    When I launch an "nmap" attack with:                     # gauntlt-1.0.13/lib/gauntlt/attack_adapters/nmap.rb:8
+      """
+      nmap -p <http_port>,<https_port> <hostname>
+      """
+      no implicit conversion of nil into String (TypeError)
+      /app/gauntlt/simple-env-var.attack:17:in `When I launch an "nmap" attack with:'
+    Then the output should match /80.tcp\s+open/             # aruba-0.7.4/lib/aruba/cucumber.rb:206
+    And the output should not match:                         # aruba-0.7.4/lib/aruba/cucumber.rb:219
+      """
+      443/tcp\s+open 
+      """
+
+Failing Scenarios:
+cucumber /app/gauntlt/simple-env-var.attack:16 # Scenario: Verify server is available on standard web ports
+
+6 scenarios (1 failed, 5 passed)
+27 steps (1 failed, 2 skipped, 24 passed)
+0m14.169s

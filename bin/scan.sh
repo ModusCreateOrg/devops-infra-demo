@@ -15,7 +15,7 @@ mkdir -p build
 cd build
 # This will have a non-zero exit if any of the scans fail, so do not fail immediately on that
 set +e
-sudo oscap xccdf eval --profile C2S --results scan-xccdf-results.xml /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml
+sudo oscap xccdf eval --profile C2S --results scan-xccdf-results.xml --fetch-remote-resources /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml
 set -e
 
 oscap xccdf generate report scan-xccdf-results.xml > scan-xccdf-results.html

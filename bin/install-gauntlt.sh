@@ -16,50 +16,65 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 
-function quick_yum_install() {
-    declare package
-    package=${1?"You must specify a package to install"}
-    if ! rpm -q  "$package" > /dev/null; then
-        sudo yum -y -q install "$package"
-    else
-        echo "$package already installed, skipping"
-    fi
-}
+ensure_not_root
 
-quick_yum_install ruby-devel
-quick_yum_install nmap
+RUBY_VERSION=2.6.3
+export RUBY_VERSION
+RVM_SH="$HOME/.rvm/scripts/rvm"
 
-if [[ ! -f /etc/profile.d/rvm.sh ]]; then
+PACKAGES='nmap
+ruby-devel
+autoconf
+automake
+bison
+gcc-c++
+libffi-devel
+libtool
+patch
+readline-devel
+sqlite-devel
+zlib-devel
+glibc-headers
+glibc-devel
+openssl-devel
+requirements_centos_libs_install
+patch
+autoconf
+automake
+bison
+gcc-c++
+libffi-devel
+libtool
+patch
+readline-devel
+sqlite-devel
+zlib-devel
+glibc-headers
+glibc-devel
+openssl-devel'
+
+#shellcheck disable=SC2086
+sudo yum -q install -y $PACKAGES
+
+if [[ ! -f "$RVM_SH" ]]; then
     curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
     curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
     curl -L get.rvm.io | bash -s stable
     # rvm hates the bash options -eu
     set +eu
-    #shellcheck disable=SC1091
-    source /etc/profile.d/rvm.sh
+    #shellcheck disable=SC1091,SC1090
+    . "$RVM_SH"
     rvm reload
     rvm requirements run
+    set -eu
 else
-    echo "rvm already installed"
+    echo "rvm already installed" >&2
 fi
-# rvm hates the bash options -eu
-set +eu
-#shellcheck disable=SC1091
-source /etc/profile.d/rvm.sh
-rvm reload
-rvm install 2.6.0
-rvm alias create default ruby-2.6.0
-rvm list
-rvm use 2.6 --default
-set -eu
-if is_ec2; then
-    usermod -a -G rvm centos
-else
-    usermod -a -G rvm vagrant
-fi
-ruby --version
+
+#shellcheck disable=SC1090
+. "$DIR/activate-rvm.sh"
 
 if ! (gem list gauntlt | grep gauntlt > /dev/null); then
     echo 'gem: --no-rdoc --no-ri' > ~/.gemrc
-    gem install gauntlt
+    gem install gauntlt syntax
 fi

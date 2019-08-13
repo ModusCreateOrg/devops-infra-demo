@@ -3,4 +3,4 @@
 gauntlt_version: "1.0.8"
 build_dir: /app/build/
 gauntlt_attacks: /app/gauntlt/*.attack
-output_file_html: gauntlt-results.txt
+output_file_html: /app/build/gauntlt-results.html
