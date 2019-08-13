@@ -28,3 +28,4 @@ trap finish EXIT
 DOCKER_PACKER=$(get_docker_packer)
 $DOCKER_PACKER validate app/packer/machines/web-server.json
 $DOCKER_PACKER build app/packer/machines/web-server.json
+find "$BASE_DIR" -name '*.html' | grep -E 'gauntlt|scan'
