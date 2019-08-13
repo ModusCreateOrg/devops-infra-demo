@@ -54,7 +54,8 @@
                 "bash /app/bin/install-gauntlt.sh",
                 "bash /app/bin/install-ansible.sh",
                 "bash /app/bin/ansible.sh bakery.yml scan-openscap.yml scan-gauntlt.yml",
-                "find / -name '*.html' 2>&1 | grep -E 'gauntlt|scan'; ls -l /app/build"
+                "find / -name '*.html' 2>/dev/null | grep -E 'gauntlt|scan'",
+                "ls -l /app /app/build"
             ]
         },
         {
