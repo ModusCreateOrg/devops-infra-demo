@@ -24,9 +24,14 @@
         {
             "type": "shell",
             "inline": [
-                "sudo mkdir /app",
-                "sudo chown centos:centos /app"
+                "sudo mkdir -p /app/build",
+                "sudo chown -R centos:centos /app"
             ]
+        },
+        {
+            "type": "file",
+            "source": "/app/ansible",
+            "destination": "/app"
         },
         {
             "type": "file",
@@ -40,20 +45,22 @@
         },
         {
             "type": "file",
-            "source": "/app/ansible",
+            "source": "/app/gauntlt",
             "destination": "/app"
         },
         {
             "type": "shell",
             "inline": [
+                "bash /app/bin/install-gauntlt.sh",
                 "bash /app/bin/install-ansible.sh",
-                "ansible-playbook -l localhost /app/ansible/bakery.yml",
-                "bash /app/bin/scan.sh"
+                "bash /app/bin/ansible.sh bakery.yml scan-openscap.yml scan-gauntlt.yml",
+                "find / -name '*.html' 2>/dev/null | grep -E 'gauntlt|scan'",
+                "ls -l /app /app/build"
             ]
         },
         {
             "type": "file",
-            "source": "build/",
+            "source": "/app/build/",
             "direction": "download",
             "destination": "/app"
         }

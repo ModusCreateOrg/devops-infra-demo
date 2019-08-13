@@ -165,16 +165,27 @@ if (params.Run_Packer) {
         node {
             wrap.call({
                 unstash 'src'
-                sh ("./bin/pack.sh")
-                archive (includes: 'build/**')
-                publishHTML (target: [
-                    allowMissing: true,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'build',
-                    reportFiles: 'scan-xccdf-results.html',
-                    reportName: "OpenSCAP Report"
-                ])
+                try {
+                    sh ("./bin/pack.sh")
+                } finally {
+                    archiveArtifacts artifacts: 'build/**', fingerprint: true
+                    publishHTML (target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build',
+                        reportFiles: 'scan-xccdf-results.html',
+                        reportName: "OpenSCAP Report"
+                    ])
+                    publishHTML (target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build',
+                        reportFiles: 'gauntlt-results.html',
+                        reportName: "Gauntlt Report"
+                    ])
+                }
             })
         }
     }

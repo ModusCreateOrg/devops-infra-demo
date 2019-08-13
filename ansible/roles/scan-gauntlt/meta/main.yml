@@ -1,0 +1,14 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: "rpigu-i"
+  description: "Gauntlt installation role for EC2"
+  company: "Modus Create"
+  license: "license (MIT)"
+  min_ansible_version: 1.2
+  galaxy_tags:
+    - security
+    - gauntlt
+    - DevSecOps
+    - InfoSec
