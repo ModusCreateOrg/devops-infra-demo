@@ -66,6 +66,7 @@ if [[ ! -f "$RVM_SH" ]]; then
     . "$RVM_SH"
     rvm reload
     rvm requirements run
+    set -eu
 else
     echo "rvm already installed" >&2
 fi
