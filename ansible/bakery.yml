@@ -33,6 +33,8 @@
     - nginxinc.nginx
     - prepare-web-content
     - prepare-codedeploy
+  vars:
+    nginx_start: false
 
 
 - name: Harden Server
@@ -42,4 +44,3 @@
   roles:
     - extra-cis-remediation
     #- MindPointGroup.RHEL7-CIS
-    - scan-openscap

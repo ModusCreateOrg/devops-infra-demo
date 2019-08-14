@@ -11,6 +11,7 @@
 /terraform/tf.plan
 __pycache__
 build/
+tmp/
 jmeter.log
 scan-xccdf-results.html
 scan-xccdf-results.xml
