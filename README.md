@@ -56,7 +56,7 @@ You will need to create an application in the Google developer console, create a
 
 ### Packer
 
-Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine on EC2, configure it using Ansible, and scan it using OpenSCAP. The results from the scan will end up in `packer/build`.
+Run `packer/bin/pack.sh` to initiate a Packer run. This will provision a machine on EC2, configure it using Ansible, and scan it using [OpenSCAP](https://www.open-scap.org/) and [Gauntlt](http://gauntlt.org/). The results from the scan will end up in `packer/build`.
 
 Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
 
@@ -135,6 +135,8 @@ The Jenkins executor running this job needs to have both a recent Docker and the
 The scripts here assume that Jenkins is running on EC2 and uses instance data from the Jenkins executor to infer what VPC and subnet to launch the new EC2 instance into.  The AWS profile IAM user associated with your Jenkins instance or the Jenkins user's AWS credentials should have full control of EC2 in the account you are using.
 
 This script relies on Jenkins having a secret file containing the Google application credentials in JSON with the id `terraform-demo.json`. You will need to add that to your Jenkins server's credentials.
+
+After a sucessful build, Jenkins will archive the artifacts from the OpenSCAP and Gauntlt scans (if a Packer run has completed) and JMeter (if a JMeter run has completed).
 
 # Modus Create
 
