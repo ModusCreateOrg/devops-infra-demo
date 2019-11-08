@@ -56,6 +56,11 @@ properties([
             description: 'Run Packer for this build?'
         ),
         booleanParam(
+            name: 'Package_CodeDeploy',
+            defaultValue: false,
+            description: 'Package CodeDeploy application on this build?'
+        ),
+        booleanParam(
             name: 'Apply_Terraform',
             defaultValue: false,
             description: 'Apply Terraform plan on this build?'
@@ -78,6 +83,12 @@ properties([
                             Allows you to override declared variables.
                             Put one variable per line, in JSON or HCL like this:
                             associate_public_ip_address = "true"'''
+        ),
+        string(
+            name: 'CodeDeploy_Target',
+            defaultValue: '',
+            description: '''Deploy either a specific build's CodeDeploy archive (specify build number)
+                            or the latest archive (specify "latest")'''
         ),
         booleanParam(
             name: 'Rotate_Servers',
@@ -122,7 +133,7 @@ properties([
 stage('Preflight') {
 
     // Check CAPTCHA
-    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter
+    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter || params.CodeDeploy_Target
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
@@ -137,6 +148,20 @@ stage('Preflight') {
     } else {
         echo "No CAPTCHA required, continuing"
     }
+
+    def build_number = ${env.BUILD_NUMBER} as Long
+    switch (params.CodeDeploy_Target.toLowerCase()) {
+        case "latest": 
+            echo "CodeDeploy targeting latest build"
+            break
+        case { it instanceof Integer && it > 0 && it <= build_number }:
+            echo "CodeDeploy targeting build ${build_number}"
+            break
+        default:
+            throw Exception("CodeDeploy build_number ${build_number} is not understood")
+            break
+    }
+        
 }
 
 stage('Checkout') {
