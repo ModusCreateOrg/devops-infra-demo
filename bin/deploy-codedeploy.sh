@@ -51,7 +51,7 @@ s3[:]//[a-z0-9]*)
 esac
 
 
-S3_SHORTHAND="bundleType=string,bucket=$BUCKET,key=$ARCHIVE"
+S3_SHORTHAND="bundleType=zip,bucket=$BUCKET,key=$ARCHIVE"
 
 echo "BRANCH_PREFIX=$BRANCH_PREFIX"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
