@@ -13,7 +13,8 @@ import java.util.Random
 final default_timeout_minutes = 20
 final codedeploy_target_skip = -1
 // See generally safe key names from https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
-final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z!\-_\.\*\'\(\)], "_")
+//final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)], "_")
+final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)]/ , "_")
 
 /** Set up CAPTCHA*/
 def get_captcha(Long hash_const) {
