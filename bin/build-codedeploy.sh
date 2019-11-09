@@ -79,6 +79,7 @@ done
         bin \
         ansible \
         application \
+        gauntlt \
         src \
         venv \
         socket
