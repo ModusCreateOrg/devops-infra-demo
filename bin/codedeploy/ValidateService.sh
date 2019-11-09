@@ -29,4 +29,4 @@ echo "Checking web server availability"
 check_every 2
 
 echo "Scanning with openscap and gauntlt"
-bash /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
+sudo -u centos HOME=/home/centos /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml

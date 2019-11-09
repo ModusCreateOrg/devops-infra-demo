@@ -3,11 +3,14 @@
 # Source this to activate RVM
 
 # CodeDeploy has no HOME variable defined!
-HOME=${HOME:-/root}
+HOME=${HOME:-/centos}
 RVM_SH=${RVM_SH:-$HOME/.rvm/scripts/rvm}
 RUBY_VERSION=${RUBY_VERSION:-2.6.3}
 
 # rvm hates the bash options -eu
+
+echo -n "Activating RVM. HOME=$HOME id:"
+id -a
 
 if [[ ! -f "$RVM_SH" ]]; then
     echo "Error: $0: RVM_SH $RVM_SH not found"
