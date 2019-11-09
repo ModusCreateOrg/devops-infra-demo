@@ -15,6 +15,7 @@ final codedeploy_target_skip = -1
 // See generally safe key names from https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
 //final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)], "_")
 final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)]/ , "_")
+def codedeploy_target = codedeploy_target_skip
 
 /** Set up CAPTCHA*/
 def get_captcha(Long hash_const) {
@@ -102,7 +103,7 @@ properties([
             defaultValue: false,
             description: """Rotate server instances in Auto Scaling Group?
                             You should do this if you changed ASG size or baked a new AMI.
-                        """
+                         """
         ),
         booleanParam(
             name: 'Run_JMeter',
@@ -157,23 +158,23 @@ stage('Preflight') {
     }
 
     def build_number = env.BUILD_NUMBER as Long
-    Long codedeploy_target
 
     switch (params.Deploy_CodeDeploy.toLowerCase()) {
         case "": 
             echo "CodeDeploy deployment target is blank, skipping codedeploy step"
-            codedeploy_target = codedeploy_target_skip
             break
         case "latest": 
             // when codedeploy_target > build number, count backwards
             codedeploy_target = build_number + 1 
             echo """CodeDeploy: targeting latest build
-CodeDeploy: Will look for build <= ${build_number}
-CodeDeploy: Will use prefix ${s3_safe_branch_name}"""
+                    CodeDeploy: Will look for build <= ${build_number}
+                    CodeDeploy: Will use prefix ${s3_safe_branch_name}
+                 """
             break
         case 1..build_number:
             echo """CodeDeploy: targeting build ${build_number} for ${env.BRANCH_NAME}
-CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}"""
+                    CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}
+                 """
             codedeploy_target = build_number
             break
         default:
