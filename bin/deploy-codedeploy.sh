@@ -32,7 +32,11 @@ BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 case $PARAM in
 latest)
     echo "CodeDeploy: finding latest build for $BRANCH_PREFIX"
-    ARCHIVE="s3://$BUCKET/$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1 | cut -d\   -f 6)"
+    ARCHIVE="s3://$BUCKET/$(aws s3 ls 
+        "$BUCKET/codedeploy-$BRANCH_PREFIX-" | \
+            sort | \
+            tail -1 | \
+            cut -d\  -f6)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
 [0-9]*)
