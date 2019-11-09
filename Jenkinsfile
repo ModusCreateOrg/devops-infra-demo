@@ -198,8 +198,8 @@ stage('Validate') {
     node {
         wrap.call({
             unstash 'src'
-            // Validate packer templates, check branch
-            sh ("./bin/validate.sh")
+            // Validate packer templates, check branch, lint shell scripts, lint terraform
+            sh ("SKIP_TERRAFORM=${params.Skip_Terraform} ./bin/validate.sh")
         })
     }
 }
