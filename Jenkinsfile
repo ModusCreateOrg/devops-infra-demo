@@ -298,6 +298,18 @@ if (params.Rotate_Servers) {
     }
 }
 
+if (params.Deploy_CodeDeploy) {
+    stage('DeployCodeDeploy Archive') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/deploy-codedeploy.sh ${codedeploy_target} ${s3_safe_branch_name}")
+            })
+        }
+    }
+}
+
+
 if (params.Rotate_Servers) {
     stage('Rotate Servers') {
         node {
