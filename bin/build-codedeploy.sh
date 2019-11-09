@@ -16,6 +16,7 @@ BUILD_DIR="$BASE_DIR/build"
 ANSIBLE_DIR="$BASE_DIR/ansible"
 APPLICTION_DIR="$BASE_DIR/application"
 SRC_DIR="$BASE_DIR/src"
+GAUNTLT_DIR="$BASE_DIR/gauntlt"
 
 # Credit to http://stackoverflow.com/a/246128/424301
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -65,6 +66,7 @@ SOURCES="$BASE_DIR/bin
 $ANSIBLE_DIR
 $APPLICTION_DIR
 $SRC_DIR
+$GAUNTLT_DIR
 $BASE_DIR/codedeploy/appspec.yml"
 for src in $SOURCES; do
     cp -a "$src" "$BUILD_DIR"
