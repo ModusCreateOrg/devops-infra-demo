@@ -9,6 +9,15 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
+# Credit to http://stackoverflow.com/a/246128/424301
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$DIR/.."
+
+# shellcheck disable=SC1090
+. "$DIR/common.sh"
+#shellcheck disable=SC1090
+. "$BASE_DIR/env.sh"
+
 BUILD_NUMBER=${BUILD_NUMBER:-0}
 PARAM=${1:-}
 BRANCH_PREFIX=${2:-master}
