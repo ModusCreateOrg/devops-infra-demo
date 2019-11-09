@@ -3,5 +3,6 @@
 build_dir: /app/build
 output_file_html: /app/build/scan-xccdf-results.html
 output_file_xml: /app/build/scan-xccdf-results.xml
-profile: C2S
+# Oh no! The old C2S profile is no longer available!
+profile: standard
 xccdf_file: /usr/share/xml/scap/ssg/content/ssg-centos7-xccdf.xml
