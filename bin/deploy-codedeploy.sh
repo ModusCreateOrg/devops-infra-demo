@@ -9,14 +9,6 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
-# Credit to http://stackoverflow.com/a/246128/424301
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE_DIR="$DIR/.."
-BUILD_DIR="$BASE_DIR/build"
-ANSIBLE_DIR="$BASE_DIR/ansible"
-APPLICTION_DIR="$BASE_DIR/application"
-SRC_DIR="$BASE_DIR/src"
-
 BUILD_NUMBER=${BUILD_NUMBER:-0}
 PARAM=${1:-}
 BRANCH_PREFIX=${2:-master}
@@ -30,7 +22,7 @@ BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 
 case $PARAM in
 latest)
-    Message="CodeDeploy: finding latest build for $BRANCH_PREFIX"
+    echo "CodeDeploy: finding latest build for $BRANCH_PREFIX"
     ARCHIVE="s3://$BUCKET/$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1 | cut -f 6)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
