@@ -32,7 +32,7 @@ BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 case $PARAM in
 latest)
     echo "CodeDeploy: finding latest build for $BRANCH_PREFIX"
-    ARCHIVE="s3://$BUCKET/$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1 | cut -f 6)"
+    ARCHIVE="s3://$BUCKET/$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1 | cut -d\   -f 6)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
 [0-9]*)
@@ -60,13 +60,14 @@ echo "S3_URL=$S3_URL"
 echo "S3_SHORTHAND=$S3_SHORTHAND"
 
 
-DEPLOYMENT=$(aws deploy create-deployment \
+DEPLOYMENT_ID=$(aws deploy create-deployment \
           --region "$AWS_DEFAULT_REGION" \
-          --output table \
+          --output text \
+          --query '[deploymentId]' \
           --application-name "$APP_NAME" \
           --deployment-group-name "$DEPLOYMENT_GROUP_NAME" \
           --description "deployment initiated by deploy-codedeploy.sh" \
           --no-ignore-application-stop-failures \
           --s3-location "$S3_SHORTHAND")
-echo "CodeDeploy: deployment started $DEPLOYMENT"
-echo "CodeDeploy: see https://console.aws.amazon.com/codesuite/codedeploy/deployments/$DEPLOYMENT"
+echo "CodeDeploy: deployment started $DEPLOYMENT_ID"
+echo "CodeDeploy: see https://console.aws.amazon.com/codesuite/codedeploy/deployments/$DEPLOYMENT_ID"
