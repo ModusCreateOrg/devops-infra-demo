@@ -52,6 +52,7 @@ echo "S3_SHORTHAND=$S3_SHORTHAND"
 
 
 DEPLOYMENT=$(aws deploy create-deployment \
+          --region "$AWS_DEFAULT_REGION" \
           --output table \
           --application-name "$APP_NAME" \
           --deployment-group-name "$DEPLOYMENT_GROUP_NAME" \
