@@ -36,11 +36,16 @@ latest)
         "$BUCKET/codedeploy-$BRANCH_PREFIX-" | \
             sort | \
             tail -1 | \
-            cut -d\  -f6)"
+            sed 's/  */\t/g' | \
+            cut -f 4)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
 [0-9]*)
-    ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1)"
+    ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-$PARAM-" | \
+            sort | \
+            tail -1 | \
+            sed 's/  */\t/g' | \
+            cut -f 4)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
 s3[:]//[a-z0-9]*)
