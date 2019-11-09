@@ -250,7 +250,7 @@ if (params.Package_CodeDeploy) {
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
 
-if (! param.Skip_Terraform) {
+if (! params.Skip_Terraform) {
     stage('Plan Terraform') {
         node {
             wrap.call({
