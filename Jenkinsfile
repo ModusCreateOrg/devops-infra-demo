@@ -169,7 +169,7 @@ stage('Preflight') {
             codedeploy_target = "current"
             break
         case ~/^s3:.*/:
-            echo """CodeDeploy: targeting S3 URL build ${params.Deploy_CodeDeploy)"""
+            echo """CodeDeploy: targeting S3 URL build ${params.Deploy_CodeDeploy}"""
             codedeploy_target = params.Deploy_CodeDeploy
             break
         default:
