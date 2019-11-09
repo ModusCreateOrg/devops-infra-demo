@@ -70,3 +70,5 @@ DEPLOYMENT_ID=$(aws deploy create-deployment \
           --s3-location "$S3_SHORTHAND")
 echo "CodeDeploy: deployment started $DEPLOYMENT_ID"
 echo "CodeDeploy: see https://console.aws.amazon.com/codesuite/codedeploy/deployments/$DEPLOYMENT_ID"
+echo "CodeDeploy: waiting for deployment $DEPLOYMENT_ID to complete..."
+aws deploy wait deployment-successful --deployment-id "$DEPLOYMENT_ID"
