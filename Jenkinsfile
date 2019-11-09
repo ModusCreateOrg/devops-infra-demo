@@ -302,7 +302,7 @@ if (params.Rotate_Servers) {
 }
 
 if (params.Deploy_CodeDeploy) {
-    stage('DeployCodeDeploy Archive') {
+    stage('Deploy') {
         node {
             wrap.call({
                 unstash 'src'
