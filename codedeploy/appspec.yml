@@ -6,6 +6,8 @@ files:
     destination: /app/application
   - source: src
     destination: /app/src
+  - source: gauntlt
+    destination: /app/gauntlt
   - source: bin
     destination: /app/bin
   - source: ansible
