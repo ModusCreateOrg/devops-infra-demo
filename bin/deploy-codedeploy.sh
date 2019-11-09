@@ -26,7 +26,7 @@ latest)
     ARCHIVE="s3://$BUCKET/$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1 | cut -f 6)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
-[0-9][0-9]+)
+[0-9]*)
     ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-" | sort | tail -1)"
     S3_URL="s3://$BUCKET/$ARCHIVE"
     ;;
