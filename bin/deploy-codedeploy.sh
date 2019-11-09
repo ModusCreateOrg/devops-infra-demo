@@ -19,6 +19,7 @@ BASE_DIR="$DIR/.."
 . "$BASE_DIR/env.sh"
 
 BUILD_NUMBER=${BUILD_NUMBER:-0}
+BUCKET="codedeploy-$(get_aws_account_id)"
 PARAM=${1:-}
 BRANCH_PREFIX=${2:-master}
 APP_NAME=${3:-tf-infra-demo-app}
