@@ -33,14 +33,15 @@ echo "Checking web server availability"
 check_every 2
 
 echo "Scanning with openscap and gauntlt"
-mkdir -p /app/build
+mkdir -p /app/build /app/ansible/tmp
 cat < /dev/null > "$GAUNTLT_RESULTS"
 chown -R centos:centos "$GAUNTLT_RESULTS" /app/build /app/ansible/tmp
+chmod 755 "$GAUNTLT_RESULTS" /app/build /app/ansible/tmp
 
 set +e
 sudo -u centos HOME=/home/centos /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
 RETCODE=$?
-cp "$GAUNTLT_RESULTS" "$GAUNTLT_RESULTS_SAVE"
 set -e
+cp "$GAUNTLT_RESULTS" "$GAUNTLT_RESULTS_SAVE"
+rm -rf /app/ansible/tmp /app/build
 exit "$RETCODE"
-rm -rf /app/ansible/tmp
