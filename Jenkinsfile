@@ -149,7 +149,7 @@ stage('Preflight') {
         echo "No CAPTCHA required, continuing"
     }
 
-    def build_number = ${env.BUILD_NUMBER} as Long
+    def build_number = env.BUILD_NUMBER as Long
     switch (params.CodeDeploy_Target.toLowerCase()) {
         case "latest": 
             echo "CodeDeploy targeting latest build"
