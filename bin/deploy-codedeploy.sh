@@ -33,6 +33,7 @@ latest)
 s3[:]//[a-z0-9]*)
     S3_URL="$PARAM"
     ARCHIVE=$(cut -d/ -f 3- <<<"$S3_URL")
+    BUCKET==$(cut -d/ -f 2- <<<"$S3_URL")
     ;;
 *)
     echo "ERROR: Unknown format for $PARAM, exiting"
@@ -41,10 +42,13 @@ s3[:]//[a-z0-9]*)
 esac
 
 
+S3_SHORTHAND="bundleType=string,bucket=$BUCKET,key=$ARCHIVE"
+
 echo "BRANCH_PREFIX=$BRANCH_PREFIX"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 echo "ARCHIVE=$ARCHIVE"
 echo "S3_URL=$S3_URL"
+echo "S3_SHORTHAND=$S3_SHORTHAND"
 
 
 DEPLOYMENT=$(aws deploy create-deployment \
@@ -53,6 +57,6 @@ DEPLOYMENT=$(aws deploy create-deployment \
           --deployment-group-name "$DEPLOYMENT_GROUP_NAME" \
           --description "deployment initiated by deploy-codedeploy.sh" \
           --no-ignore-application-stop-failures \
-          --s3-location "$S3_URL")
+          --s3-location "$S3_SHORTHAND")
 echo "CodeDeploy: deployment started $DEPLOYMENT"
 echo "CodeDeploy: see https://console.aws.amazon.com/codesuite/codedeploy/deployments/$DEPLOYMENT"

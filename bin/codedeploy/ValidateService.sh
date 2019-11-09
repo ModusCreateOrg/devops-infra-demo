@@ -25,4 +25,8 @@ check_every() {
     done
 }
 
+echo "Checking web server availability"
 check_every 2
+
+echo "Scanning with openscap and gauntlt"
+bash /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
