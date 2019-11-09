@@ -15,6 +15,8 @@ ${DEBUG:-false} && set -vx
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 GAUNTLT_RESULTS=/app/build/gauntlt-results.html
+# TODO: save this to S3 instead
+GAUNTLT_RESULTS_SAVE="/home/centos/$DEPLOYMENT_ID-gauntlt-results.html"
 
 check_every() {
     local delay=${1:-}
@@ -34,4 +36,9 @@ echo "Scanning with openscap and gauntlt"
 mkdir -p /app/build
 cat < /dev/null > "$GAUNTLT_RESULTS"
 chown centos:centos "$GAUNTLT_RESULTS"
+set +e
 sudo -u centos HOME=/home/centos /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
+RETCODE=$?
+cp "$GAUNTLT_RESULTS" "$GAUNTLT_RESULTS_SAVE"
+set -e
+exit "$RETCODE"
