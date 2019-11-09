@@ -14,6 +14,8 @@ ${DEBUG:-false} && set -vx
 # and http://wiki.bash-hackers.org/scripting/debuggingtips
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
+GAUNTLT_RESULTS=/app/build/gauntlt-results.html
+
 check_every() {
     local delay=${1:-}
     local host="http://localhost/"
@@ -29,4 +31,7 @@ echo "Checking web server availability"
 check_every 2
 
 echo "Scanning with openscap and gauntlt"
+mkdir -p /app/build
+cat < /dev/null > "$GAUNTLT_RESULTS"
+chown centos:centos "$GAUNTLT_RESULTS"
 sudo -u centos HOME=/home/centos /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
