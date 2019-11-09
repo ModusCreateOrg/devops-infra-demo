@@ -24,43 +24,29 @@ BRANCH_PREFIX=${2:-master}
 APP_NAME=${3:-tf-infra-demo-app}
 DEPLOYMENT_GROUP_NAME=${4:-dev}
 
+GIT_REV="$(git rev-parse --short HEAD)"
+ARCHIVE="codedeploy-$BRANCH_PREFIX-$BUILD_NUMBER-$GIT_REV.zip"
+# Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
+S3_URL="s3://$BUCKET/$ARCHIVE"
+
 # Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 
-if [[ "$PARAM" -gt "$BUILD_NUMBER" ]]; then
-    echo "CodeDeploy: finding latest build for $BRANCH_PREFIX"
-    for x in $(seq $PARAM 1); do
-        ARCHIVE="s3://$BUCKET/$(aws s3 ls 
-            "$BUCKET/codedeploy-$BRANCH_PREFIX-" | \
-                sort | \
-                tail -1 | \
-                sed 's/  */\t/g' | \
-                cut -f 4)"
-        S3_URL="s3://$BUCKET/$ARCHIVE"
-        PARAM=$(( PARAM - 1 ))
-    done
-else
-    case $PARAM in
-    [0-9]*)
-        ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-$PARAM-" | \
-                sort | \
-                tail -1 | \
-                sed 's/  */\t/g' | \
-                cut -f 4)"
-        S3_URL="s3://$BUCKET/$ARCHIVE"
-        ;;
+case $PARAM in
     s3[:]//[a-z0-9]*)
         S3_URL="$PARAM"
         ARCHIVE=$(cut -d/ -f 3- <<<"$S3_URL")
         BUCKET=$(cut -d/ -f 2- <<<"$S3_URL")
         ;;
+    current)
+        echo "Using current CodeDeploy build: $S3_URL"
+        ;;
     *)
         echo "ERROR: Unknown format for $PARAM, exiting"
         exit 1
         ;;
-    esac
-fi
+esac
 
 
 S3_SHORTHAND="bundleType=zip,bucket=$BUCKET,key=$ARCHIVE"

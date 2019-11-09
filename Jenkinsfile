@@ -70,9 +70,9 @@ properties([
             defaultValue: '',
             description: '''Deploy a CodeDeploy archive.
                             Specify one of the following:
-                            1. "latest" - deploy the latest build from this branch
-                            2. a build number - deploy that build number from this branch
-                            3. a full S3 URL'''
+                            1. "current" - deploy the CodeDeploy archive from this build
+                            2. a full S3 URL of a zip file to deploy'''
+                            3. an empty string (to skip deployment)'''
         ),
         booleanParam(
             name: 'Apply_Terraform',
@@ -159,23 +159,19 @@ stage('Preflight') {
 
     def build_number = env.BUILD_NUMBER as Long
 
-    switch (params.Deploy_CodeDeploy.toLowerCase()) {
+    switch (params.Deploy_CodeDeploy) {
         case "": 
             echo "CodeDeploy deployment target is blank, skipping codedeploy step"
             break
-        case "latest": 
-            // when codedeploy_target > build number, count backwards
-            codedeploy_target = build_number + 1 
+        case "current": 
             echo """CodeDeploy: targeting latest build
-                    CodeDeploy: Will look for build <= ${build_number}
                     CodeDeploy: Will use prefix ${s3_safe_branch_name}
                  """
+            codedeploy_target = "current"
             break
-        case 1..build_number:
-            echo """CodeDeploy: targeting build ${build_number} for ${env.BRANCH_NAME}
-                    CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}
-                 """
-            codedeploy_target = build_number
+        case /^s3:.*/:
+            echo """CodeDeploy: targeting S3 URL build ${params.Deploy_CodeDeploy)"""
+            codedeploy_target = params.Deploy_CodeDeploy
             break
         default:
             currentBuild.result = 'ABORTED'
