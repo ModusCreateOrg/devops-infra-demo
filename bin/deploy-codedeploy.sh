@@ -33,7 +33,7 @@ latest)
 s3[:]//[a-z0-9]*)
     S3_URL="$PARAM"
     ARCHIVE=$(cut -d/ -f 3- <<<"$S3_URL")
-    BUCKET==$(cut -d/ -f 2- <<<"$S3_URL")
+    BUCKET=$(cut -d/ -f 2- <<<"$S3_URL")
     ;;
 *)
     echo "ERROR: Unknown format for $PARAM, exiting"
