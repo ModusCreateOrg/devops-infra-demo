@@ -65,7 +65,7 @@ properties([
             description: 'Package CodeDeploy application on this build?'
         ),
         string(
-            name: 'CodeDeploy_Target',
+            name: 'Deploy_CodeDeploy',
             defaultValue: '',
             description: '''Deploy a CodeDeploy archive.
                             Specify one of the following:
@@ -159,21 +159,21 @@ stage('Preflight') {
     def build_number = env.BUILD_NUMBER as Long
     Long codedeploy_target
 
-    switch (params.CodeDeploy_Target.toLowerCase()) {
+    switch (params.Deploy_CodeDeploy.toLowerCase()) {
         case "": 
-            echo "CodeDeploy target is blank, skipping codedeploy step"
+            echo "CodeDeploy deployment target is blank, skipping codedeploy step"
             codedeploy_target = codedeploy_target_skip
             break
         case "latest": 
             // when codedeploy_target > build number, count backwards
             codedeploy_target = build_number + 1 
             echo """CodeDeploy: targeting latest build
-                    CodeDeploy: Will look for build <= ${build_number}
-                    CodeDeploy: Will use prefix ${s3_safe_branch_name}"""
+CodeDeploy: Will look for build <= ${build_number}
+CodeDeploy: Will use prefix ${s3_safe_branch_name}"""
             break
         case 1..build_number:
             echo """CodeDeploy: targeting build ${build_number} for ${env.BRANCH_NAME}
-                    CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}"""
+CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}"""
             codedeploy_target = build_number
             break
         default:
