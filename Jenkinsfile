@@ -74,6 +74,11 @@ properties([
                             3. an empty string (to skip deployment)'''
         ),
         booleanParam(
+            name: 'Skip_Terraform',
+            defaultValue: false,
+            description: 'Skip all Terraform steps, including validation and planning? (shortens cycle times when testing other aspects)'
+        ),
+        booleanParam(
             name: 'Apply_Terraform',
             defaultValue: false,
             description: 'Apply Terraform plan on this build?'
@@ -245,24 +250,26 @@ if (params.Package_CodeDeploy) {
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
 
-stage('Plan Terraform') {
-    node {
-        wrap.call({
-            unstash 'src'
-            def verb = "plan"
-            if (params.Destroy_Terraform) {
-                verb += '-destroy';
-                terraform_prompt += ' WARNING: will DESTROY resources';
-            }
-            sh ("""
-                ./bin/terraform.sh ${verb}
-                """)
-        })
-        stash includes: "**", excludes: ".git/", name: 'plan'
+if (! param.Skip_Terraform) {
+    stage('Plan Terraform') {
+        node {
+            wrap.call({
+                unstash 'src'
+                def verb = "plan"
+                if (params.Destroy_Terraform) {
+                    verb += '-destroy';
+                    terraform_prompt += ' WARNING: will DESTROY resources';
+                }
+                sh ("""
+                    ./bin/terraform.sh ${verb}
+                    """)
+            })
+            stash includes: "**", excludes: ".git/", name: 'plan'
+        }
     }
 }
 
-if (params.Apply_Terraform || params.Destroy_Terraform) {
+if (! params.Skip_Terraform && params.Apply_Terraform || params.Destroy_Terraform) {
     // See https://support.cloudbees.com/hc/en-us/articles/226554067-Pipeline-How-to-add-an-input-step-with-timeout-that-continues-if-timeout-is-reached-using-a-default-value
     def userInput = false
     try {
