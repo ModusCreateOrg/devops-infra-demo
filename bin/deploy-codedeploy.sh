@@ -28,36 +28,39 @@ DEPLOYMENT_GROUP_NAME=${4:-dev}
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 
-
-case $PARAM in
-latest)
+if [[ "$PARAM" -gt "$BUILD_NUMBER" ]]; then
     echo "CodeDeploy: finding latest build for $BRANCH_PREFIX"
-    ARCHIVE="s3://$BUCKET/$(aws s3 ls 
-        "$BUCKET/codedeploy-$BRANCH_PREFIX-" | \
-            sort | \
-            tail -1 | \
-            sed 's/  */\t/g' | \
-            cut -f 4)"
-    S3_URL="s3://$BUCKET/$ARCHIVE"
-    ;;
-[0-9]*)
-    ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-$PARAM-" | \
-            sort | \
-            tail -1 | \
-            sed 's/  */\t/g' | \
-            cut -f 4)"
-    S3_URL="s3://$BUCKET/$ARCHIVE"
-    ;;
-s3[:]//[a-z0-9]*)
-    S3_URL="$PARAM"
-    ARCHIVE=$(cut -d/ -f 3- <<<"$S3_URL")
-    BUCKET=$(cut -d/ -f 2- <<<"$S3_URL")
-    ;;
-*)
-    echo "ERROR: Unknown format for $PARAM, exiting"
-    exit 1
-    ;;
-esac
+    for x in $(seq $PARAM 1); do
+        ARCHIVE="s3://$BUCKET/$(aws s3 ls 
+            "$BUCKET/codedeploy-$BRANCH_PREFIX-" | \
+                sort | \
+                tail -1 | \
+                sed 's/  */\t/g' | \
+                cut -f 4)"
+        S3_URL="s3://$BUCKET/$ARCHIVE"
+        PARAM=$(( PARAM - 1 ))
+    done
+else
+    case $PARAM in
+    [0-9]*)
+        ARCHIVE="$(aws s3 ls "$BUCKET/codedeploy-$BRANCH_PREFIX-$PARAM-" | \
+                sort | \
+                tail -1 | \
+                sed 's/  */\t/g' | \
+                cut -f 4)"
+        S3_URL="s3://$BUCKET/$ARCHIVE"
+        ;;
+    s3[:]//[a-z0-9]*)
+        S3_URL="$PARAM"
+        ARCHIVE=$(cut -d/ -f 3- <<<"$S3_URL")
+        BUCKET=$(cut -d/ -f 2- <<<"$S3_URL")
+        ;;
+    *)
+        echo "ERROR: Unknown format for $PARAM, exiting"
+        exit 1
+        ;;
+    esac
+fi
 
 
 S3_SHORTHAND="bundleType=zip,bucket=$BUCKET,key=$ARCHIVE"
