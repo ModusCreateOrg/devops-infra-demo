@@ -11,6 +11,7 @@ import java.util.Random
 
 // Set default variables
 final default_timeout_minutes = 20
+final codedeploy_target_skip = -1
 
 /** Set up CAPTCHA*/
 def get_captcha(Long hash_const) {
@@ -150,18 +151,27 @@ stage('Preflight') {
     }
 
     def build_number = env.BUILD_NUMBER as Long
+    Long codedeploy_target
+
     switch (params.CodeDeploy_Target.toLowerCase()) {
+        case "": 
+            echo "CodeDeploy target is blank, skipping codedeploy step"
+            codedeploy_target = codedeploy_target_skip
+            break
         case "latest": 
-            echo "CodeDeploy targeting latest build"
+            // when codedeploy_target > build number, count backwards
+            codedeploy_target = build_number + 1 
+            echo "CodeDeploy targeting latest build (will look for build <= ${build_number}"
             break
         case 1..build_number:
             echo "CodeDeploy targeting build ${build_number}"
+            codedeploy_target = build_number
             break
         default:
-            throw Exception("CodeDeploy build_number ${build_number} is not understood")
+            currentBuild.result = 'ABORTED'
+            error "CodeDeploy build_number ${build_number} is not understood"
             break
     }
-        
 }
 
 stage('Checkout') {
@@ -216,12 +226,14 @@ if (params.Run_Packer) {
     }
 }
 
-stage('Build CodeDeploy Archive') {
-    node {
-        wrap.call({
-            unstash 'src'
-            sh ("./bin/build-codedeploy.sh")
-        })
+if (params.Package_CodeDeploy) {
+    stage('Package CodeDeploy Archive') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/build-codedeploy.sh")
+            })
+        }
     }
 }
 
@@ -263,6 +275,17 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
     } catch(err) { // timeout reached or other error
         echo err.toString()
         currentBuild.result = 'ABORTED'
+    }
+}
+
+if (params.Rotate_Servers) {
+    stage('Rotate Servers') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/rotate-asg.sh infra-demo-asg")
+            })
+        }
     }
 }
 
