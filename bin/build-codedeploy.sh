@@ -22,16 +22,17 @@ BUILD_NUMBER=${BUILD_NUMBER:-0}
 BRANCH_PREFIX=${1:-master}
 ARCHIVE="codedeploy-$BRANCH_PREFIX-$BUILD_NUMBER-$GIT_REV.zip"
 CONTAINERNAME=infra-demo
+# Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+BUCKET="codedeploy-$AWS_ACCOUNT_ID"
+S3_URL="s3://$BUCKET/$ARCHIVE"
 
 echo "GIT_REV=$GIT_REV"
 echo "BRANCH_PREFIX=$BRANCH_PREFIX"
 echo "BUILD_NUMBER=$BUILD_NUMBER"
 echo "ARCHIVE=$ARCHIVE"
+echo "S3_URL=$S3_URL"
 
-# Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
-BUCKET="codedeploy-$AWS_ACCOUNT_ID"
-S3_URL="s3://$BUCKET/$ARCHIVE"
 
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
