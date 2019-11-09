@@ -2,6 +2,8 @@
 # Activate rvm
 # Source this to activate RVM
 
+# CodeDeploy has no HOME variable defined!
+HOME=${HOME:-/root}
 RVM_SH=${RVM_SH:-$HOME/.rvm/scripts/rvm}
 RUBY_VERSION=${RUBY_VERSION:-2.6.3}
 
