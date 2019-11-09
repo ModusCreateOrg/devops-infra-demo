@@ -154,7 +154,7 @@ stage('Preflight') {
         case "latest": 
             echo "CodeDeploy targeting latest build"
             break
-        case { it instanceof Integer && it > 0 && it <= build_number }:
+        case 1..build_number:
             echo "CodeDeploy targeting build ${build_number}"
             break
         default:
