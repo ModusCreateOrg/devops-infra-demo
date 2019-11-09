@@ -68,7 +68,9 @@ $APPLICTION_DIR
 $SRC_DIR
 $GAUNTLT_DIR
 $BASE_DIR/codedeploy/appspec.yml"
+echo "Copying sources into place
 for src in $SOURCES; do
+    echo cp -a "$src" "$BUILD_DIR"
     cp -a "$src" "$BUILD_DIR"
 done
 
