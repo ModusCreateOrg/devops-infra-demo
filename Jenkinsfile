@@ -144,7 +144,7 @@ stage('Preflight') {
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
-            throw new Exception("No CAPTCHA guess detected, try again!")
+            error "No CAPTCHA guess detected, try again!"
         }
         def guess = params.CAPTCHA_Guess as Long
         def hash = params.CAPTCHA_Hash as Long
