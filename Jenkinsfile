@@ -63,6 +63,15 @@ properties([
             defaultValue: false,
             description: 'Package CodeDeploy application on this build?'
         ),
+        string(
+            name: 'CodeDeploy_Target',
+            defaultValue: '',
+            description: '''Deploy a CodeDeploy archive.
+                            Specify one of the following:
+                            1. "latest" - deploy the latest build from this branch
+                            2. a build number - deploy that build number from this branch
+                            3. a full S3 URL'''
+        ),
         booleanParam(
             name: 'Apply_Terraform',
             defaultValue: false,
@@ -86,12 +95,6 @@ properties([
                             Allows you to override declared variables.
                             Put one variable per line, in JSON or HCL like this:
                             associate_public_ip_address = "true"'''
-        ),
-        string(
-            name: 'CodeDeploy_Target',
-            defaultValue: '',
-            description: '''Deploy either a specific build's CodeDeploy archive (specify build number)
-                            or the latest archive (specify "latest")'''
         ),
         booleanParam(
             name: 'Rotate_Servers',
