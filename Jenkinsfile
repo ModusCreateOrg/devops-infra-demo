@@ -13,7 +13,6 @@ import java.util.Random
 final default_timeout_minutes = 20
 final codedeploy_target_skip = -1
 // See generally safe key names from https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
-//final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)], "_")
 final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)]/ , "_")
 def codedeploy_target = codedeploy_target_skip
 
@@ -71,7 +70,7 @@ properties([
             description: '''Deploy a CodeDeploy archive.
                             Specify one of the following:
                             1. "current" - deploy the CodeDeploy archive from this build
-                            2. a full S3 URL of a zip file to deploy'''
+                            2. a full S3 URL of a zip file to deploy
                             3. an empty string (to skip deployment)'''
         ),
         booleanParam(
