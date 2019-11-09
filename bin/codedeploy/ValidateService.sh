@@ -35,10 +35,12 @@ check_every 2
 echo "Scanning with openscap and gauntlt"
 mkdir -p /app/build
 cat < /dev/null > "$GAUNTLT_RESULTS"
-chown centos:centos "$GAUNTLT_RESULTS"
+chown -R centos:centos "$GAUNTLT_RESULTS" /app/build /app/ansible/tmp
+
 set +e
 sudo -u centos HOME=/home/centos /app/bin/ansible.sh scan-openscap.yml scan-gauntlt.yml
 RETCODE=$?
 cp "$GAUNTLT_RESULTS" "$GAUNTLT_RESULTS_SAVE"
 set -e
 exit "$RETCODE"
+rm -rf /app/ansible/tmp
