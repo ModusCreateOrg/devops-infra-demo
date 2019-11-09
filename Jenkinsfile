@@ -12,6 +12,8 @@ import java.util.Random
 // Set default variables
 final default_timeout_minutes = 20
 final codedeploy_target_skip = -1
+// See generally safe key names from https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
+final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z!\-_\.\*\'()], "_")
 
 /** Set up CAPTCHA*/
 def get_captcha(Long hash_const) {
@@ -161,10 +163,13 @@ stage('Preflight') {
         case "latest": 
             // when codedeploy_target > build number, count backwards
             codedeploy_target = build_number + 1 
-            echo "CodeDeploy targeting latest build (will look for build <= ${build_number}"
+            echo """CodeDeploy: targeting latest build
+                    CodeDeploy: Will look for build <= ${build_number}
+                    CodeDeploy: Will use prefix ${s3_safe_branch_name}"""
             break
         case 1..build_number:
-            echo "CodeDeploy targeting build ${build_number}"
+            echo """CodeDeploy: targeting build ${build_number} for ${env.BRANCH_NAME}
+                    CodeDeploy: Will use name ${s3_safe_build_number}-${build_number}"""
             codedeploy_target = build_number
             break
         default:
@@ -231,7 +236,7 @@ if (params.Package_CodeDeploy) {
         node {
             wrap.call({
                 unstash 'src'
-                sh ("./bin/build-codedeploy.sh")
+                sh ("./bin/build-codedeploy.sh ${s3_safe_branch_name}")
             })
         }
     }
