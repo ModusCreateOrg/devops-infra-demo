@@ -32,3 +32,17 @@ Feature: nmap attacks for localhost and to use this for your tests, change the v
       """
       443/tcp
       """
+
+  Scenario: Output to XML
+    When I launch an "nmap" attack with:
+      """
+      nmap -p 22,80,443 -oX /app/build/nmap-results.xml <hostname>
+      """
+    And the file "/app/build/nmap-results.xml" should contain XML:
+      | css                                                          |
+      | ports port[protocol="tcp"][portid="22"] state[state="open"]  |
+    And the file "/app/build/nmap-results.xml" should not contain XML:
+      | css                                                          |
+      | ports port[protocol="tcp"][portid="80"] state[state="open"] |
+      | ports port[protocol="tcp"][portid="443"] state[state="open"] |
+
