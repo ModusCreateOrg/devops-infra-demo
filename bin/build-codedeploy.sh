@@ -16,20 +16,34 @@ BUILD_DIR="$BASE_DIR/build"
 ANSIBLE_DIR="$BASE_DIR/ansible"
 APPLICTION_DIR="$BASE_DIR/application"
 SRC_DIR="$BASE_DIR/src"
+GAUNTLT_DIR="$BASE_DIR/gauntlt"
+
+# Credit to http://stackoverflow.com/a/246128/424301
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE_DIR="$DIR/.."
+
+# shellcheck disable=SC1090
+. "$DIR/common.sh"
+#shellcheck disable=SC1090
+. "$BASE_DIR/env.sh"
+
 
 GIT_REV="$(git rev-parse --short HEAD)"
 BUILD_NUMBER=${BUILD_NUMBER:-0}
-ARCHIVE="codedeploy-$BUILD_NUMBER-$GIT_REV.zip"
+BRANCH_PREFIX=${1:-master}
+ARCHIVE="codedeploy-$BRANCH_PREFIX-$BUILD_NUMBER-$GIT_REV.zip"
 CONTAINERNAME=infra-demo
-
-echo "GIT_REV=$GIT_REV"
-echo "BUILD_NUMBER=$BUILD_NUMBER"
-echo "ARCHIVE=$ARCHIVE"
-
 # Thanks https://stackoverflow.com/questions/33791069/quick-way-to-get-aws-account-number-from-the-cli-tools
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
+AWS_ACCOUNT_ID=$(get_aws_account_id)
 BUCKET="codedeploy-$AWS_ACCOUNT_ID"
 S3_URL="s3://$BUCKET/$ARCHIVE"
+
+echo "GIT_REV=$GIT_REV"
+echo "BRANCH_PREFIX=$BRANCH_PREFIX"
+echo "BUILD_NUMBER=$BUILD_NUMBER"
+echo "ARCHIVE=$ARCHIVE"
+echo "S3_URL=$S3_URL"
+
 
 if [[ -d "$BUILD_DIR" ]]; then
     rm -rf "$BUILD_DIR"
@@ -52,8 +66,11 @@ SOURCES="$BASE_DIR/bin
 $ANSIBLE_DIR
 $APPLICTION_DIR
 $SRC_DIR
+$GAUNTLT_DIR
 $BASE_DIR/codedeploy/appspec.yml"
+echo "Copying sources into place"
 for src in $SOURCES; do
+    echo cp -a "$src" "$BUILD_DIR"
     cp -a "$src" "$BUILD_DIR"
 done
 
@@ -64,6 +81,7 @@ done
         bin \
         ansible \
         application \
+        gauntlt \
         src \
         venv \
         socket

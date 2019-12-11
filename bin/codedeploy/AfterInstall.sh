@@ -41,3 +41,6 @@ source ${VENV_DIR}/bin/activate
 set -u
 newrelic-admin generate-config "${NEWRELIC_LICENSE_KEY}" "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig"
 sed 's/^app_name =.*$/app_name = Spin/' "${NEWRELIC_CONFIG_DIR}/newrelic.ini.orig" > "${NEWRELIC_CONFIG_DIR}/newrelic.ini"
+
+echo /app directory:
+ls -laZ /app
