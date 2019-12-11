@@ -61,6 +61,11 @@
 						"file_path": "/var/log/nginx/error.log",
 						"log_group_name": "nginx-error",
 						"log_stream_name": "{instance_id}"
+					},
+					{
+						"file_path": "/opt/codedeploy-agent/deployment-root/deployment-logs/codedeploy-agent-deployments.log",
+						"log_group_name": "codedeploy",
+						"log_stream_name": "{instance_id}"
 					}
 				]
 			}

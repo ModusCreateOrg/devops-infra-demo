@@ -11,6 +11,10 @@ import java.util.Random
 
 // Set default variables
 final default_timeout_minutes = 20
+final codedeploy_target_skip = -1
+// See generally safe key names from https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
+final s3_safe_branch_name = env.BRANCH_NAME.replaceAll(/[^0-9a-zA-Z\!\-_\.\*\'\(\)]/ , "_")
+def codedeploy_target = codedeploy_target_skip
 
 /** Set up CAPTCHA*/
 def get_captcha(Long hash_const) {
@@ -56,6 +60,25 @@ properties([
             description: 'Run Packer for this build?'
         ),
         booleanParam(
+            name: 'Package_CodeDeploy',
+            defaultValue: false,
+            description: 'Package CodeDeploy application on this build?'
+        ),
+        string(
+            name: 'Deploy_CodeDeploy',
+            defaultValue: '',
+            description: '''Deploy a CodeDeploy archive.
+                            Specify one of the following:
+                            1. "current" - deploy the CodeDeploy archive from this build
+                            2. a full S3 URL of a zip file to deploy
+                            3. an empty string (to skip deployment)'''
+        ),
+        booleanParam(
+            name: 'Skip_Terraform',
+            defaultValue: false,
+            description: 'Skip all Terraform steps, including validation and planning? (shortens cycle times when testing other aspects)'
+        ),
+        booleanParam(
             name: 'Apply_Terraform',
             defaultValue: false,
             description: 'Apply Terraform plan on this build?'
@@ -84,7 +107,7 @@ properties([
             defaultValue: false,
             description: """Rotate server instances in Auto Scaling Group?
                             You should do this if you changed ASG size or baked a new AMI.
-                        """
+                         """
         ),
         booleanParam(
             name: 'Run_JMeter',
@@ -122,11 +145,11 @@ properties([
 stage('Preflight') {
 
     // Check CAPTCHA
-    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter
+    def should_validate_captcha = params.Run_Packer || params.Apply_Terraform || params.Destroy_Terraform || params.Run_JMeter || params.CodeDeploy_Target
 
     if (should_validate_captcha) {
         if (params.CAPTCHA_Guess == null || params.CAPTCHA_Guess == "") {
-            throw new Exception("No CAPTCHA guess detected, try again!")
+            error "No CAPTCHA guess detected, try again!"
         }
         def guess = params.CAPTCHA_Guess as Long
         def hash = params.CAPTCHA_Hash as Long
@@ -136,6 +159,28 @@ stage('Preflight') {
         echo "CAPTCHA validated OK"
     } else {
         echo "No CAPTCHA required, continuing"
+    }
+
+    def build_number = env.BUILD_NUMBER as Long
+
+    switch (params.Deploy_CodeDeploy) {
+        case "": 
+            echo "CodeDeploy deployment target is blank, skipping codedeploy step"
+            break
+        case "current": 
+            echo """CodeDeploy: targeting latest build
+                    CodeDeploy: Will use prefix ${s3_safe_branch_name}
+                 """
+            codedeploy_target = "current"
+            break
+        case ~/^s3:.*/:
+            echo """CodeDeploy: targeting S3 URL build ${params.Deploy_CodeDeploy}"""
+            codedeploy_target = params.Deploy_CodeDeploy
+            break
+        default:
+            currentBuild.result = 'ABORTED'
+            error "CodeDeploy build_number ${build_number} is not understood"
+            break
     }
 }
 
@@ -153,8 +198,8 @@ stage('Validate') {
     node {
         wrap.call({
             unstash 'src'
-            // Validate packer templates, check branch
-            sh ("./bin/validate.sh")
+            // Validate packer templates, check branch, lint shell scripts, lint terraform
+            sh ("SKIP_TERRAFORM=${params.Skip_Terraform} ./bin/validate.sh")
         })
     }
 }
@@ -191,36 +236,40 @@ if (params.Run_Packer) {
     }
 }
 
-stage('Build CodeDeploy Archive') {
-    node {
-        wrap.call({
-            unstash 'src'
-            sh ("./bin/build-codedeploy.sh")
-        })
+if (params.Package_CodeDeploy) {
+    stage('Package CodeDeploy Archive') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/build-codedeploy.sh ${s3_safe_branch_name}")
+            })
+        }
     }
 }
 
 def terraform_prompt = 'Should we apply the Terraform plan?'
 
 
-stage('Plan Terraform') {
-    node {
-        wrap.call({
-            unstash 'src'
-            def verb = "plan"
-            if (params.Destroy_Terraform) {
-                verb += '-destroy';
-                terraform_prompt += ' WARNING: will DESTROY resources';
-            }
-            sh ("""
-                ./bin/terraform.sh ${verb}
-                """)
-        })
-        stash includes: "**", excludes: ".git/", name: 'plan'
+if (! params.Skip_Terraform) {
+    stage('Plan Terraform') {
+        node {
+            wrap.call({
+                unstash 'src'
+                def verb = "plan"
+                if (params.Destroy_Terraform) {
+                    verb += '-destroy';
+                    terraform_prompt += ' WARNING: will DESTROY resources';
+                }
+                sh ("""
+                    ./bin/terraform.sh ${verb}
+                    """)
+            })
+            stash includes: "**", excludes: ".git/", name: 'plan'
+        }
     }
 }
 
-if (params.Apply_Terraform || params.Destroy_Terraform) {
+if (! params.Skip_Terraform && params.Apply_Terraform || params.Destroy_Terraform) {
     // See https://support.cloudbees.com/hc/en-us/articles/226554067-Pipeline-How-to-add-an-input-step-with-timeout-that-continues-if-timeout-is-reached-using-a-default-value
     def userInput = false
     try {
@@ -240,6 +289,29 @@ if (params.Apply_Terraform || params.Destroy_Terraform) {
         currentBuild.result = 'ABORTED'
     }
 }
+
+if (params.Rotate_Servers) {
+    stage('Rotate Servers') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/rotate-asg.sh infra-demo-asg")
+            })
+        }
+    }
+}
+
+if (params.Deploy_CodeDeploy) {
+    stage('Deploy') {
+        node {
+            wrap.call({
+                unstash 'src'
+                sh ("./bin/deploy-codedeploy.sh ${codedeploy_target} ${s3_safe_branch_name}")
+            })
+        }
+    }
+}
+
 
 if (params.Rotate_Servers) {
     stage('Rotate Servers') {
