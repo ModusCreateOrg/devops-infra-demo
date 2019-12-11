@@ -113,3 +113,17 @@ function quick_yum_install() {
         echo "$package already installed, skipping" >&2
     fi
 }
+
+function get_local_ipv4_addresses () {
+    ip addr | \
+        grep 'inet ' | \
+        sed 's/  */ /g;s/\/[0-9]* / /g' | \
+        cut -d\  -f 3
+}
+
+function get_local_ipv6_addresses () {
+    ip addr | \
+        grep 'inet6' | \
+        sed 's/  */ /g;s/\/[0-9]* / /g' | \
+        cut -d\  -f 3
+}

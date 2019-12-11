@@ -1,0 +1,16 @@
+@slow
+
+Feature: nmap attacks for localhost and to use this for your tests, change the value in the profile
+  Background:
+    Given "nmap" is installed
+    And the following profile:
+      | name           | value        |
+      | hostname       | localhost   |
+      | host           | localhost   |
+      | tcp_ping_ports | 22,25,80,443 |
+
+  Scenario: Verify server is open on expected set of ports using the nmap-fast attack step
+    When I launch a "nmap-fast" attack
+    Then the output should match /22\.tcp\s+open/
+    Then the output should not contain /(25|80|443)\.tcp\s+open/
+

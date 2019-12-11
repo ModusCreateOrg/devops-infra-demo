@@ -1,0 +1,48 @@
+@slow
+# Adapted from https://github.com/gauntlt/gauntlt/blob/master/examples/nmap/nmap.attack
+
+Feature: nmap attacks for localhost
+  Background:
+    Given "nmap" is installed
+    And the following profile:
+      | name           | value       |
+      | hostname       | localhost   |
+      | host           | localhost   |
+      | tcp_ping_ports | 22,25       |
+
+  Scenario: Verify server is open on expected set of ports using the nmap-fast attack step
+    When I launch a "nmap-fast" attack
+    Then the output should match /22.tcp\s+open/
+    And the output should not match /25.tcp\s+open/
+
+  Scenario: Verify server is open on expected set of ports using the nmap fast flag
+    When I launch an "nmap" attack with:
+      """
+      nmap -F <hostname>
+      """
+    Then the output should match:
+      """
+      22/tcp\s+open
+      """
+
+  Scenario: Verify server is open on expected set of ports using the nmap fast flag
+    When I launch an "nmap" attack with:
+      """
+      nmap -F <hostname>
+      """
+    Then the output should not contain:
+      """
+      25/tcp\s+open
+      """
+
+  Scenario: Output to XML
+    When I launch an "nmap" attack with:
+      """
+      nmap -p- -oX /app/build/nmap-results.xml <hostname>
+      """
+    And the file "/app/build/nmap-results.xml" should contain XML:
+      | css                                                          |
+      | ports port[protocol="tcp"][portid="22"] state[state="open"]  |
+    And the file "/app/build/nmap-results.xml" should not contain XML:
+      | ports port[protocol="tcp"][portid="25"] state[state="open"] |
+
