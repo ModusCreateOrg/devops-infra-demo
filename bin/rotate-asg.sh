@@ -31,7 +31,6 @@ if [[ -z "$asg_name" ]]; then
     exit 1
 fi
 
-
 # Count the number of instances in service
 function num_in_service() {
     local inservice
@@ -85,6 +84,7 @@ asg_DesiredCapacity="$(aws autoscaling describe-auto-scaling-groups \
     --output text)"
 
 asg_MaxSize=$(aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-name "$asg_name" \
     --query 'AutoScalingGroups[].MaxSize' \
     --output text)
 
@@ -123,5 +123,4 @@ aws autoscaling update-auto-scaling-group \
     --auto-scaling-group-name "$asg_name" \
     --max-size "$asg_MaxSize" \
     --output table
-
 
