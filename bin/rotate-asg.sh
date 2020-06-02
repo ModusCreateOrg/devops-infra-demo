@@ -85,6 +85,7 @@ asg_DesiredCapacity="$(aws autoscaling describe-auto-scaling-groups \
     --output text)"
 
 asg_MaxSize=$(aws autoscaling describe-auto-scaling-groups \
+    --auto-scaling-group-name "$asg_name" \
     --query 'AutoScalingGroups[].MaxSize' \
     --output text)
 
@@ -105,13 +106,17 @@ aws autoscaling update-auto-scaling-group \
     --output table
 
 # Wait until new instances spin up
+echo -n "Waiting until new instances are in service"
 current_asg_instances="$(get_asg_instances "$asg_name")"
 while num_in_service_less_than "$current_asg_instances" "$asg_NewCapacity"; do
     sleep 5
+    echo -n "."
     current_asg_instances="$(get_asg_instances "$asg_name")"
 done
+echo ""
 
 # Terminate old instances explicitly
+echo "Terminating old instances $original_asg_instances"
 for instance in $original_asg_instances; do
     aws autoscaling terminate-instance-in-auto-scaling-group \
         --instance-id "$instance" \
@@ -124,4 +129,20 @@ aws autoscaling update-auto-scaling-group \
     --max-size "$asg_MaxSize" \
     --output table
 
+# Wait for old instances to complete termination
+for instance in $original_asg_instances; do
+    echo ""
+    echo -n "Waiting for $instance to terminate"
+    while aws ec2 describe-instances \
+        --instance-id "$instance" \
+        --query 'Reservations[*].Instances[*].State.Name' \
+        --output text \
+        | grep -v '^terminated$' >/dev/null
+    do
+        echo -n "."
+        sleep 5
+    done
+done
+echo ""
 
+echo "Rotate complete. New ASG instances: $(get_asg_instances "$asg_name")"
