@@ -17,7 +17,7 @@ See the branch [demo-20181205](https://github.com/ModusCreateOrg/devops-infra-de
 See the branch [demo-20190130](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20190130) for the code for the demo for the [Big Apple DevOps  talk _Monitoring and Alerting as code with Terraform and New Relic_](https://www.meetup.com/Big-Apple-DevOps/events/257744262/). Slides from this presentation are on [Slideshare](https://www.slideshare.net/RichardBullingtonMcG/monitoring-and-alerting-as-code-with-terraform-and-new-relic).
  
 See the branch [demo-20191109](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20191109) for the code for the demo for the [BSidesCT 2019 talk _Extensible DevSecOps pipelines with Jenkins, Docker, Terraform, and a kitchen sink full of scanners_](https://bsidesct.org/schedule/). Slides from this presentation are on
-[Slideshare](https://www.slideshare.net/RichardBullingtonMcG/extensible-devsecops-pipelines-with-jenkins-docker-terrraform-and-a-kitchen-sink-full-of-scanners)
+[Slideshare](https://www.slideshare.net/RichardBullingtonMcG/extensible-dev-secops-pipelines-with-jenkins-docker-terraform-and-a-kitchen-sink-full-of-scanners)
  
 Instructions
 ------------
