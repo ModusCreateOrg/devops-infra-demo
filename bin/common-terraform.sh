@@ -51,10 +51,8 @@ function init_terraform() {
     #shellcheck disable=SC2086,SC2046
     $DOCKER_TERRAFORM init \
         -input="$INPUT_ENABLED" \
-        -backend-config bucket=tf-state.${PROJECT_NAME}.${AWS_DEFAULT_REGION}.$(get_aws_account_id) \
-        -backend-config dynamodb_table=TerraformStatelock-${PROJECT_NAME} \
-        -backend-config region=${AWS_DEFAULT_REGION} \
-        -backend-config encrypt=true
+        -backend-config region=${AWS_DEFAULT_REGION}
+
     # Generate an SSH keypair if none exists yet
     if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
         #shellcheck disable=SC2174

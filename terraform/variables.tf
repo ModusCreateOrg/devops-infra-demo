@@ -111,3 +111,8 @@ variable "newrelic_alert_email" {
   description = "New Relic alert email"
   default     = ""
 }
+
+variable "backend_account_alias" {
+  description = "Account alias, or prefix, used by bootstrap project"
+  default     = "moduscreate-devops-demo"
+}
