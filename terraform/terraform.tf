@@ -4,10 +4,10 @@ terraform {
   # ./bootstrap project. See ./bootstrap/README.md for details.
   #===================================================================
   backend "s3" {
-    bucket         = "${var.backend_account_alias}-tf-state-us-east-1"
+    bucket         = "moduscreate-devops-demo-tf-state-us-east-1"
     key            = "terraform-state.tfstate"
-    dynamodb_table = "${var.backend_account_alias}-state-lock"
-    region         = "${var.aws_region}"
+    dynamodb_table = "moduscreate-devops-demo-state-lock"
+    region         = "us-east-1"
     encrypt        = "true"
   }
 }
