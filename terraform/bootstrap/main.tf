@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 module "bootstrap" {
-  source              = "trussworks/bootstrap/aws"
+  source = "trussworks/bootstrap/aws"
 
   region              = "${var.aws_region}"
   account_alias       = "${var.account_alias}"
