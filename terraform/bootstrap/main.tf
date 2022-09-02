@@ -10,14 +10,14 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = "${var.aws_region}"
 }
 
 module "bootstrap" {
   source              = "trussworks/bootstrap/aws"
 
-  region              = var.aws_region
-  account_alias       = var.account_alias
+  region              = "${var.aws_region}"
+  account_alias       = "${var.account_alias}"
   dynamodb_table_name = "${var.account_alias}-state-lock"
 }
 
@@ -37,5 +37,5 @@ output "user_id" {
 
 output "backend_details" {
   description = "Details of the S3 bucket and DynamoDB tables created for backend"
-  value       = module.bootstrap
+  value       = "${module.bootstrap}"
 }
