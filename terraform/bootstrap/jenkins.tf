@@ -31,6 +31,13 @@ data "aws_iam_policy_document" "terraform_backend_role_policy_document" {
     actions   = ["s3:*"]
     resources = ["arn:aws:s3:::${module.bootstrap.state_bucket}/*"]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions   = ["dynamodb:*"]
+    resources = ["arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${module.bootstrap.dynamodb_table}"]
+  }
 }
 
 resource "aws_iam_policy" "terraform_backend_role_policy" {
