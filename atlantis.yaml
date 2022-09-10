@@ -1,0 +1,7 @@
+version: 3
+projects:
+- dir: ./terraform
+  terraform_version: v0.11.7
+- dir: ./terraform/bootstrap
+  autoplan:
+    enabled: false
