@@ -4,6 +4,9 @@
 provider "aws" {
   region  = "${var.aws_region}"
   version = "~> 1.57"
+  assume_role = {
+    role_arn = "arn:aws:iam::587267277416:role/terraform_sandbox_backend_admin"
+  }
 }
 
 data "aws_caller_identity" "current" {}

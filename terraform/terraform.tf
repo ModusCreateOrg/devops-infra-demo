@@ -9,6 +9,7 @@ terraform {
     dynamodb_table = "moduscreate-devops-demo-state-lock"
     region         = "us-east-1"
     encrypt        = "true"
+    role_arn       = "arn:aws:iam::587267277416:role/terraform_sandbox_backend_admin"
   }
 }
 
