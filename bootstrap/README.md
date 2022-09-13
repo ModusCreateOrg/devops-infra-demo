@@ -5,7 +5,7 @@ This terraform module is used to bootstrap the backend for the `/terraform` proj
 ## How to use
 
 ```bash
-cd terraform/bootstrap
+cd bootstrap
 terraform init
 terraform apply
 ```
