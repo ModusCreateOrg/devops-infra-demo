@@ -67,7 +67,7 @@ function get_docker_packer {
         PACKER_AWS_VPC_ID="$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/"$INTERFACE"/vpc-id)"
     fi
 
-    echo "docker run -i
+    echo "docker run -i --rm
         ${USE_TTY}
         --env-file $TMPFILE
         -e PACKER_AWS_SUBNET_ID=$PACKER_AWS_SUBNET_ID
