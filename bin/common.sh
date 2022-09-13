@@ -29,6 +29,7 @@ function get_env_tmpfile() {
     local TMPFILE
     TMPFILE="$(mktemp)"
     grep ^export "$DIR/../env.sh" | cut -c8- > "$TMPFILE"
+    printenv | grep '^AWS' >> "$TMPFILE"
     echo "$TMPFILE"
 }
 
