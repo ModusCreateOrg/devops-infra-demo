@@ -1,7 +1,5 @@
+---
+# This does not use Atlantis (https://www.runatlantis.io/) to manage Terraform, 
+# so disable it with an empty list of projects.
 version: 3
 projects:
-- dir: ./terraform
-  terraform_version: v0.11.7
-- dir: ./terraform/bootstrap
-  autoplan:
-    enabled: false
