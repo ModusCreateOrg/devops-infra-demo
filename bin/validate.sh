@@ -42,7 +42,7 @@ if [[ "${SKIP_TERRAFORM:-false}" == "false" ]]; then
     $DOCKER_TERRAFORM validate \
         -var 'newrelic_license_key=ZZZZ' \
         -var 'newrelic_api_key=ZZZZ' \
-        -var 'newrelic_alert_email=ferd.berferd@example.com' \
+        -var 'newrelic_alert_email=ferd.berferd@example.com'
 fi
 
 echo "Linting shell scripts"
