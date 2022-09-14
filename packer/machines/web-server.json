@@ -18,7 +18,8 @@
         "vpc_id": "{{user `aws_vpc_id`}}",
         "ssh_username": "centos",
         "ami_name": "devops-infra-demo-centos-7-{{timestamp}}",
-        "ami_description": "DevOps Infrastructure Demo CentOS 7 - CIS hardened"
+        "ami_description": "DevOps Infrastructure Demo CentOS 7 - CIS hardened",
+        "ami_users": ["587267277416"] // Share with devops sandbox account
     }],
     "provisioners": [
         {

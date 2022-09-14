@@ -2,7 +2,7 @@
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
- 
+
 # Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
 ${DEBUG:-false} && set -vx
 # Credit to https://stackoverflow.com/a/17805088
@@ -30,6 +30,7 @@ $DOCKER_PACKER validate app/packer/machines/web-server.json
 if [[ "${SKIP_TERRAFORM:-false}" == "false" ]]; then
     DOCKER_TERRAFORM=$(get_docker_terraform)
     fmt=$($DOCKER_TERRAFORM fmt)
+    echo "Linting terraform files for formatting"
     if [[ -n "$fmt" ]]; then
         echo 'ERROR: these files are not formatted correctly. Run "terraform fmt"'
         echo "$fmt"
@@ -42,7 +43,6 @@ if [[ "${SKIP_TERRAFORM:-false}" == "false" ]]; then
         -var 'newrelic_license_key=ZZZZ' \
         -var 'newrelic_api_key=ZZZZ' \
         -var 'newrelic_alert_email=ferd.berferd@example.com' \
-    echo "Linting terraform files for formatting"
 fi
 
 echo "Linting shell scripts"
