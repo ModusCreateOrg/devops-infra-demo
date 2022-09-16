@@ -16,6 +16,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #shellcheck disable=SC1090
 . "$DIR/common.sh"
 
+ls -al /etc/yum.repos.d
+
 ensure_not_root
 
 quick_yum_install epel-release

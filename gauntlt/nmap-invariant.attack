@@ -1,5 +1,4 @@
 @slow
-# Adapted from https://github.com/gauntlt/gauntlt/blob/master/examples/nmap/nmap.attack
 
 Feature: nmap attacks for localhost
   Background:
@@ -45,4 +44,3 @@ Feature: nmap attacks for localhost
       | ports port[protocol="tcp"][portid="22"] state[state="open"]  |
     And the file "/app/build/nmap-results.xml" should not contain XML:
       | ports port[protocol="tcp"][portid="25"] state[state="open"] |
-
