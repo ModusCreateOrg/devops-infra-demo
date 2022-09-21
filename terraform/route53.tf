@@ -1,10 +1,10 @@
-data "aws_route53_zone" "dev" {
-  name = "${var.domain}."
+resource "aws_route53_zone" "dev" {
+  name = "${var.host}.${var.domain}"
 }
 
 resource "aws_route53_record" "main" {
-  zone_id = "${data.aws_route53_zone.dev.zone_id}"
-  name    = "${var.host}.${var.domain}"
+  zone_id = "${aws_route53_zone.dev.zone_id}"
+  name    = "${aws_route53_zone.dev.name}"
   type    = "CNAME"
   ttl     = "300"
 
@@ -14,5 +14,5 @@ resource "aws_route53_record" "main" {
 }
 
 output "route53-dns" {
-  value = "${var.host}.${var.domain}"
+  value = "${aws_route53_zone.dev.name}"
 }

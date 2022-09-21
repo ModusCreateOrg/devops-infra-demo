@@ -2,7 +2,7 @@
 
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
- 
+
 # Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
 ${DEBUG:-false} && set -vx
 # Credit to https://stackoverflow.com/a/17805088
@@ -27,22 +27,22 @@ echo "Linting packer files"
 $DOCKER_PACKER validate app/packer/machines/web-server.json
 
 # Ensure that `terraform fmt` comes up clean
-if [[ "$SKIP_TERRAFORM" == "false" ]]; then
-    echo "Linting terraform files for correctness"
+if [[ "${SKIP_TERRAFORM:-false}" == "false" ]]; then
     DOCKER_TERRAFORM=$(get_docker_terraform)
-    init_terraform
-    $DOCKER_TERRAFORM validate \
-        -var 'newrelic_license_key=ZZZZ' \
-        -var 'newrelic_api_key=ZZZZ' \
-        -var 'newrelic_alert_email=ferd.berferd@example.com' \
-    echo "Linting terraform files for formatting"
     fmt=$($DOCKER_TERRAFORM fmt)
+    echo "Linting terraform files for formatting"
     if [[ -n "$fmt" ]]; then
         echo 'ERROR: these files are not formatted correctly. Run "terraform fmt"'
         echo "$fmt"
         git diff
         exit 1
     fi
+    echo "Linting terraform files for correctness"
+    init_terraform
+    $DOCKER_TERRAFORM validate \
+        -var 'newrelic_license_key=ZZZZ' \
+        -var 'newrelic_api_key=ZZZZ' \
+        -var 'newrelic_alert_email=ferd.berferd@example.com'
 fi
 
 echo "Linting shell scripts"

@@ -48,9 +48,10 @@ variable "google_project" {
   default     = "example-media"
 }
 
+# Use devops prod account as default. We bake and store AMIs using packer.
 variable "aws_account_id_for_ami" {
   description = "AWS Account ID where AMIs live, if not the default"
-  default     = ""
+  default     = "191447213457"
 }
 
 variable "ami_pattern" {
@@ -110,4 +111,9 @@ variable "newrelic_runbook_url" {
 variable "newrelic_alert_email" {
   description = "New Relic alert email"
   default     = ""
+}
+
+variable "backend_account_alias" {
+  description = "Account alias, or prefix, used by bootstrap project"
+  default     = "moduscreate-devops-demo"
 }

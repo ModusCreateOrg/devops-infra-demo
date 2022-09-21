@@ -1,10 +1,11 @@
 # Install roles from Ansible Galaxy
 
 # CIS hardening
-- src: MindPointGroup.RHEL7-CIS
+- src: mindpointgroup.rhel7_cis
 
 # NGINX web server
 - src: nginxinc.nginx
+  version: 0.14.0
 
 # AWS CodeDeploy agent
 # The original version of this role in Ansible Galaxy
@@ -17,4 +18,3 @@
 
 # New Relic Infrastructure
 - src: newrelic.newrelic-infra
-

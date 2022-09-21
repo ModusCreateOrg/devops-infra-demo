@@ -1,0 +1,5 @@
+---
+# This does not use Atlantis (https://www.runatlantis.io/) to manage Terraform, 
+# so disable it with an empty list of projects.
+version: 3
+projects:

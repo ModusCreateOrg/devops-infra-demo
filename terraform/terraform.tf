@@ -1,15 +1,15 @@
 terraform {
+  #===================================================================
+  # The S3 bucket and DyanmoDB table used here are created using
+  # ./bootstrap project. See ./bootstrap/README.md for details.
+  #===================================================================
   backend "s3" {
-    encrypt = true
-
-    # We can't specify parameterized config here but if we could it would look like:
-    # bucket = "tf-state.${project_name}.${aws_region}.${data.aws_caller_identity.current.account_id}"
-    # dynamodb_table = "TerraformStatelock-${project_name}"
-    bucket = "my-terraform-bucket"
-
-    dynamodb_table = "TerraformStatelock"
+    bucket         = "moduscreate-devops-demo-tf-state-us-east-1"
+    key            = "terraform-state.tfstate"
+    dynamodb_table = "moduscreate-devops-demo-state-lock"
     region         = "us-east-1"
-    key            = "terraform.tfstate"
+    encrypt        = "true"
+    role_arn       = "arn:aws:iam::587267277416:role/terraform_sandbox_backend_admin"
   }
 }
 

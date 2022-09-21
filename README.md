@@ -13,17 +13,17 @@ See the branch [demo-20180619](https://github.com/ModusCreateOrg/devops-infra-de
 See the branch [demo-20180926](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20180926) for the code for the demo for the [Continuous Delivery NYC talk _Managing Expensive or Destructive Operations in Jenkins CI_](https://www.meetup.com/ContinuousDeliveryNYC/events/254036209/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/managing-expensive-or-destructive-operations-in-jenkins-ci).
 
 See the branch [demo-20181205](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20181205) for the code for the demo for the [Ansible NYC talk _Ansible Image Bakeries: Best Practices & Pitfalls_](https://www.meetup.com/Ansible-NYC/events/256728741/). Slides from this presentation are on [SlideShare](https://www.slideshare.net/RichardBullingtonMcG/ansible-image-bakeries-best-practices-and-pitfalls).
- 
+
 See the branch [demo-20190130](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20190130) for the code for the demo for the [Big Apple DevOps  talk _Monitoring and Alerting as code with Terraform and New Relic_](https://www.meetup.com/Big-Apple-DevOps/events/257744262/). Slides from this presentation are on [Slideshare](https://www.slideshare.net/RichardBullingtonMcG/monitoring-and-alerting-as-code-with-terraform-and-new-relic).
- 
+
 See the branch [demo-20191109](https://github.com/ModusCreateOrg/devops-infra-demo/tree/demo-20191109) for the code for the demo for the [BSidesCT 2019 talk _Extensible DevSecOps pipelines with Jenkins, Docker, Terraform, and a kitchen sink full of scanners_](https://bsidesct.org/schedule/). Slides from this presentation are on
 [Slideshare](https://www.slideshare.net/RichardBullingtonMcG/extensible-dev-secops-pipelines-with-jenkins-docker-terraform-and-a-kitchen-sink-full-of-scanners)
- 
+
 Instructions
 ------------
 
  To run the demo end to end, you will need:
- 
+
 * [AWS Account](https://aws.amazon.com/)
 * [Google Cloud Account](https://cloud.google.com/)
 * [Docker](https://docker.com/) (tested with 18.05.0-ce)
@@ -33,7 +33,7 @@ Instructions
 
 Optionally, you can use Vagrant to test ansible playbooks locally and Jenkins to orchestrate creation of AMIs in conjunction with GitHub branches and pull requests.
 
-You will also need to set a few environment variables. The method of doing so will vary from platform to platform. 
+You will also need to set a few environment variables. The method of doing so will vary from platform to platform.
 
 ```
 AWS_PROFILE
@@ -74,20 +74,14 @@ Install [Vagrant](https://www.vagrantup.com/). Change directory into the root of
 
 ### Terraform
 
-This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap that configuration. You can use [this repository](https://github.com/monterail/terraform-bootstrap-example) to use Terraform to do that bootstrap process. The `backend.tfvars` file in that repo should be modified as follows to work with this project:
+This Terraform setup stores its state in Amazon S3 and uses DynamoDB for locking. There is a bit of setup required to bootstrap the configuration. Check out `./terraform/bootstrap/README.md` to setup the resources required for backend.
 
-(Replace us-east-1 and XXXXXXXXXXXX with the AWS region and your account ID)
-```
-bucket = "tf-state.devops-infra-demo.us-east-1.XXXXXXXXXXXX"
-dynamodb_table = "TerraformStatelock-devops-infra-demo"
-key = "terraform.tfstate"
-profile = "terraform"
-region = "us-east-1"
-```
+If you override the default input values (by CLI or using a `.tfvars` file) for bootstrapping, please update the `terraform.backend` section in `./terraform/terraform.tf` to reflect that.
+
 You'll also need to modify the list of operators who can modify the object in the S3 bucket. Put in the IAM user names of the user into the `setup/variables.tf` file in that project. If your Jenkins instance uses an IAM role to grant access, give it a similar set of permissions to those granted on in the bucket policy to IAM users.
 
 These commands will then set up cloud resources using terraform:
- 
+
     cd terraform
     terraform init
     terraform get
@@ -112,7 +106,7 @@ The application loads an image from Google storage. To get it loading correctly,
 
 ### Auto Scaling Groups
 
-The application in this demo uses an AWS Auto Scaling Group in order to dynamically change the number of servers deployed in response to load. Two policies help guide how many instances are available: a CPU scaling policy that seeks to keep the average CPU load below 40% in the cluster, and a scheduled scaling policy that scales the entire cluster down to 0 instances at 02:00 UTC every night, to minimize the charges should you forget to destroy the cluster. If the cluster is scaled down to 0 instances, you will need to edit the Auto Scaling Group through the console, the CLI, or an API call to set the sizes to non-zero, for example 
+The application in this demo uses an AWS Auto Scaling Group in order to dynamically change the number of servers deployed in response to load. Two policies help guide how many instances are available: a CPU scaling policy that seeks to keep the average CPU load below 40% in the cluster, and a scheduled scaling policy that scales the entire cluster down to 0 instances at 02:00 UTC every night, to minimize the charges should you forget to destroy the cluster. If the cluster is scaled down to 0 instances, you will need to edit the Auto Scaling Group through the console, the CLI, or an API call to set the sizes to non-zero, for example
 
 ### Elastic Load Balancing
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run ansible 
+# Run ansible
 #
 # Set bash unofficial strict mode http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
@@ -19,6 +19,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . "$DIR/activate-rvm.sh"
 
 ensure_not_root
+
+sudo yum -y install yum-utils pcre2
 
 cd "$DIR/../ansible"
 ansible-playbook -l localhost "$@"
